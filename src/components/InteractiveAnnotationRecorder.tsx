@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
-  const [annotations, setAnnotations] = useState<{ x: number; y: number; text: string }[]>([]);
+  // const [annotations, setAnnotations] = useState<{ x: number; y: number; text: string }[]>([]);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const annotationOverlayRef = useRef<HTMLDivElement | null>(null);
-  const [isAnnotating, setIsAnnotating] = useState(false); // Control annotation mode
+  // const annotationOverlayRef = useRef<HTMLDivElement | null>(null);
+  // const [isAnnotating, setIsAnnotating] = useState(false); // Control annotation mode
   const [recordingComplete, setRecordingComplete]=useState(false);
   const navigate=useNavigate();
   useEffect(() => {
@@ -65,32 +65,54 @@ const InteractiveScreenRecorder: React.FC = () => {
     }
   };
 
-  const handleAddAnnotation = (e: React.MouseEvent) => {
-    if (isRecording && !isPaused && isAnnotating) {
-      const x = e.clientX;
-      const y = e.clientY;
-      const annotationText = prompt('Enter annotation text:') || '';
-      if (annotationText) {
-        setAnnotations((prev) => [...prev, { x, y, text: annotationText }]);
-      }
-    }
-  };
+  // const handleAddAnnotation = (e: React.MouseEvent) => {
+  //   if (isRecording && !isPaused && isAnnotating) {
+  //     const x = e.clientX;
+  //     const y = e.clientY;
+  //     const annotationText = prompt('Enter annotation text:') || '';
+  //     if (annotationText) {
+  //       setAnnotations((prev) => [...prev, { x, y, text: annotationText }]);
+  //     }
+  //   }
+  // };
 
-  const handleSaveRecording = () => {
+  const handleSaveRecording = async() => {
     if (recordedVideoUrl) {
+      try {
       const a = document.createElement('a');
       a.href = recordedVideoUrl;
       a.download = 'screen_recording.mp4';
       a.click();
+      toast.success('file downloaded ')
+        const blob = await fetch(recordedVideoUrl).then(r => r.blob()); // Convert URL to Blob
+  
+        const formData = new FormData();
+        formData.append('video', blob, 'screen_recording.mp4'); // 'video' is the name your server expects
+  
+        const response = await fetch('/your-upload-endpoint', { // Replace with your upload endpoint
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json(); // Try to get error details from the server
+          throw new Error(`Upload failed: ${response.status} - ${errorData.message || response.statusText}`);
+        }
+  
+        toast.success('Video uploaded successfully!');
+        navigate(`/`); // Redirect after successful upload
+  
+      } catch (error) {
+        console.error("Error uploading video:", error);
+        toast.error('Video upload failed. Please try again.'); // Show error toast
+      }
     }
-    toast.success('Recording saved successfully!');
-    navigate(`/`);
 
   };
 
-  const toggleAnnotationMode = () => {
-    setIsAnnotating((prev) => !prev);
-  };
+  // const toggleAnnotationMode = () => {
+  //   setIsAnnotating((prev) => !prev);
+  // };
 
   return (
     <div className='w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4'>
@@ -108,7 +130,7 @@ const InteractiveScreenRecorder: React.FC = () => {
         {recordedVideoUrl && <button onClick={handleSaveRecording} className='btn btn-success btn-sm'>Save Recording</button>}
       </div>
 
-      {/* Annotation Mode Button (Fixed Position) */}
+      {/* Annotation Mode Button (Fixed Position)
      {recordingComplete? <button
         style={{
           position: 'fixed',
@@ -124,7 +146,7 @@ const InteractiveScreenRecorder: React.FC = () => {
         onClick={toggleAnnotationMode}
       >
         {isAnnotating ? 'Stop Annotating' : 'Start Annotating'}
-      </button>:''}
+      </button>:''} */}
 
       {/* Screen Recording Video */}
       <div style={{ position: 'relative' }} className='w-[60%] h-full border-slate-700'>
@@ -139,7 +161,7 @@ const InteractiveScreenRecorder: React.FC = () => {
         ></video>
 
         {/* Annotation Overlay */}
-        <div
+        {/* <div
           ref={annotationOverlayRef}
           style={{
             position: 'absolute',
@@ -169,7 +191,7 @@ const InteractiveScreenRecorder: React.FC = () => {
               {annotation.text}
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
