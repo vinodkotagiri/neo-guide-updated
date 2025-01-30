@@ -68,4 +68,15 @@ export async function applyZoom(payload:ApplyZoomPayload){
     })
   } )
 }
+
+export async function createArticle(payload:{video_url:string}){
+  return new Promise((resolve) => {
+    api.post("/article/article_creation", payload).then((res) => {
+      resolve(res.data);
+    }).catch(error=>{
+      console.log('error creating article',error);
+      resolve(null)
+    })
+  } )
+}
 export default api;

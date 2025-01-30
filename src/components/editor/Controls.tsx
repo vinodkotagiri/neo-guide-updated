@@ -75,7 +75,6 @@ const Controls = ({ playerRef }) => {
               ...props.style,
               height: '64px',
               width: '100%',
-
             }}
           >
             {children}

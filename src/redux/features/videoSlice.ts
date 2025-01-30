@@ -6,6 +6,7 @@ interface VideoState {
   playing: boolean;
   played: number;
   seeked: number;
+  isArticle:boolean;
 }
 
 const initialState: VideoState = {
@@ -13,7 +14,8 @@ const initialState: VideoState = {
   duration: 0,
   playing: false,
   played: 0,
-  seeked: 0
+  seeked: 0,
+  isArticle:false
 };
 
 const videoSlice = createSlice({
@@ -34,9 +36,12 @@ const videoSlice = createSlice({
     },
     setSeekedSeconds: (state, action) => {
       state.seeked = action.payload;
-    }
+    },
+    setIsArticle: (state, action) => {
+      state.isArticle = action.payload;
+    },
   }
 });
 
 export default videoSlice.reducer;
-export const { setVideoUrl, setVideoDuration, setVideoPlaying, setVideoPlayed,setSeekedSeconds } = videoSlice.actions;
+export const { setVideoUrl, setVideoDuration, setVideoPlaying, setVideoPlayed,setSeekedSeconds,setIsArticle } = videoSlice.actions;

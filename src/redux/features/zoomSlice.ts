@@ -30,6 +30,23 @@ const initialState: zoomState = {
       easing_factor: 2,
       roi: [100, 100, 300, 200]
     }
+    ,
+    {
+      input_video: "https://converter-effy.s3.ap-southeast-1.amazonaws.com/output_videos/processed_video_Urdu.mp4",
+      start_time: 80,
+      end_time: 100,
+      zoom_factor: 1.5,
+      easing_factor: 2,
+      roi: [100, 100, 300, 200]
+    },
+    // {
+    //   input_video: "https://converter-effy.s3.ap-southeast-1.amazonaws.com/output_videos/processed_video_Urdu.mp4",
+    //   start_time: 10,
+    //   end_time: 15,
+    //   zoom_factor: 2,
+    //   easing_factor: 2,
+    //   roi: [100, 100, 300, 200]
+    // }
   ]
 };
 const zoomSlice = createSlice({
