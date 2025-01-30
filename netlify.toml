@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/*"  # Catch-all route
+  to = "/index.html"  # Serve index.html
+  status = 200  # Important: Use 200 status for SPAs
