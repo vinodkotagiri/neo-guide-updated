@@ -1,6 +1,6 @@
 import { setIsArticle } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
-import {MdOutlineVideoFile,MdOutlineArticle} from 'react-icons/md'
+import { PiArticleThin,PiVideoThin } from "react-icons/pi";
 interface NavbarProps {
   from?: string
 }
@@ -12,13 +12,13 @@ function Navbar({from}:NavbarProps) {
     dispatch(setIsArticle(!isArticle))
   }
   return (
-    <div className="navbar bg-neutral text-neutral-content">
+    <div className="navbar bg-gradient-to-br from-fuchsia-900 via-fuchsia-900 to-orange-900 text-neutral-content">
   <div className="fixed px-4">
     <a className="btn btn-ghost text-xl">Neo Guide</a>
   </div>
  { from=='editor' &&<div className="w-full h-full  items-center justify-center flex gap-2">
-  <button className="btn btn-lg w-[256px] text-xl  outline-none shadow-none border-slate-600 text-slate-400" style={isArticle?{background:'#00ff0040'}:{background:'#00000050'}} onClick={handleVideoArticleSwitch}><MdOutlineArticle size={32}/>Article</button>
-  <button className="btn btn-lg w-[256px] text-xl outline-none shadow-none border-slate-600 text-slate-400" style={!isArticle?{background:'#00ff0040'}:{background:'#00000050'}} onClick={handleVideoArticleSwitch}><MdOutlineVideoFile size={32}/>Video</button>
+  <button className="flex items-center w-[128px]  border-b-4 outline-none shadow-none  text-slate-400 cursor-pointer" style={isArticle?{borderColor:'#9810FA',fontWeight:600}:{borderColor:'transparent'}} onClick={handleVideoArticleSwitch}><PiArticleThin size={32}/>&emsp;Article</button>
+  <button className="flex items-center w-[128px]  border-b-4 outline-none shadow-none  text-slate-400 cursor-pointer" style={!isArticle?{borderColor:'#9810FA',fontWeight:600}:{borderColor:'transparent'}} onClick={handleVideoArticleSwitch}><PiVideoThin size={32}/>&emsp;Video</button>
   </div>}
   <div className="flex-none gap-2">
     <div className="dropdown dropdown-end">
