@@ -10,7 +10,7 @@ const Editor = () => {
   return (
     <div className='w-full h-full'>
       <Navbar from={'editor'}/>
-      <div className='w-full h-[calc(100vh-64px)] flex p-2 gap-1 '>
+      <div className='w-full h-[calc(100vh-64px)] flex justify-center rounded-md p-2 gap-1 '>
        {isArticle?<Article/> :<>
         <div className='w-[80%] h-full rounded-md overflow-hidden'>
           <VideoEditor />
