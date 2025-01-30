@@ -1,15 +1,17 @@
+import { useEffect, useState } from "react"
 import { useAppSelector } from "../../redux/hooks"
-import DocxViewerEditor from "./DocxViewerEditor"
+import ArticleViewer from "./ArticleViewer";
+import ArticleEditor from "./ArticleEditor";
+
 
 function Article() {
-  const {url}=useAppSelector(state=>state.article)
-  return (
-    <div className="w-full p-2 h-full bg-slate-700 flex gap-2">
-      <div className="w-[80%] h-full bg-black rounded-md">
-        <DocxViewerEditor fileUrl={url}/>
-      </div>
-      <div className="w-[20%] h-full bg-black rounded-md">
+  const [editing,setEditing]=useState(true);
+  const {articleData}=useAppSelector(state=>state.article)
 
+  return (
+    <div className="w-full p-2 h-full bg-slate-700 flex gap-2" style={{backgroundColor:'ghostwhite'}}>
+      <div className="w-full h-full bg-black rounded-md">
+      {!editing?<ArticleViewer articleData={articleData}/>:<ArticleEditor articleData={articleData} />}
       </div>
     </div>
   )
