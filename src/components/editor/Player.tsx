@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'

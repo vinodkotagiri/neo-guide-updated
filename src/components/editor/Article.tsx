@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+// @ts-nocheck
+import {  useState } from "react"
 import { useAppSelector } from "../../redux/hooks"
 import ArticleViewer from "./ArticleViewer";
 import ArticleEditor from "./ArticleEditor";

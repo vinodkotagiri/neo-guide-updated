@@ -23,14 +23,14 @@ export function initiateScreenRecord() {}
 export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVideoResponse | null> {
   try {
     AWS.config.update({
-      region: process.env.NEXT_PUBLIC_AWS_REGION as string,
-      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string
+      region: process.env.VITE_AWS_REGION as string,
+      accessKeyId: process.env.VITE_AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.VITE_AWS_SECRET_ACCESS_KEY as string
     });
     const s3 = new AWS.S3();
     console.log("payload:::", payload);
     const params = {
-      Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET as string,
+      Bucket: process.env.VITE_AWS_S3_BUCKET as string,
       Key: payload.file.name,
       Body: payload.file,
       ContentType: payload.file.type

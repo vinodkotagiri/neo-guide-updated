@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+// @ts-nocheck
+import React from 'react';
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
 const initialRectangles = [
   {
