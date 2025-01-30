@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { uploadFile } from '../api/axios';
+import { useDispatch } from 'react-redux';
+import { setVideoUrl } from '../redux/features/videoSlice';
+import { setLoader } from '../redux/features/loaderSlice';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -13,6 +17,7 @@ const InteractiveScreenRecorder: React.FC = () => {
   // const [isAnnotating, setIsAnnotating] = useState(false); // Control annotation mode
   const [recordingComplete, setRecordingComplete]=useState(false);
   const navigate=useNavigate();
+  const dispatch=useDispatch()
   useEffect(() => {
     return () => {
       // Clean up the stream and media recorder when component unmounts
@@ -85,22 +90,16 @@ const InteractiveScreenRecorder: React.FC = () => {
       a.click();
       toast.success('file downloaded ')
         const blob = await fetch(recordedVideoUrl).then(r => r.blob()); // Convert URL to Blob
-  
-        const formData = new FormData();
-        formData.append('video', blob, 'screen_recording.mp4'); // 'video' is the name your server expects
-  
-        const response = await fetch('/your-upload-endpoint', { // Replace with your upload endpoint
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          const errorData = await response.json(); // Try to get error details from the server
-          throw new Error(`Upload failed: ${response.status} - ${errorData.message || response.statusText}`);
+        const file = new File([blob], 'screen_recording.mp4', { type: 'video/mp4' });
+        const response=await uploadFile({user_id:'1',file})
+        if (response) {
+          dispatch(setVideoUrl(response.file_url));
+          navigate(`/editor`);
+          dispatch(setLoader(false))
+        } else {
+          dispatch(setLoader(false));
+          return toast.error('Error uploading video');
         }
-  
-        toast.success('Video uploaded successfully!');
-        navigate(`/`); // Redirect after successful upload
   
       } catch (error) {
         console.error("Error uploading video:", error);
