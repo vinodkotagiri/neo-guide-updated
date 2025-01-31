@@ -5,29 +5,45 @@ import 'react-quill/dist/quill.snow.css';
 
 const ArticleEditor = ({ articleData, onSave }) => {
   const [quillValue, setQuillValue] = useState('');
-  
   const modules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'indent': '-1' }, { 'indent': '+1' }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'font': [] }],
-      [{ 'align': [] }],
-      ['link', 'image', 'video'], // Include image and video
-      ['clean']
-    ]
-  }
+    toolbar: { container: "#custom-toolbar" }, // Attach the toolbar outside
+  };
+  // const modules = {
+  //   toolbar: [
+  //     ['bold', 'italic', 'underline', 'strike'],
+  //     ['blockquote', 'code-block'],
+  //     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  //     [{ 'indent': '-1' }, { 'indent': '+1' }],
+  //     [{ 'size': ['small', false, 'large', 'huge'] }],
+  //     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  //     [{ 'color': [] }, { 'background': [] }],
+  //     [{ 'font': [] }],
+  //     [{ 'align': [] }],
+  //     ['link', 'image', 'video'], // Include image and video
+  //     ['clean']
+  //   ]
+  // }
 
   const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image'
-  ]
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "code-block",
+    "list",
+    "indent",
+    "size",
+    "header",
+    "color",
+    "background",
+    "font",
+    "align",
+    "link",
+    "image",
+    "video",
+    "clean",
+  ];
 
   useEffect(() => {
     if (articleData && articleData.length > 0) {
@@ -90,11 +106,48 @@ const ArticleEditor = ({ articleData, onSave }) => {
   };
 
   return (
-    <div className=" w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto">
+    <div className=" w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
+     <div id="custom-toolbar">
+        <button className="ql-bold" />
+        <button className="ql-italic" />
+        <button className="ql-underline" />
+        <button className="ql-strike" />
+        <button className="ql-blockquote" />
+        <button className="ql-code-block" />
+        <button className="ql-list" value="ordered" />
+        <button className="ql-list" value="bullet" />
+        <button className="ql-indent" value="-1" />
+        <button className="ql-indent" value="+1" />
+        <select className="ql-size">
+          <option value="small" />
+          <option value={false} />
+          <option value="large" />
+          <option value="huge" />
+        </select>
+        <select className="ql-header">
+          <option value="1" />
+          <option value="2" />
+          <option value="3" />
+          <option value="4" />
+          <option value="5" />
+          <option value="6" />
+          <option value="" />
+        </select>
+        <select className="ql-color" />
+        <select className="ql-background" />
+        <select className="ql-font" />
+        <select className="ql-align" />
+        <button className="ql-link" />
+        <button className="ql-image" />
+        <button className="ql-video" />
+        <button className="ql-clean" />
+      </div>
+
+      {/* <div className='w-full text-right top-8 right-0  text-white z-50 sticky '>WELCOME</div> */}
       <ReactQuill theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules}/>
-      <button onClick={handleSave} className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      {/* <button onClick={handleSave} className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Save
-      </button>
+      </button> */}
     </div>
   );
 };

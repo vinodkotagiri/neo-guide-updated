@@ -195,7 +195,11 @@ const initialState:articleState={
 const articleSlice = createSlice({
   name: "article",
   initialState,
-  reducers: {}
+  reducers: {
+    setArticleData: (state, action) => {
+      state.articleData = action.payload;
+    }
+  }
 });
-
+export const {setArticleData}=articleSlice.actions
 export default articleSlice.reducer;
