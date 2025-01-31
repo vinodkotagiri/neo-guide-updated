@@ -12,7 +12,7 @@ function Navbar({from}:NavbarProps) {
     dispatch(setIsArticle(!isArticle))
   }
   return (
-    <div className="navbar bg-gradient-to-br from-fuchsia-900 via-fuchsia-900 to-orange-900 text-neutral-content">
+    <div className="navbar bg-gradient-to-tl from-slate-900 via-slate-900 to-blue-900 text-neutral-content">
   <div className="fixed px-4">
     <a className="btn btn-ghost text-xl">Neo Guide</a>
   </div>

@@ -31,8 +31,8 @@ const Controls = ({ playerRef }) => {
         className="timeline-markers flex absolute "
         style={{
           width: '100%',
-          height: '64px',
-          backgroundColor: '#83018e',
+          height: '36px',
+          backgroundColor: '#0fff4030',
           overflow: 'hidden',
         }}
       >
@@ -45,14 +45,14 @@ const Controls = ({ playerRef }) => {
               style={{
                 width: `${secondsWidth}px`,
                 height: '100%',
-                borderLeft: index % 30 === 0 ? '4px solid #000' : '1px solid #000',
+                // borderLeft: index % 30 === 0 ? '2px solid gray' : '0px solid #000',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
             >
               {index % 30 === 0 && (
-                <div className='absolute -bottom-1' style={{ fontSize: '10px', color: '#aaf' }}>{index}</div>
+                <div className='absolute -bottom-1 ml-8 ' style={{ fontSize: '10px', color: '#aaf' }}>{index}</div>
               )}
             </div>
           ))}
@@ -73,7 +73,7 @@ const Controls = ({ playerRef }) => {
             {...props}
             style={{
               ...props.style,
-              height: '64px',
+              height: '36px',
               width: '100%',
             }}
           >
@@ -87,7 +87,7 @@ const Controls = ({ playerRef }) => {
               ...props.style,
               height: '100%',
               width: '0.25rem',
-              backgroundColor: '#abc65f',
+              backgroundColor: 'blue',
             }}
             className="border-none outline-none"
           />

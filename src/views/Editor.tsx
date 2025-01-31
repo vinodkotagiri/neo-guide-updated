@@ -8,14 +8,15 @@ import { useAppSelector } from '../redux/hooks'
 const Editor = () => {
   const {isArticle}=useAppSelector(state=>state.video)
   return (
-    <div className='w-full h-full'>
+    <div className='w-full h-full bg-black'>
       <Navbar from={'editor'}/>
-      <div className='w-full h-[calc(100vh-64px)] flex justify-center rounded-md p-2 gap-1 '>
+      <div className='w-full h-[calc(100vh-64px)] flex  rounded-md '>
        {isArticle?<Article/> :<>
-        <div className='w-[80%] h-full rounded-md overflow-hidden'>
+       <div className='h-full w-[48px] border-r-[1px] border-slate-700'></div>
+        <div className='w-[70%] h-full'>
           <VideoEditor />
         </div>
-        <div className='w-[15%] h-full rounded-md overflow-hidden'>
+        <div className='w-[30%] h-full'>
           <EditorSider />
         </div>
         </>}

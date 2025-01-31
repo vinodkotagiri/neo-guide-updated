@@ -8,6 +8,7 @@ export interface zoomPayload {
   easing_factor: number;
 }
 interface zoomState {
+  zooming: boolean;
   zoom_factor: number;
   roi: Array<number>;
   start_time: number;
@@ -16,6 +17,7 @@ interface zoomState {
   savedZooms: Array<zoomPayload> | [];
 }
 const initialState: zoomState = {
+  zooming:false,
   zoom_factor: 1,
   roi: [0, 0, 0, 0],
   start_time: 0,
@@ -30,15 +32,15 @@ const initialState: zoomState = {
       easing_factor: 2,
       roi: [100, 100, 300, 200]
     }
-    ,
-    {
-      input_video: "https://converter-effy.s3.ap-southeast-1.amazonaws.com/output_videos/processed_video_Urdu.mp4",
-      start_time: 80,
-      end_time: 100,
-      zoom_factor: 1.5,
-      easing_factor: 2,
-      roi: [100, 100, 300, 200]
-    },
+    // ,
+    // {
+    //   input_video: "https://converter-effy.s3.ap-southeast-1.amazonaws.com/output_videos/processed_video_Urdu.mp4",
+    //   start_time: 80,
+    //   end_time: 100,
+    //   zoom_factor: 1.5,
+    //   easing_factor: 2,
+    //   roi: [100, 100, 300, 200]
+    // },
     // {
     //   input_video: "https://converter-effy.s3.ap-southeast-1.amazonaws.com/output_videos/processed_video_Urdu.mp4",
     //   start_time: 10,
@@ -53,6 +55,9 @@ const zoomSlice = createSlice({
   name: "zoom",
   initialState,
   reducers: {
+    setZooming: (state, action) => {
+      state.zooming = action.payload;
+    },
     setZoomFactor: (state, action) => {
       state.zoom_factor = action.payload;
     },
@@ -84,4 +89,4 @@ const zoomSlice = createSlice({
 });
 
 export default zoomSlice.reducer;
-export const { setZoomEndTime, setZoomFactor, setZoomROI, setZoomStartTime, setZoomData,updateZoomData } = zoomSlice.actions;
+export const { setZoomEndTime, setZoomFactor, setZoomROI, setZoomStartTime, setZoomData,updateZoomData, setZooming } = zoomSlice.actions;

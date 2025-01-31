@@ -2,12 +2,13 @@
 @plugin "daisyui";
 
 .ql-toolbar {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
+  position: absolute;
+  top: 6px;
+  left: 18%;
+  width:52%;
   z-index: 1000;
-  background-color: antiquewhite;
+  border-radius:0.5rem;
+  background: linear-gradient(to right, #db2777, #a855f7);
 }
 
 
