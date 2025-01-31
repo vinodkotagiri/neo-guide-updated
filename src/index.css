@@ -1,26 +1,34 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-.ql-toolbar {
-  position: static;
+/* .ql-toolbar {
+   position: static;
   top: -48;
-  width:100%;
+  width:100%; 
   z-index: 1000;
-  border-radius:0.5rem;
+  border-top-left-radius:0.5rem;border-bottom-left-radius:0.5rem;
   background-color: black;
 
 }
-
+.custom-buttons-ai{
+  border-top-left-radius:0.5rem;border-bottom-left-radius:0.5rem;
+  background-color: black;
+} */
+.ql-toolbar.ql-snow{
+border: none !important;
+}
+.ql-snow .ql-stroke{
+  stroke: white !important;
+}
+.ql-snow .ql-picker{
+  color: white !important;
+}
 /* 
 
 .content-below-toolbar {
   padding-top: 42px; 
 }
 
-.ql-snow .ql-stroke{
-  stroke: white !important;
-}
 
-.ql-snow .ql-picker{
-  color: white !important;
-} */
+
+ */

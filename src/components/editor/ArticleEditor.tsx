@@ -106,7 +106,8 @@ const ArticleEditor = ({ articleData, onSave }) => {
   };
 
   return (
-    <div className=" w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
+    <>
+    <div className="flex bg-black rounded-md justify-between items-center">
      <div id="custom-toolbar">
         <button className="ql-bold" />
         <button className="ql-italic" />
@@ -142,6 +143,11 @@ const ArticleEditor = ({ articleData, onSave }) => {
         <button className="ql-video" />
         <button className="ql-clean" />
       </div>
+<div className="custom-buttons-ai">Welcome</div>
+      </div>
+   
+    <div className=" w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
+    
 
       {/* <div className='w-full text-right top-8 right-0  text-white z-50 sticky '>WELCOME</div> */}
       <ReactQuill theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules}/>
@@ -149,6 +155,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
         Save
       </button> */}
     </div>
+    </>
   );
 };
 
