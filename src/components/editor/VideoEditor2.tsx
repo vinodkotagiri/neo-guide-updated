@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { Timeline } from 'react-timeline-range-slider';
 import 'react-timeline-range-slider/dist/styles.css'; // Import default styles
 
 const VideoEditor = () => {
@@ -116,13 +115,13 @@ const VideoEditor = () => {
 
       {/* Timeline Editor */}
       <div className="timeline-wrapper">
-        <Timeline
+        {/* <Timeline
           value={currentTime}
           onChange={handleSeek}
           min={0}
           max={timelineData[timelineData.length - 1].end}
           step={1}
-        />
+        /> */}
       </div>
 
       {/* Add Clip Button */}
