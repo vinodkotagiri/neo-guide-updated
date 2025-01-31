@@ -4,8 +4,7 @@
 .ql-toolbar {
   position: absolute;
   top: 6px;
-  left: 18%;
-  width:52%;
+  width:'auto';
   z-index: 1000;
   border-radius:0.5rem;
   background: linear-gradient(to right, #db2777, #a855f7);
