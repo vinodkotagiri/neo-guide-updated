@@ -7,11 +7,20 @@
   width:'auto';
   z-index: 1000;
   border-radius:0.5rem;
-  background: linear-gradient(to right, #db2777, #a855f7);
+  background-color: black;
+  /* background: linear-gradient(to right, #db2777, #a855f7); */
 }
 
 
 
 .content-below-toolbar {
   padding-top: 42px; /* Adjust to the toolbar height */
+}
+
+.ql-snow .ql-stroke{
+  stroke: white !important;
+}
+
+.ql-snow .ql-picker{
+  color: white !important;
 }
