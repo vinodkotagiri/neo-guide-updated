@@ -47,7 +47,7 @@ const Editor = () => {
       // dispatch(setLoader({loading:true}))
       const progessInterval=setInterval(()=>{
         getProgress(request_id).then(res=>{
-          if(res?.status=='completed'){
+          if(res?.status?.toLowerCase()=='Completed'){
             clearInterval(progessInterval)
             const data=res?.result;
             dispatch(setArticleData(data))
