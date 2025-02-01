@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
+// const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
 interface VideoState {
   url: string;
   duration: number;
@@ -11,7 +11,7 @@ interface VideoState {
 }
 
 const initialState: VideoState = {
-  url: url_test,
+  url: '',
   duration: 0,
   language:'',
   playing: false,

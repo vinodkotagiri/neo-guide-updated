@@ -4,8 +4,8 @@ import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 
-const BASE_URL = "http://161.97.162.131:3000";
-// const BASE_URL='https://recorder.effybiz.com'
+// const BASE_URL = "http://161.97.162.131:3000";
+const BASE_URL='https://recorder.effybiz.com'
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
