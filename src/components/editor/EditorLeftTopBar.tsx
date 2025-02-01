@@ -59,7 +59,7 @@ function EditorLeftTopBar({ setDub }) {
                 dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
               }
             })
-          }, 1000)
+          }, 5000)
         } else {
           setDub(false)
           toast.error('Error dubbing/translating video');
@@ -97,7 +97,7 @@ function EditorLeftTopBar({ setDub }) {
                 dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
               }
             })
-          }, 1000)
+          }, 5000)
         } else {
           setDub(false)
           toast.error('Error dubbing/translating video');

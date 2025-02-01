@@ -65,7 +65,7 @@ const Editor = () => {
             dispatch(setLoaderData({status:res?.status, percentage:res?.progress}))
           }
         })
-      },1000)
+      },5000)
     }
   }
 
