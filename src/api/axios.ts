@@ -7,8 +7,8 @@ const BASE_URL = "http://161.97.162.131:3000";
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*"
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json"
   }
 });
 

@@ -3,6 +3,7 @@ const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_vide
 interface VideoState {
   url: string;
   duration: number;
+  language:string;
   playing: boolean;
   played: number;
   seeked: number;
@@ -12,6 +13,7 @@ interface VideoState {
 const initialState: VideoState = {
   url: url_test,
   duration: 0,
+  language:'',
   playing: false,
   played: 0,
   seeked: 0,

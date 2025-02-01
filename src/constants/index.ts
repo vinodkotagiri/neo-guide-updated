@@ -1,4 +1,4 @@
-export const languages={
+const languages={
   "English (Transatlantic)-EE": ["Callum-EE"],
   "English (Australian)-EE": ["Charlie-EE"],
   "English (Swedish)-EE": ["Charlotte-EE"],
@@ -67,3 +67,13 @@ export const languages={
   "Serbian-EN": ["Lazar-EN", "Lazar-latin-EN", "Milica-EN", "Milica-latin-EN"],
   "Catalan-EN": ["Abril-EN", "Jordi-EN", "Laia-EN", "Mireia-EN", "Silvia-EN"]
 }
+
+const languagesWithVoice=[]
+
+for(const [key,value] of Object.entries(languages)){
+  const language=key.split('-')[0];
+  const voices=value.map((item) => item.split('-')[0]);
+  languagesWithVoice.push({language,voices})
+}
+console.log(languagesWithVoice)
+export {languages,languagesWithVoice};

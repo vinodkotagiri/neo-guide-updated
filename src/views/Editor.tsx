@@ -1,12 +1,23 @@
 
+import { useEffect } from 'react'
 import Article from '../components/editor/Article'
 import EditorSider from '../components/editor/EditorSider'
 import VideoEditor from '../components/editor/VideoEditor'
 import Navbar from '../components/global/Navbar'
 import { useAppSelector } from '../redux/hooks'
+import { createArticle } from '../api/axios'
 
 const Editor = () => {
-  const { isArticle } = useAppSelector(state => state.video)
+  const { isArticle,url } = useAppSelector(state => state.video)
+  useEffect(()=>{
+    getArticleData()
+  },[])
+
+  async function getArticleData(){
+    const response=await createArticle({video_url:url})
+    console.log(response);
+  }
+
   return (
     <div className='w-full h-full bg-gradient-to-br from-blue-700 to-pink-500 overflow-hidden'>
       <Navbar from={'editor'} />
