@@ -1,24 +1,34 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const loaderSlice=createSlice({
-  name:'loader',
-  initialState:{
-    loading:false,
-    status:'loading',
-    percentage:0,
-  },
-  reducers:{
-    setLoader:(state,action)=>{
-      state=action.payload
-      return state
+interface LoaderState {
+  loading: boolean;
+  status?: string;
+  percentage?: number;
+}
+
+const initialState: LoaderState = {
+  loading: false,
+  status: "loading",
+  percentage: 0,
+};
+
+const loaderSlice = createSlice({
+  name: "loader",
+  initialState,
+  reducers: {
+    setLoader: (state, action: PayloadAction<LoaderState>) => {
+      Object.assign(state, action.payload); // Correct state update
     },
-    setLoaderData:(state,action)=>{
-      if(action.payload.percentage!=undefined){state.percentage=action.payload.percentage}
-      if(action.payload.status!=undefined){state.status=action.payload.status}
-      return state
-    }
-  }
-})
+    setLoaderData: (state, action: PayloadAction<Partial<LoaderState>>) => {
+      if (action.payload.percentage !== undefined) {
+        state.percentage = action.payload.percentage;
+      }
+      if (action.payload.status !== undefined) {
+        state.status = action.payload.status;
+      }
+    },
+  },
+});
 
-export const {setLoader,setLoaderData}=loaderSlice.actions
-export default loaderSlice.reducer
+export const { setLoader, setLoaderData } = loaderSlice.actions;
+export default loaderSlice.reducer;

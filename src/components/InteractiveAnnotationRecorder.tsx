@@ -95,9 +95,9 @@ const InteractiveScreenRecorder: React.FC = () => {
         if (response) {
           dispatch(setVideoUrl(response.file_url));
           navigate(`/editor`);
-          dispatch(setLoader(false))
+          dispatch(setLoader({loading:false}))
         } else {
-          dispatch(setLoader(false));
+          dispatch(setLoader({loading:false}));
           return toast.error('Error uploading video');
         }
   

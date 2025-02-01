@@ -21,7 +21,6 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string
     });
     const s3 = new AWS.S3();
-    console.log("payload:::", payload);
     const params = {
       Bucket: import.meta.env.VITE_AWS_S3_BUCKET as string,
       Key: payload.file.name,

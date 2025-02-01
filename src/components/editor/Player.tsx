@@ -57,6 +57,7 @@ const Player = ({ playerRef }) => {
         url={url}
         width={'100%'}
         height={'100%'}
+        controls
         playing={playing}
         onDuration={(duration) => dispatch(setVideoDuration(duration))}
         onProgress={(played) => dispatch(setVideoPlayed(played.playedSeconds))}

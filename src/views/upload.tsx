@@ -12,15 +12,15 @@ function UploadView() {
   const navigate = useNavigate();
   async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    dispatch(setLoader(true));
+    dispatch(setLoader({loading:true,status:'please wait while we upload the file'}));
     if (file) {
       const response: UploadVideoResponse | null = await uploadFile({ user_id: '1', file });
       if (response) {
         dispatch(setVideoUrl(response.file_url));
         navigate(`/editor`);
-        dispatch(setLoader(false))
+        dispatch(setLoader({loading:false}))
       } else {
-        dispatch(setLoader(false));
+        dispatch(setLoader({loading:false}));
         return toast.error('Error uploading video');
       }
 
@@ -28,10 +28,10 @@ function UploadView() {
   }
 
   async function handleInitiateRecording() {
-    dispatch(setLoader(true));
+    dispatch(setLoader({loading:true}));
     setTimeout(() => {
       navigate(`/recorder`);
-      dispatch(setLoader(false))
+      dispatch(setLoader({loading:false}))
     }, 1000);
   }
   
