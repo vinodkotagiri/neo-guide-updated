@@ -39,7 +39,7 @@ const Editor = () => {
 
   useEffect(()=>{
     if(requestId){
-      // getArticleData(requestId)
+      getArticleData(requestId)
     }
   },[requestId])
   async function getArticleData(request_id){
