@@ -4,8 +4,9 @@ import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 
+const BASE_URL=import.meta.env.VITE_NODE_ENV=='local'?"http://161.97.162.131:3000":'https://recorder.effybiz.com/api';
 // const BASE_URL = "http://161.97.162.131:3000";
-const BASE_URL='https://recorder.effybiz.com'
+// const BASE_URL='https://recorder.effybiz.com/api'
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -82,7 +83,7 @@ export async function createArticle(payload: { video_url: string }) {
   });
 }
 
-export async function translateAndDub(payload: { s3_link: string; target_language: string; voice: string }) {
+export async function translateAndDub(payload: { s3_link: string; target_language: string; voice: string }):{request_id:string} {
   return new Promise((resolve) => {
     api
       .post("/dubbing", payload)
@@ -96,13 +97,38 @@ export async function translateAndDub(payload: { s3_link: string; target_languag
   });
 }
 
-export async function  getLanguageList(Language_name_from_first_API){
-  // const url=`https://demo.effybiz.com/effybizgetlanguages`;
-  const url=`https://demo.effybiz.com/effybizgetvoices?language=${Language_name_from_first_API}`
+
+export async function  getLanguageList(){
+  const url=`https://demo.effybiz.com/effybizgetlanguages`;
   axios.get(url).then(res=>{
     console.log('res::',res.data)
   }).catch(err=>console.log(err))
 }
+
+export async function  getLanguageVoiceList(Language_name_from_first_API){
+  // const url=`https://demo.effybiz.com/effybizgetlanguages`;
+  const url=`https://demo.effybiz.com/effybizgetvoices?language=${Language_name_from_first_API}`
+  axios.get(url).then(res=>{
+    console.log('res::',res.data)
+    return res.data
+  }).catch(err=>{console.log(err); return null})
+}
+
+
+export async function getSubtitles(payload: { target_language: string, video_path: string }):{request_id:string} {
+  return new Promise((resolve) => {
+    api
+      .post("/subtitle", payload)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.log("error creating article", error);
+        resolve(null);
+      });
+  });
+}
+
 
 
 export default api;

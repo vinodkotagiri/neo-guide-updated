@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
+
 const initialRectangles = [
   {
     x: 10,

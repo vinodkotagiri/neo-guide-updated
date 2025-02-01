@@ -7,3 +7,11 @@ for (const [key, value] of Object.entries(languages)) {
 }
 return response
 }
+
+export async function getFormattedLanguages(){
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(getLanguages())
+    }, 1000);
+  })
+}

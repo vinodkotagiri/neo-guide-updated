@@ -10,13 +10,21 @@ import toast from 'react-hot-toast'
 import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
 import { useDispatch } from 'react-redux'
 import { setArticleData } from '../redux/features/articleSlice'
+import { useNavigate } from 'react-router-dom'
 
 const Editor = () => {
   const { isArticle,url } = useAppSelector(state => state.video)
+  const {articleData}=useAppSelector(state=>state.article)
   const [requestId,setRequestId]=useState('')
   const dispatch=useDispatch()
+  const navigate=useNavigate()
+
+  useEffect(()=>{
+    if(!url) navigate('/')
+  },[])
 
   useEffect(() => {
+    if(articleData.length==0){
     dispatch(setLoader({ loading: true }));
     createArticle({ video_url: url })
       .then((res) => {
@@ -25,7 +33,7 @@ const Editor = () => {
           setRequestId(request_id);
           toast.success('Video uploaded successfully');
         } else {
-          toast.success('Video uploaded successfully');
+          toast.error('Forbidden');
         }
       })
       .catch(() => {
@@ -34,6 +42,7 @@ const Editor = () => {
       .finally(() => {
         dispatch(setLoader({ loading: false }));
       });
+    }
   }, [url]); // Run when url changes
   
 

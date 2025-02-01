@@ -71,9 +71,9 @@ const languages={
 const languagesWithVoice=[]
 
 for(const [key,value] of Object.entries(languages)){
-  const language=key.split('-')[0];
-  const voices=value.map((item) => item.split('-')[0]);
-  languagesWithVoice.push({language,voices})
+
+  // const voices=value.map((item) => item.split('-');
+  languagesWithVoice.push({language:key,voices:value})
 }
 console.log(languagesWithVoice)
 export {languages,languagesWithVoice};

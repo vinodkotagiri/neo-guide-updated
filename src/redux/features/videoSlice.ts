@@ -11,7 +11,7 @@ interface VideoState {
 }
 
 const initialState: VideoState = {
-  url: '',
+  url:'' ,
   duration: 0,
   language:'',
   playing: false,
