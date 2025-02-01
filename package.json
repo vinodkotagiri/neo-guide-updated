@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.12.0",
+    "@xzdarcy/react-timeline-editor": "^0.1.9",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.7.9",
     "buffer": "^6.0.3",

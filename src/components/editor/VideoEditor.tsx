@@ -7,12 +7,12 @@ const VideoEditor = () => {
   return (
     <div className='w-full h-full flex flex-col gap-1 '>
 
-      <div className='w-full h-[75%]'>
+      <div className='w-full h-full'>
         <Player playerRef={playerRef}/>
       </div>
-      <div className='w-full h-[25%] p-2'>
+      {/* <div className='w-full h-[25%] p-2'>
         <Controls playerRef={playerRef}/>
-      </div>
+      </div> */}
     </div>
   ) 
 }
