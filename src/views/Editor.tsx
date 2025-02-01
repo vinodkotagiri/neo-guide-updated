@@ -33,7 +33,7 @@ const Editor = () => {
           setRequestId(request_id);
           toast.success('Video uploaded successfully');
         } else {
-          toast.error('Forbidden');
+          // toast.error('Forbidden');
         }
       })
       .catch(() => {
