@@ -6,11 +6,12 @@ import LocalLoader from '../global/LocalLoader'
 
 const EditorSider = () => {
   const { articleData } = useAppSelector(state => state.article)
+  const {percentage,status}=useAppSelector(state=>state.loader)
   return (
     <div className='w-full h-full border-l-[1px] border-slate-700'>
       <EditorLeftTopBar />
      { articleData.length==0?<div className='w-full h-full overflow-auto relative'>
-     <LocalLoader loading={true}/>
+     <LocalLoader loading={true} progress={percentage} text={status}/>
      </div>
      :
       <div className='w-full h-full overflow-auto p-4'>

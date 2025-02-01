@@ -44,14 +44,14 @@ const Editor = () => {
   },[requestId])
   async function getArticleData(request_id){
     if(request_id){
-      dispatch(setLoader({loading:true}))
+      // dispatch(setLoader({loading:true}))
       const progessInterval=setInterval(()=>{
         getProgress(request_id).then(res=>{
           if(res?.status=='completed'){
             clearInterval(progessInterval)
             const data=res?.result;
             dispatch(setArticleData(data))
-            dispatch(setLoader({loading:false}))
+            // dispatch(setLoader({loading:false}))
           }else{
             dispatch(setLoaderData({status:res?.status, percentage:res?.progress}))
           }
