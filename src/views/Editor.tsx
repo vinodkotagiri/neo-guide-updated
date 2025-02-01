@@ -1,21 +1,63 @@
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Article from '../components/editor/Article'
 import EditorSider from '../components/editor/EditorSider'
 import VideoEditor from '../components/editor/VideoEditor'
 import Navbar from '../components/global/Navbar'
 import { useAppSelector } from '../redux/hooks'
-import { createArticle } from '../api/axios'
+import { createArticle, getLanguageList, getProgress } from '../api/axios'
+import toast from 'react-hot-toast'
+import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
+import { useDispatch } from 'react-redux'
+import { setArticleData } from '../redux/features/articleSlice'
 
 const Editor = () => {
   const { isArticle,url } = useAppSelector(state => state.video)
-  useEffect(()=>{
-    getArticleData()
-  },[])
+  const [requestId,setRequestId]=useState('')
+  const dispatch=useDispatch()
 
-  async function getArticleData(){
-    const response=await createArticle({video_url:url})
-    console.log(response);
+  useEffect(() => {
+    dispatch(setLoader({ loading: true }));
+    createArticle({ video_url: url })
+      .then((res) => {
+        const request_id = res?.request_id;
+        if (request_id) {
+          setRequestId(request_id);
+          toast.success('Video uploaded successfully');
+        } else {
+          toast.success('Video uploaded successfully');
+        }
+      })
+      .catch(() => {
+        toast.error('Error uploading video');
+      })
+      .finally(() => {
+        dispatch(setLoader({ loading: false }));
+      });
+  }, [url]); // Run when url changes
+  
+
+  useEffect(()=>{
+    if(requestId){
+      getArticleData(requestId)
+    }
+  },[requestId])
+  async function getArticleData(request_id){
+    if(request_id){
+      dispatch(setLoader({loading:true}))
+      const progessInterval=setInterval(()=>{
+        getProgress(request_id).then(res=>{
+          if(res?.status=='completed'){
+            clearInterval(progessInterval)
+            const data=res?.result;
+            dispatch(setArticleData(data))
+            dispatch(setLoader({loading:false}))
+          }else{
+            dispatch(setLoaderData({status:res?.status, percentage:res?.progress}))
+          }
+        })
+      },1000)
+    }
   }
 
   return (

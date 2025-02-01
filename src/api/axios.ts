@@ -4,6 +4,7 @@ import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 
 const BASE_URL = "http://161.97.162.131:3000";
+// const BASE_URL='https://recorder.effybiz.com'
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -37,7 +38,7 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
 }
 export async function getProgress(
   requestId: string
-): Promise<{ percentage: number; status: string; details: string } | null> {
+): Promise<{ progress: number; status: string; details?: string,result?:unknown } | null> {
   return new Promise((resolve) => {
     api
       .get(`/progress/${requestId}`)
@@ -69,7 +70,7 @@ export async function applyZoom(payload: ApplyZoomPayload) {
 export async function createArticle(payload: { video_url: string }) {
   return new Promise((resolve) => {
     api
-      .post("/article/article_formate", payload)
+      .post("/article_formate", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -94,6 +95,13 @@ export async function translateAndDub(payload: { s3_link: string; target_languag
   });
 }
 
+export async function  getLanguageList(Language_name_from_first_API){
+  // const url=`https://demo.effybiz.com/effybizgetlanguages`;
+  const url=`https://demo.effybiz.com/effybizgetvoices?language=${Language_name_from_first_API}`
+  axios.get(url).then(res=>{
+    console.log('res::',res.data)
+  }).catch(err=>console.log(err))
+}
 
 
 export default api;
