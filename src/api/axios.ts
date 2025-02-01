@@ -129,6 +129,21 @@ export async function getSubtitles(payload: { target_language: string, video_pat
   });
 }
 
+export async function enhanceAIArticle(payload: { json_content:Array<{text?:string, image_url?:string}> }):{request_id:string} {
+    
+  return new Promise((resolve) => {
+    api
+      .post("/enhance_ai", payload)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.log("error creating article", error);
+        resolve(null);
+      });
+  });
+}
+
 
 
 export default api;
