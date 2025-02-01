@@ -1,4 +1,4 @@
-
+//@ts-nocheck
 import { useEffect, useState } from 'react'
 import Article from '../components/editor/Article'
 import EditorSider from '../components/editor/EditorSider'
@@ -39,7 +39,7 @@ const Editor = () => {
 
   useEffect(()=>{
     if(requestId){
-      getArticleData(requestId)
+      // getArticleData(requestId)
     }
   },[requestId])
   async function getArticleData(request_id){

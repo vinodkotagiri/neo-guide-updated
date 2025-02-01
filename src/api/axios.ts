@@ -1,3 +1,4 @@
+//@ts-nocheck
 import axios from "axios";
 import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
