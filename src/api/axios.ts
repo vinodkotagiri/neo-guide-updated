@@ -11,7 +11,7 @@ const api = axios.create({
   headers: {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json"
-  }
+  },withCredentials:true
 });
 
 export function initiateScreenRecord() {}
