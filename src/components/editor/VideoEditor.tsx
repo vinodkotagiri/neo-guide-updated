@@ -1,20 +1,20 @@
-import  { useRef } from 'react'
+import { useRef } from 'react'
 import Player from './Player'
 import Controls from './Controls'
 
 const VideoEditor = () => {
-  const playerRef=useRef(null);
+  const playerRef = useRef(null);
   return (
     <div className='w-full h-full flex flex-col gap-1 '>
 
       <div className='w-full h-full'>
-        <Player playerRef={playerRef}/>
+        <Player playerRef={playerRef} />
       </div>
       {/* <div className='w-full h-[25%] p-2'>
         <Controls playerRef={playerRef}/>
       </div> */}
     </div>
-  ) 
+  )
 }
 
 export default VideoEditor
