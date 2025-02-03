@@ -1,6 +1,9 @@
 import { setIsArticle } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
+import { MdArticle } from "react-icons/md";
+import { MdVideoCameraBack } from "react-icons/md";
+
 interface NavbarProps {
   from?: string
 }
@@ -29,8 +32,19 @@ function Navbar({ from }: NavbarProps) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
           </svg>
             Video</button>
+          {/* <p>Video</p>
+          <div className="toggler">
+
+            <input id="toggler-1" name="toggler-1" type="checkbox" value="1" />
+            <label for="toggler-1">
+
+              <MdArticle className="toggler-on" />
+              <MdVideoCameraBack className="toggler-off" />
 
 
+            </label>
+          </div>
+          <p>Article</p> */}
         </div>
       </div>}
       <div className="flex-none gap-2">
