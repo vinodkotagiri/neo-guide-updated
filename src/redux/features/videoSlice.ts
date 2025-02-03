@@ -26,6 +26,7 @@ const videoSlice = createSlice({
   reducers: {
     setVideoUrl: (state, action) => {
       state.url = action.payload;
+      window.sessionStorage.setItem('url',action.payload)
     },
     setVideoDuration: (state, action) => {
       state.duration = action.payload;

@@ -198,6 +198,7 @@ const articleSlice = createSlice({
   reducers: {
     setArticleData: (state, action) => {
       state.articleData = action.payload;
+      window.sessionStorage.setItem('articleData',JSON.stringify(action.payload))
     }
   }
 });
