@@ -59,7 +59,7 @@ const Player = ({ playerRef }) => {
       </div>
 
       {/* Timeline with Gap and Blue Zoom Track */}
-      <div className="w-full h-[29%] relative overflow-visible">
+      {/* <div className="w-full h-[29%] relative overflow-visible">
         <Timeline
           style={{ width: "100%", height: "100%", margin: "0 auto" }}
           scale={10}
@@ -101,7 +101,7 @@ const Player = ({ playerRef }) => {
           effects={[]}
           onTimeCursorChange={(newTime) => handleTimelineChange(newTime)}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
