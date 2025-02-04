@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { createSlice } from "@reduxjs/toolkit";
 // const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
 interface VideoState {
@@ -26,7 +27,7 @@ const videoSlice = createSlice({
   reducers: {
     setVideoUrl: (state, action) => {
       state.url = action.payload;
-      window.sessionStorage.setItem('url',action.payload)
+      window.localStorage.setItem('url',action.payload)
     },
     setVideoDuration: (state, action) => {
       state.duration = action.payload;

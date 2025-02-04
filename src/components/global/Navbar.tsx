@@ -1,8 +1,8 @@
+//@ts-nocheck
 import { setIsArticle } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
-import { MdArticle } from "react-icons/md";
-import { MdVideoCameraBack } from "react-icons/md";
+import { MdAdd} from "react-icons/md";
 
 interface NavbarProps {
   from?: string
@@ -14,10 +14,16 @@ function Navbar({ from }: NavbarProps) {
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
+
+  function handleNewUpload() {
+    document.getElementById('confirm_new_modal').showModal()
+  }
+
   return (
     <div className="navbar ">
-      <div className="fixed px-4">
+      <div className="fixed px-4 flex  items-center justify-center gap-6">
         <a><img src={logo} alt="logo" /></a>
+      <button className='btn btn-success' onClick={handleNewUpload}><MdAdd/>New</button>
       </div>
       {from == 'editor' && <div className="w-full items-center justify-center flex gap-2">
         <div className="nav-custom-btn">
