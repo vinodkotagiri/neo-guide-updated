@@ -13,9 +13,7 @@ const InteractiveScreenRecorder: React.FC = () => {
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  // const annotationOverlayRef = useRef<HTMLDivElement | null>(null);
-  // const [isAnnotating, setIsAnnotating] = useState(false); // Control annotation mode
-  const [recordingComplete, setRecordingComplete]=useState(false);
+  // const annotationOverlayRef = useRef<HTMLDivElement | null>(nul
   const navigate=useNavigate();
   const dispatch=useDispatch()
   useEffect(() => {
@@ -31,23 +29,44 @@ const InteractiveScreenRecorder: React.FC = () => {
   const startScreenRecording = async () => {
     try {
       // Ask the user to select a screen/window for recording
-      const stream = await navigator.mediaDevices.getDisplayMedia({
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true,
+        audio: { echoCancellation: true, noiseSuppression: true }
       });
-      setScreenStream(stream);
-
-      const recorder = new MediaRecorder(stream);
+  
+      // Capture microphone audio separately (optional)
+      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  
+      // Combine screen and microphone audio streams
+      const combinedStream = new MediaStream([
+        ...screenStream.getVideoTracks(), // Add screen video
+        ...screenStream.getAudioTracks(), // Add system audio (if available)
+        ...audioStream.getAudioTracks()   // Add microphone audio
+      ]);
+  
+      setScreenStream(combinedStream);
+  
+      const recorder = new MediaRecorder(combinedStream);
+      const recordedChunks: Blob[] = [];
+  
       recorder.ondataavailable = (event) => {
-        const videoBlob = event.data;
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+  
+      recorder.onstop = () => {
+        const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
         const videoUrl = URL.createObjectURL(videoBlob);
         setRecordedVideoUrl(videoUrl);
       };
+  
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
     } catch (err) {
-      console.error('Error accessing screen:', err);
+      console.error("Error accessing screen:", err);
+      toast.error("Failed to access screen or microphone.");
     }
   };
 
@@ -56,7 +75,6 @@ const InteractiveScreenRecorder: React.FC = () => {
       mediaRecorder.stop();
     }
     setIsRecording(false);
-    setRecordingComplete(true);
   };
 
   const togglePauseRecording = () => {
@@ -70,16 +88,6 @@ const InteractiveScreenRecorder: React.FC = () => {
     }
   };
 
-  // const handleAddAnnotation = (e: React.MouseEvent) => {
-  //   if (isRecording && !isPaused && isAnnotating) {
-  //     const x = e.clientX;
-  //     const y = e.clientY;
-  //     const annotationText = prompt('Enter annotation text:') || '';
-  //     if (annotationText) {
-  //       setAnnotations((prev) => [...prev, { x, y, text: annotationText }]);
-  //     }
-  //   }
-  // };
 
   const handleSaveRecording = async() => {
     if (recordedVideoUrl) {
@@ -109,10 +117,6 @@ const InteractiveScreenRecorder: React.FC = () => {
 
   };
 
-  // const toggleAnnotationMode = () => {
-  //   setIsAnnotating((prev) => !prev);
-  // };
-
   return (
     <div className='w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4'>
 
@@ -128,25 +132,6 @@ const InteractiveScreenRecorder: React.FC = () => {
         )}
         {recordedVideoUrl && <button onClick={handleSaveRecording} className='btn btn-success btn-sm'>Save Recording</button>}
       </div>
-
-      {/* Annotation Mode Button (Fixed Position)
-     {recordingComplete? <button
-        style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          zIndex: 9999,
-          backgroundColor: isAnnotating ? 'red' : 'green',
-          color: 'white',
-          border: 'none',
-          padding: '10px 20px',
-          cursor: 'pointer',
-        }}
-        onClick={toggleAnnotationMode}
-      >
-        {isAnnotating ? 'Stop Annotating' : 'Start Annotating'}
-      </button>:''} */}
-
       {/* Screen Recording Video */}
       <div style={{ position: 'relative' }} className='w-[60%] h-full border-slate-700'>
         <video
@@ -158,39 +143,6 @@ const InteractiveScreenRecorder: React.FC = () => {
           muted
           style={{ width: '100%', height: 'auto' }}
         ></video>
-
-        {/* Annotation Overlay */}
-        {/* <div
-          ref={annotationOverlayRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: isAnnotating ? 'auto' : 'none', // Enable/Disable annotation overlay
-          }}
-          onClick={handleAddAnnotation}
-        >
-          {annotations.map((annotation, index) => (
-            <div
-              key={index}
-              style={{
-                position: 'absolute',
-                left: annotation.x,
-                top: annotation.y,
-                backgroundColor: 'rgba(0, 0, 0, 0.6)', // Dark background for better contrast
-                color: 'white', // Light text color
-                padding: '5px 10px',
-                borderRadius: '3px',
-                pointerEvents: 'auto', // Allow annotation click to interact
-                fontSize: '14px',
-              }}
-            >
-              {annotation.text}
-            </div>
-          ))}
-        </div> */}
       </div>
     </div>
   );
