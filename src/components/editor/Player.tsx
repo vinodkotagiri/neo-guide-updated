@@ -8,6 +8,7 @@ import {
   setVideoPlaying,
 } from "../../redux/features/videoSlice";
 import { Timeline } from "@xzdarcy/react-timeline-editor";
+import TimeLineEditor from "./TimeLineEditor";
 
 const Player = ({ playerRef }) => {
   const { url, playing, duration, played } = useAppSelector(
@@ -102,6 +103,9 @@ const Player = ({ playerRef }) => {
           onTimeCursorChange={(newTime) => handleTimelineChange(newTime)}
         />
       </div> */}
+      <div className="w-full h-[29%] relative">
+      <TimeLineEditor duration={duration} currentTime={played} onSeek={handleTimelineChange}/>
+      </div>
     </div>
   );
 };
