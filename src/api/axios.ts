@@ -100,9 +100,13 @@ export async function translateAndDub(payload: { s3_link: string; target_languag
 
 export async function  getLanguageList(){
   const url=`https://demo.effybiz.com/effybizgetlanguages`;
-  axios.get(url).then(res=>{
-    console.log('res::',res.data)
-  }).catch(err=>console.log(err))
+  return new Promise(resolve=>{
+    axios.get(url)
+    .then(res=>resolve(res.data))
+    .catch(err=>{
+      console.log(err)
+      resolve({})})
+  })
 }
 
 export async function  getLanguageVoiceList(Language_name_from_first_API){
