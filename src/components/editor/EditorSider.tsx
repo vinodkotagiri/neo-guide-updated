@@ -12,7 +12,6 @@ import ElementsAddComponent from './ElementsAddComponent'
 const EditorSider = () => {
   const { articleData } = useAppSelector(state => state.article)
   const { percentage, status } = useAppSelector(state => state.loader)
-  const [dub, setDub] = useState(false)
   const [rightActiveArea,setRightActiveArea]=useState(1)
   return (
     <div className='w-full h-full bg-black-op rounded-md  flex'>
