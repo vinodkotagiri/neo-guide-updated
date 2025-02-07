@@ -1,20 +1,21 @@
 import React from 'react'
 import { RiSpeakAiLine } from "react-icons/ri";
-import {PiSubtitles} from 'react-icons/pi'
-function RightMenuIcons() {
+import {PiShapesLight, PiSubtitles} from 'react-icons/pi'
+function RightMenuIcons({setRightActiveArea,rightActiveArea}) {
   return (
     <div className='h-full bg-slate-900 w-full text-slate-400 flex flex-col  align-items-center'>
-     <MenuIconButton icon={ <RiSpeakAiLine size={32}/>}/>
-     <MenuIconButton icon={ <PiSubtitles size={32}/>}/>
+     <MenuIconButton icon={ <RiSpeakAiLine size={32}/>} setRightActiveArea={setRightActiveArea} val={1} rightActiveArea={rightActiveArea}/>
+     <MenuIconButton icon={ <PiSubtitles size={32}/>} setRightActiveArea={setRightActiveArea} val={2} rightActiveArea={rightActiveArea}/>
+     <MenuIconButton icon={ <PiShapesLight size={32}/>} setRightActiveArea={setRightActiveArea} val={3} rightActiveArea={rightActiveArea}/>
     </div>
   )
 }
 
 export default RightMenuIcons
 
-function MenuIconButton({ icon }: { icon: React.ReactNode }) {
+function MenuIconButton({ icon,setRightActiveArea,val,rightActiveArea }: { icon: React.ReactNode ,setRightActiveArea:any,val:number,rightActiveArea:number}) {
   return (
-    <button className='btn btn-ghost rounded-none outline-none shadow-none h-[64px] flex w-full justify-center items-center border-t-[1px] border-slate-600 p-2'>
+    <button style={rightActiveArea==val?{backgroundColor:'#02BC7D',color:'#fff'}:{}} className='btn btn-ghost rounded-none outline-none shadow-none h-[64px] flex w-full justify-center items-center border-t-[1px] border-slate-600 p-2' onClick={()=>setRightActiveArea(val)}>
       {icon}
     </button>
   );
