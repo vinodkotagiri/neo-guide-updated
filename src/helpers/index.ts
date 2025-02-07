@@ -1,14 +1,14 @@
-import { languages } from "../constants/index";
+// import { languages } from "../constants/index";
 export function getLanguages() {
-  const response = [];
-  for (const [key, value] of Object.entries(languages)) {
-    const val = value;
-    response.push({
-      language: { label: key.split("-")[0], value: key },
-      voice: { labels: val.map((v) => v.split("-")[0]), values: val }
-    });
-  }
-  return response;
+  // const response = [];
+  // for (const [key, value] of Object.entries(languages)) {
+  //   const val = value;
+  //   response.push({
+  //     language: { label: key.split("-")[0], value: key },
+  //     voice: { labels: val.map((v) => v.split("-")[0]), values: val }
+  //   });
+  // }
+  // return response;
 }
 
 export async function getFormattedLanguages() {
