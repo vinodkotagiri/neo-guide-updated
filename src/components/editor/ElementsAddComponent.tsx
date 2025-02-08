@@ -24,6 +24,6 @@ export default ElementsAddComponent
 
 function ElementTypeComponent({icon,label}) {
   return (
-  <button className='btn btn-accent text-slate-900 w-[160px]'>{icon}<small className='capitalize'>{label}</small></button>
+  <button className='btn bg-[#02BC7D] text-slate-800 w-[160px]'>{icon}<small className='capitalize'>{label}</small></button>
   )
 }

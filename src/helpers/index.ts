@@ -23,6 +23,11 @@ export async function getLanguagesListWithVoicesAndFlags(){
 
 }
 
+export function getSecondsFromTime(time) {
+  const [hours, minutes, seconds] = time.split(":");
+  return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+}
+
 // export async function getFormattedLanguages(){
 // const langs=await getLanguageList()
 // console.log(langs)

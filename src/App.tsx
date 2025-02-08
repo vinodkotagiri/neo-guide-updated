@@ -26,7 +26,7 @@ const App = () => {
       articleData =JSON.parse( window.localStorage.getItem('articleData'))
     }
 
-    if (articleData) dispatch(setArticleData(articleData))
+    if (articleData.length) dispatch(setArticleData(articleData))
     if (url) dispatch(setVideoUrl(url));
 
   }, [])

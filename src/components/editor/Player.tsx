@@ -3,15 +3,18 @@ import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
+  setCurrentSubtitle,
   setVideoDuration,
   setVideoPlayed,
   setVideoPlaying,
 } from "../../redux/features/videoSlice";
 import { Timeline } from "@xzdarcy/react-timeline-editor";
 import TimeLineEditor from "./TimeLineEditor";
+import SubtitlesOverlay from "./SubtitlesOverlay";
+import { getSecondsFromTime } from "../../helpers";
 
 const Player = ({ playerRef }) => {
-  const { url, playing, duration, played } = useAppSelector(
+  const { url, playing, duration, played,subtitles,currentSubtitle } = useAppSelector(
     (state) => state.video
   );
 
@@ -43,9 +46,16 @@ const Player = ({ playerRef }) => {
     }
   };
 
+  useEffect(() => {
+   const currentSub=subtitles.data.find(item=>getSecondsFromTime(item.start)<=played&&getSecondsFromTime(item.end)>=played)
+   if(JSON.stringify(currentSubtitle)!==JSON.stringify(currentSub))dispatch(setCurrentSubtitle(currentSub))
+  },[played,subtitles.data])
+
+
   return (
     <div className="w-full h-full relative border-b-[1px] border-slate-700 bg-black">
-      <div className="w-full h-[70%]">
+      <div className="w-full h-[70%] relative">
+      <SubtitlesOverlay/>
         <ReactPlayer
           ref={playerRef}
           url={url}
@@ -57,6 +67,7 @@ const Player = ({ playerRef }) => {
           onProgress={(progress) => dispatch(setVideoPlayed(progress.playedSeconds))}
           onSeek={(time) => dispatch(setVideoPlayed(time))}
         />
+        
       </div>
 
       {/* Timeline with Gap and Blue Zoom Track */}
