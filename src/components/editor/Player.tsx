@@ -67,53 +67,7 @@ const Player = ({ playerRef }) => {
           onProgress={(progress) => dispatch(setVideoPlayed(progress.playedSeconds))}
           onSeek={(time) => dispatch(setVideoPlayed(time))}
         />
-        
       </div>
-
-      {/* Timeline with Gap and Blue Zoom Track */}
-      {/* <div className="w-full h-[29%] relative overflow-visible">
-        <Timeline
-          style={{ width: "100%", height: "100%", margin: "0 auto" }}
-          scale={10}
-          rowHeight={50}
-          scaleSplitCount={10}
-          getScaleRender={(scale) => <CustomScale scale={scale} />}
-          editorData={[
-            {
-              id: "main_track",
-              name: "Main Track",
-              actions: [
-                {
-                  id: "main",
-                  start: 0,
-                  end: duration ?? 0,
-                  minStart: 0,
-                  maxEnd: duration ?? 0,
-                  
-                },
-              ],
-            },
-            {
-              id: "zoom_track",
-              name: "Zoom Track",
-              actions: [
-                {
-                  id: "zoom",
-                  start: 0,
-                  end: 2,
-                  minStart: 0,
-                  maxEnd: duration ?? 0,
-                },
-              ],
-              // Add gap and blue background for zoom track
-              rowStyle: { marginTop: "20px", backgroundColor: "#1E90FF" },
-            },
-          ]}
-          timeCursor={played}
-          effects={[]}
-          onTimeCursorChange={(newTime) => handleTimelineChange(newTime)}
-        />
-      </div> */}
       <div className="w-full h-[29%] relative">
       <TimeLineEditor duration={duration} currentTime={played} onSeek={handleTimelineChange}/>
       </div>
