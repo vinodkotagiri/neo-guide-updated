@@ -1,54 +1,71 @@
-//@ts-nocheck
-import { Timeline, TimelineEffect, TimelineRow, TimelineState } from "@xzdarcy/react-timeline-editor";
-import { useEffect, useRef, useState } from "react";
-import "./TimeLineEditor.css";
+import { useEffect, useState, useRef } from "react";
 
-const TimeLineEditor = ({ duration, currentTime, onSeek }: { duration: number; currentTime: number; onSeek: (time: number) => void }) => {
-  const timelineRef = useRef<TimelineState | null>(null);
-  const [cursorTime, setCursorTime] = useState(currentTime);
+function TimeLineEditor({ duration, currentTime, onSeek }) {
+  const [timeMarkers, setTimeMarkers] = useState([]);
+  const cursorRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    setCursorTime(currentTime); // ✅ Sync cursor with currentTime
+    const markers = [];
+    for (let i = 0; i <= duration; i++) {
+      markers.push(i);
+    }
+    setTimeMarkers(markers);
+  }, [duration]);
+
+  useEffect(() => {
+    if (cursorRef.current) {
+      cursorRef.current.style.left = `${currentTime * 10}px`;
+    }
   }, [currentTime]);
 
-  const handleSeek = (time: number) => {
-    setCursorTime(time);
-    onSeek(time);
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    const handleMouseMove = (event) => {
+      const newTime = Math.max(0, Math.min(duration, Math.round((event.clientX - containerRect.left) / 10)));
+      onSeek(newTime);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
-  const mockData: TimelineRow[] = [
-    {
-      id: "0",
-      actions: [
-        {
-          id: "action00",
-          start: 0,
-          end: duration ?? 2,
-          disable: true,
-          movable: false,
-          flexible: false,
-        },
-      ],
-    },
-  ];
-
-  const mockEffect: Record<string, TimelineEffect> = {};
-
   return (
-    <Timeline
-      ref={timelineRef} // ✅ Attach reference
-      scale={1}
-      style={{
-        width: "100%",
-        height: "180px",
-        cursor: "pointer",
-      }}
-      editorData={mockData}
-      effects={mockEffect}
-      timeCursor={cursorTime} // ✅ Correct prop name
-      onTimeCursorChange={handleSeek} // ✅ Update cursor on interaction
-    />
+    <div ref={containerRef} className="h-64 bg-slate-800 flex overflow-x-scroll relative">
+      {timeMarkers.map((time) => (
+        <div key={time}>
+          <div 
+            className="absolute w-px bg-slate-500" 
+            style={{ 
+              left: `${time * 10}px`, 
+              height: time % 30 === 0 ? '25%' : '12.5%' 
+            }}
+          />
+          <div 
+            className="absolute text-xs font-semibold text-white" 
+            style={{ left: `${time * 10 + 4}px`, top: '13%' }}
+          >
+            {time % 30 === 0 ? time : ''}
+          </div>
+        </div>
+      ))}
+      
+      {/* Draggable Cursor */}
+      <div 
+        ref={cursorRef} 
+        className="absolute w-1 bg-red-500 h-full cursor-ew-resize" 
+        style={{ left: `${currentTime * 10}px` }}
+        onMouseDown={handleMouseDown}
+      />
+    </div>
   );
-};
+}
 
 export default TimeLineEditor;
