@@ -51,7 +51,7 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url: url_test,
+  url: '',
   duration: 0,
   language: "",
   playing: false,
