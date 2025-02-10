@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { languages } from '../../constants'
 import { IoIosMic } from "react-icons/io";

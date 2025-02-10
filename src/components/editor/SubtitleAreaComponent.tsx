@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import SubtitleHeader from './SUbtitleHeader'
+import SubtitleHeader from './SubtitleHeader'
 import { useAppSelector } from '../../redux/hooks'
 import { getSecondsFromTime } from '../../helpers'
 

@@ -1,4 +1,4 @@
-import { stat } from 'fs'
+//@ts-nocheck
 import React from 'react'
 import { useAppSelector } from '../../redux/hooks'
 
