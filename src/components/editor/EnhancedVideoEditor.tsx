@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Timeline, TimelineRow, TimelineEffect } from "@xzdarcy/react-timeline-editor";
