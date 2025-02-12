@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutlineCenterFocusStrong } from 'react-icons/md'
 import {GoRepoPush} from 'react-icons/go'
+import { useDispatch } from 'react-redux'
+import { setAddingElements } from '../../redux/features/videoSlice'
 function ElementsAddComponent() {
+  const disptch=useDispatch()
+  useEffect(()=>{
+    disptch(setAddingElements(true))
+  },[])
   return (
     <div className='w-full flex flex-col'>
       <div className='w-full border-b-[1px] h-10 border-slate-600 flex items-center justify-between px-2'>

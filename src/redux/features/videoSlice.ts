@@ -21,6 +21,7 @@ interface VideoState {
   subtitles: SubtitlesState;
   currentSubtitle: { text: string; start: number; end: number };
   tracks: TimelineRow[];
+  addingElements:boolean;
 }
 const initialSubtitleState: SubtitlesState = {
   data: [
@@ -51,7 +52,7 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url: '',
+  url: url_test,
   duration: 0,
   language: "",
   playing: false,
@@ -59,6 +60,7 @@ const initialState: VideoState = {
   seeked: 0,
   isArticle: false,
   subtitles: initialSubtitleState,
+  addingElements:false,
   currentSubtitle: { text: "", start: 0, end: 0 },
   tracks: [
     {
@@ -104,6 +106,9 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setAddingElements:(state,action)=>{
+      state.addingElements=action.payload
+    },
     setVideoUrl: (state, action) => {
       state.url = action.payload;
       window.localStorage.setItem("url", action.payload);
@@ -150,6 +155,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setAddingElements,
   setVideoUrl,
   setCurrentSubtitle,
   setVideoDuration,
