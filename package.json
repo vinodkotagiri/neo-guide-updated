@@ -43,6 +43,7 @@
     "redux": "^5.0.1",
     "styled-components": "^6.1.14",
     "tailwindcss": "^4.0.0",
+    "uuid": "^11.0.5",
     "wavesurfer.js": "^7.9.0"
   },
   "devDependencies": {

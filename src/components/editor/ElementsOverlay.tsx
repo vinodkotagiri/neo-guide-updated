@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
-
+import { useAppSelector } from '../../redux/hooks';
+import {v4} from 'uuid'
 function ElementsOverlay() {
   const stageRef = useRef(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-
+  const {rectangles}=useAppSelector(state=>state.elements)
   useEffect(() => {
     const updateStageSize = () => {
       if (stageRef.current) {
@@ -27,14 +28,18 @@ function ElementsOverlay() {
     <div ref={stageRef} style={{ width: '100%', height: '100%' }}>
       <Stage width={stageSize.width} height={stageSize.height}>
         <Layer>
-          <Rect
-            x={50}
-            y={50}
-            width={100}
-            height={100}
-            fill="red"
+          {rectangles.map((rect) => <Rect
+            id={rect.id}
+            x={rect.x}
+            y={rect.y}
+            width={rect.width}
+            height={rect.height}
+            fill={rect.fillColor}
+            stroke={rect.strokeColor}
+            strokeWidth={rect.strokeWidth}
+            cornerRadius={rect.cornerRadius}
             draggable
-          />
+          />)}
         </Layer>
       </Stage>
     </div>
