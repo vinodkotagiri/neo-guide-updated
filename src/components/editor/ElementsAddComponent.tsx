@@ -51,6 +51,8 @@ function ElementTypeComponent({icon,label}) {
         strokeWidth:3,
         cornerRadius:[1,1,1,1],
         fillColor:'transparent',
+        startTime:0,
+        endTime:10
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
