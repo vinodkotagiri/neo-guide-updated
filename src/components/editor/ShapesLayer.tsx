@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { editRectangle } from '../../redux/features/elementsSlice'
 
-
 function ShapesLayer() {
   const { rectangles } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
@@ -27,7 +26,7 @@ function ShapesLayer() {
     const newEndTime = newStartTime + (draggedRect.endTime - draggedRect.startTime) // Adjust the endTime accordingly
 
     // Dispatch an action to update the rectangle's position
-    dispatch(editRectangle({ id:draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
+    dispatch(editRectangle({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
   }
 
   const handleDragEnd = () => {
@@ -45,7 +44,7 @@ function ShapesLayer() {
         return (
           <div
             key={i}
-            className="absolute bg-green-400 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-35 tooltip" data-tip={'rectangle'}
+            className="absolute group bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
             style={{
               left: `${left}px`,
               width: `${width}px`,
@@ -56,6 +55,14 @@ function ShapesLayer() {
             onDragEnd={handleDragEnd}
             draggable
           >
+            
+            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+
           </div>
         )
       })}
