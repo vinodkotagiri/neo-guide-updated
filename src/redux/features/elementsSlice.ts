@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface RectangleElementState {
+export interface RectangleElementState {
   id: string;
   x: number;
   y: number;
@@ -9,7 +9,7 @@ interface RectangleElementState {
   strokeColor: string;
   strokeWidth: number;
   fillColor: string;
-  cornerRadius: string;
+  cornerRadius: Array<number>;
   startTime: number;
   endTime: number;
 }
@@ -37,7 +37,8 @@ const elementsSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     setCurrentElementId(state, action) {
-      state.currentElementId = action.payload;
+      state.currentElementId = action.payload.id;
+      state.currentElement = action.payload.type
     },
     setCurrentElement(state, action) {
       state.currentElement = action.payload;
@@ -61,7 +62,12 @@ const elementsSlice = createSlice({
     },
     editRectangle(state, action) {
       const index = state.rectangles.findIndex((e) => e.id === action.payload.id);
-      state.rectangles[index] = action.payload;
+      const rect=state.rectangles[index]
+      
+      for(const key of Object.keys(rect)){
+        if(action.payload[key]) rect[key]=action.payload[key]
+      }
+      state.rectangles[index] = rect
     },
     editArrow(state, action) {
       const index = state.arrows.findIndex((e) => e.id === action.payload.id);
@@ -80,7 +86,7 @@ const elementsSlice = createSlice({
       state.spotLight[index] = action.payload;
     },
     deleteRectangle(state, action) {
-      state.rectangles = state.rectangles.filter((e) => e.id !== action.payload);
+      state.rectangles = state.rectangles.filter((e) => e.id !== action.payload.id);
     },
     deleteArrow(state, action) {
       state.arrows = state.arrows.filter((e) => e.id !== action.payload);
@@ -93,12 +99,13 @@ const elementsSlice = createSlice({
     },
     deleteSpotLight(state, action) {
       state.spotLight = state.spotLight.filter((e) => e.id !== action.payload);
-    }
+    },
   }
 });
 
 export default elementsSlice.reducer;
 export const {
+  setCurrentElementId,
   addRectangle,
   addArrow,
   addBlur,

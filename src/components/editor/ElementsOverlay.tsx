@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {v4} from 'uuid'
+import { setCurrentElementId } from '../../redux/features/elementsSlice';
 function ElementsOverlay() {
   const stageRef = useRef(null);
+  const dispatch = useAppDispatch()
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const {rectangles}=useAppSelector(state=>state.elements)
   useEffect(() => {
@@ -39,6 +41,7 @@ function ElementsOverlay() {
             strokeWidth={rect.strokeWidth}
             cornerRadius={rect.cornerRadius}
             draggable
+            onClick={() => dispatch(setCurrentElementId({type:'rectangle',id:rect.id}))}
           />)}
         </Layer>
       </Stage>

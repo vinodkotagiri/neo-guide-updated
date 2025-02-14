@@ -3,7 +3,7 @@ import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutl
 import {GoRepoPush} from 'react-icons/go'
 import { useDispatch } from 'react-redux'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { setCurrentElement } from '../../redux/features/elementsSlice'
+import { addRectangle, RectangleElementState, setCurrentElement } from '../../redux/features/elementsSlice'
 import { useAppSelector } from '../../redux/hooks'
 import RectangleOptions from './Elements/RectangleOptions'
 function ElementsAddComponent() {
@@ -38,6 +38,24 @@ export default ElementsAddComponent
 
 function ElementTypeComponent({icon,label}) {
   const dispatch=useDispatch()
+  useEffect(()=>{
+    if(label=='rectangle') {
+      dispatch(setAddingElements(true))
+      const rectData:RectangleElementState={
+        id:Date.now().toString(),
+        x:0,
+        y:0,
+        width:100,
+        height:100,
+        strokeColor:'#fff',
+        strokeWidth:3,
+        cornerRadius:[1,1,1,1],
+        fillColor:'transparent',
+      }
+      dispatch(addRectangle(rectData))
+      dispatch(setCurrentElement('rectangle'))
+    }
+  },[])
   return (
   <button className='btn bg-[#02BC7D] text-slate-800 w-[160px]' onClick={()=>dispatch(setCurrentElement(label))}>{icon}<small className='capitalize'>{label}</small></button>
   )
