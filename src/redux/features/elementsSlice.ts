@@ -54,6 +54,17 @@ export interface ArrowElementState {
   endTime: number;
 }
 
+export interface SpotElementElementState {
+  id:string;
+  x: number;
+  y: number;
+width:number;
+height:number;
+radius:number;
+  startTime: number;
+  endTime: number;
+}
+
 interface ElementsState {
   currentElementId:string|null;
   currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "pop-over" | null;
@@ -61,7 +72,7 @@ interface ElementsState {
   arrows: ArrowElementState[];
   blurs: BlurElementState[];
   texts: TextElementState[];
-  spotLights: RectangleElementState[];
+  spotLights: SpotElementElementState[];
 }
 
 const INITIAL_STATE: ElementsState = {

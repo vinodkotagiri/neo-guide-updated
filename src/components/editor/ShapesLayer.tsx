@@ -148,10 +148,10 @@ function ShapesLayer() {
               width: `${width}px`,
             }}
             onDragStart={(e) => handleDragStart(e, rect)}
-            onDrag={(e) => handleDrag(e, 'text')}
+            onDrag={(e) => handleDrag(e, 'arrow')}
             onDragEnd={handleDragEnd}
             onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'text' }))
+              dispatch(setCurrentElementId({ id: rect.id, type: 'arrow' }))
             }}
             draggable
           >

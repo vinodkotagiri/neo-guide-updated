@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Arrow, Layer, Rect, Stage, Text, Transformer } from 'react-konva';
+import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { editArrow, editBlur, editRectangle, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
+import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
 
 function ElementsOverlay() {
@@ -11,7 +11,7 @@ function ElementsOverlay() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-  const { rectangles, blurs, texts, arrows } = useAppSelector((state) => state.elements);
+  const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector((state) => state.elements);
   const { played } = useAppSelector(state => state.video)
   useEffect(() => {
     const updateStageSize = () => {
@@ -91,8 +91,6 @@ function ElementsOverlay() {
               fill={'rgba(0,0,0,99)'}
               width={rect.width}
               height={rect.height}
-              stroke={'rgba(0,0,0,8)'}
-              strokeWidth={2}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
               filters={[Konva.Filters.Blur]} // Apply blur filter
@@ -168,11 +166,16 @@ function ElementsOverlay() {
               points={arrow.points}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
-              pointerLength={10}
-              pointerWidth={10}
+              pointerLength={arrow.pointerLenght}
+              pointerWidth={arrow.pointerWidth}
+              rotation={arrow.rotation}
+              fill={arrow.stroke}
               draggable
               visible={arrow.startTime <= played && arrow.endTime >= played}
-              onClick={() => setSelectedId(arrow.id)}
+              onClick={() =>{
+                 setSelectedId(arrow.id)
+                 dispatch(setCurrentElementId({ type: 'arrow', id: arrow.id }))
+                }}
               onDragMove={(e) => {
                 const node = e.target;
                 const points = node.points();
@@ -203,6 +206,7 @@ function ElementsOverlay() {
               }}
             />
           ))}
+
           <Transformer ref={transformerRef} rotateEnabled={true} />
         </Layer>
       </Stage>

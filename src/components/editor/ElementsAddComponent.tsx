@@ -3,10 +3,12 @@ import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutl
 import {GoRepoPush} from 'react-icons/go'
 import { useDispatch } from 'react-redux'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { addArrow, addBlur, addRectangle, addText, ArrowElementState, BlurElementState, RectangleElementState, setCurrentElement, TextElementState } from '../../redux/features/elementsSlice'
+import { addArrow, addBlur, addRectangle, addSpotLight, addText, ArrowElementState, BlurElementState, RectangleElementState, setCurrentElement, SpotElementElementState, TextElementState } from '../../redux/features/elementsSlice'
 import { useAppSelector } from '../../redux/hooks'
 import RectangleOptions from './Elements/RectangleOptions'
 import BlurOptions from './Elements/BlurOptions'
+import ArrowOptions from './Elements/ArrowOptions'
+import TextOptions from './Elements/TextOptions'
 function ElementsAddComponent() {
   const {currentElement}=useAppSelector(state=>state.elements)
   const dispatch=useDispatch()
@@ -17,6 +19,8 @@ function ElementsAddComponent() {
 
   if(currentElement=='rectangle') return <RectangleOptions/>
   if(currentElement=='blur') return <BlurOptions/>
+  if(currentElement=='arrow') return <ArrowOptions/>
+  if(currentElement=='text') return <TextOptions/>
   if(currentElement==null)
   return (
     <>
@@ -66,11 +70,11 @@ function ElementTypeComponent({icon,label}) {
       dispatch(setAddingElements(true))
       const blurData:BlurElementState={
         id:Date.now().toString(),
-        x:0,
-        y:0,
+        x:100,
+        y:100,
         width:100,
         height:100,
-        blurRadius:5,
+        blurRadius:-15,
         startTime:played,
         endTime:played+5
       }
@@ -81,8 +85,8 @@ function ElementTypeComponent({icon,label}) {
       dispatch(setAddingElements(true))
       const textData:TextElementState={
         id:Date.now().toString(),
-        x:0,
-        y:0,
+        x:100,
+        y:100,
         text:'Hello world',
         font:'Open Sans',
         fontSize:12,
@@ -112,6 +116,23 @@ function ElementTypeComponent({icon,label}) {
       }
       dispatch(addArrow(arrowData))
       dispatch(setCurrentElement('arrow'))
+    }
+    if (shape === 'spotlight') {
+      dispatch(setAddingElements(true));
+    
+      const spotlightData:SpotElementElementState = {
+        id: Date.now().toString(),
+        x: 100, // Default X position
+        y: 100, // Default Y position
+        width: 100, // Spotlight width
+        height: 100, // Spotlight height
+        radius:50,
+        startTime: played,
+        endTime: played + 5
+      };
+    
+      dispatch(addSpotLight(spotlightData));
+      dispatch(setCurrentElement('spotlight'));
     }
   }
 
