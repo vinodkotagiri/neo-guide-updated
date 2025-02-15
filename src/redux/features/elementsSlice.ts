@@ -26,15 +26,30 @@ export interface BlurElementState {
   endTime: number;
 }
 
+export interface TextElementState {
+  id:string;
+  x: number;
+  y: number;
+  text: string;
+  font:string;
+  fontSize:number;
+  fontColor:string;
+  backgroundColor:string;
+  justify:string;
+  startTime: number;
+  endTime: number;
+}
+
 interface ElementsState {
   currentElementId:string|null;
   currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "pop-over" | null;
   rectangles: RectangleElementState[];
   arrows: RectangleElementState[];
   blurs: BlurElementState[];
-  texts: RectangleElementState[];
+  texts: TextElementState[];
   spotLights: RectangleElementState[];
 }
+
 const INITIAL_STATE: ElementsState = {
   currentElementId:null,
   currentElement: null,
@@ -70,6 +85,7 @@ const elementsSlice = createSlice({
     },
     addText(state, action) {
       state.texts.push(action.payload);
+      state.currentElementId = action.payload.id
     },
     addSpotLight(state, action) {
       state.spotLights.push(action.payload);
@@ -88,7 +104,6 @@ const elementsSlice = createSlice({
       state.arrows[index] = action.payload;
     },
     editBlur(state, action) {
-      console.log('acrionnn:',action.payload)
       const index = state.blurs.findIndex((e) => e.id === action.payload.id);
       const blur=state.blurs[index]
       for(const key of Object.keys(blur)){
@@ -97,8 +112,12 @@ const elementsSlice = createSlice({
       state.blurs[index] = blur
     },
     editText(state, action) {
-      const index = state.text.findIndex((e) => e.id === action.payload.id);
-      state.text[index] = action.payload;
+      const index = state.texts.findIndex((e) => e.id === action.payload.id);
+      const text=state.texts[index]
+      for(const key of Object.keys(text)){
+        if(action.payload[key]) text[key]=action.payload[key]
+      }
+      state.texts[index] = text
     },
     editSpotLight(state, action) {
       const index = state.spotLights.findIndex((e) => e.id === action.payload.id);
@@ -114,9 +133,13 @@ const elementsSlice = createSlice({
     },
     deleteBlur(state, action) {
       state.blurs = state.blurs.filter((e) => e.id !== action.payload.id);
+      state.currentElementId = null
+      state.currentElement = null
     },
     deleteText(state, action) {
-      state.text = state.text.filter((e) => e.id !== action.payload);
+      state.texts = state.texts.filter((e) => e.id !== action.payload);
+      state.currentElementId = null
+      state.currentElement = null
     },
     deleteSpotLight(state, action) {
       state.spotLight = state.spotLight.filter((e) => e.id !== action.payload);

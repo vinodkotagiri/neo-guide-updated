@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Layer, Rect, Stage, Transformer } from 'react-konva';
+import { Layer, Rect, Stage, Text, Transformer } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { editBlur, editRectangle, setCurrentElementId } from '../../redux/features/elementsSlice';
+import { editBlur, editRectangle, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
 
 function ElementsOverlay() {
@@ -11,7 +11,7 @@ function ElementsOverlay() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-  const { rectangles, blurs } = useAppSelector((state) => state.elements);
+  const { rectangles, blurs ,texts} = useAppSelector((state) => state.elements);
   const { played } = useAppSelector(state => state.video)
   useEffect(() => {
     const updateStageSize = () => {
@@ -125,6 +125,38 @@ function ElementsOverlay() {
 
                 // Update rectangle size in Redux store
                 dispatch(editBlur({ id: rect.id, width: newWidth, height: newHeight }));
+              }}
+            />
+          ))}
+          {texts.map((textElement) => (
+            <Text
+              key={textElement.id}
+              id={textElement.id}
+              x={textElement.x}
+              y={textElement.y}
+              text={textElement.text}
+              fontFamily={textElement.font}
+              fontSize={textElement.fontSize}
+              fill={textElement.fontColor}
+              align={textElement.justify}
+              backgroundColor={textElement.backgroundColor}
+              draggable
+              visible={textElement.startTime <= played && textElement.endTime >= played}
+              onClick={() => {
+                setSelectedId(textElement.id);
+                dispatch(setCurrentElementId({ type: 'text', id: textElement.id }));
+              }}
+              onDragEnd={(e) => {
+                const { x, y } = e.target.position();
+                dispatch(editText({ id: textElement.id, x, y }));
+              }}
+              onTransformEnd={(e) => {
+                const node = e.target;
+                const scaleX = node.scaleX();
+                node.scaleX(1);
+
+                const newFontSize = node.fontSize() * scaleX;
+                dispatch(editText({ id: textElement.id, fontSize: newFontSize }));
               }}
             />
           ))}
