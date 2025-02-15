@@ -13,7 +13,7 @@ import TimeLineEditor from "./TimeLineEditor";
 import SubtitlesOverlay from "./SubtitlesOverlay";
 import { getSecondsFromTime } from "../../helpers";
 import ElementsOverlay from "./ElementsOverlay";
-import { MdPauseCircleOutline, MdPlayCircleOutline } from "react-icons/md";
+import { MdPauseCircleOutline, MdPlayCircleOutline, MdRestore } from "react-icons/md";
 
 const Player = ({ playerRef }) => {
   const { url, playing, duration, played, subtitles, currentSubtitle, addingElements } = useAppSelector(
@@ -76,6 +76,15 @@ const Player = ({ playerRef }) => {
       </div>
       <div className="w-full h-[29%] relative left-10">
         <div className="bg-slate-900 absolute -left-10 h-full w-10 text-slate-200 flex items-center justify-center flex-col ">
+        <button className=" cursor-pointer" onClick={() =>  {
+           if (playerRef.current) {
+            playerRef.current.seekTo(0, 'seconds'); // Seek to the beginning
+            setPlayed(0); // Reset the played value
+            setIsPlaying(true); // Optionally, resume playback after reset
+          }
+        }}>
+           <MdRestore size={36}/>
+          </button>
           <button className=" cursor-pointer" onClick={() => dispatch(setVideoPlaying(!playing))}>
             {!playing ? <MdPlayCircleOutline size={36} />
               : <MdPauseCircleOutline size={36} />}

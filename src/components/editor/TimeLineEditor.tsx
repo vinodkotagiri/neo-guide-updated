@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import WaveSurfer from "wavesurfer.js";
 import ShapesLayer from "./ShapesLayer";
+import { Range } from "react-range";
 
 function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
   const [timeMarkers, setTimeMarkers] = useState([]);
@@ -66,15 +67,15 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
       <div ref={waveformRef} className="absolute top-0 left-0 w-full h-full opacity-50" />
       {timeMarkers.map((time) => (
         <div key={time}>
-          <div 
-            className="absolute w-px bg-slate-500" 
-            style={{ 
-              left: `${time * 10}px`, 
-              height: time % 30 === 0 ? '25%' : '12.5%' 
+          <div
+            className="absolute w-px bg-slate-500"
+            style={{
+              left: `${time * 10}px`,
+              height: time % 30 === 0 ? '25%' : '12.5%'
             }}
           />
-          <div 
-            className="absolute text-xs font-semibold text-white" 
+          <div
+            className="absolute text-xs font-semibold text-white"
             style={{ left: `${time * 10 + 4}px`, top: '13%' }}
           >
             {time % 30 === 0 ? time : ''}
@@ -84,33 +85,30 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
 
       {/* Draggable Cursor */}
       <motion.div
-      ref={cursorRef}
-      animate={{ boxShadow: ["0 0 10px #6a0dad", "0 0 20px #8a2be2", "0 0 40px #d580ff"] }}
-      transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-      className="absolute w-[2px] bg-purple-500 h-full cursor-pointer hover:w-1 shadow-[0_0_10px_#6a0dad,0_0_40px_#8a2be2,0_0_80px_#d580ff] flex flex-col items-center"
-      style={{ left: `${draggingTime * 10}px` }}
-      drag="x"
-      dragConstraints={{ left: 0, right: duration * 10 }}
-      dragTransition={{ power: 0.1, timeConstant: 200 }}
-      onDrag={(event, info) => {
-        console.log("info", info);
-        const newTime = info.offset.x / 10;
-        setDraggingTime(currentTime + newTime);
-      }}
-      onDragEnd={() => {
-        if (draggingTime !== currentTime) {
-          onSeek(draggingTime);
-        }
-      }}
-    >
-      {/* Downward Triangle */}
-      <motion.div
-        className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px] border-t-purple-500 mb-1"
-        animate={{ boxShadow: ["0 0 10px #6a0dad", "0 0 20px #8a2be2", "0 0 40px #d580ff"] }}
-        transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-      />
-    </motion.div>
+        ref={cursorRef}
+        className="absolute w-[2px] bg-purple-500 h-full cursor-pointer hover:w-1 shadow-[0_0_10px_#6a0dad,0_0_40px_#8a2be2,0_0_80px_#d580ff] flex flex-col items-center"
+        style={{ left: `${draggingTime * 10}px` }}
+        drag="x"
+        onDrag={(event, info) => {
+          const newTime = info.offset.x / 10;
+          setDraggingTime(currentTime + newTime);
+        }}
+        onDragEnd={() => {
+          if (draggingTime !== currentTime) {
+            onSeek(draggingTime);
+          }
+        }}
+      >
+        {/* Downward Triangle */}
+        <motion.div
+          className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px] border-t-purple-500 mb-1"
+          animate={{ boxShadow: ["0 0 10px #6a0dad", "0 0 20px #8a2be2", "0 0 40px #d580ff"] }}
+          transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+        />
+      </motion.div>
       {/* ELEMENTS LAYER */}
+
+      
       <ShapesLayer />
     </div>
   );

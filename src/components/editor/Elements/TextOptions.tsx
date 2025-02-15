@@ -74,7 +74,7 @@ useEffect(()=>{
       <div className='flex items-center justify-between w-full h-6 px-6'>
         <div className='flex font-semibold text-slate-500'>
           {/* <MdChevronLeft size={24} className='cursor-pointer' onClick={() => dispatch(setCurrentElement(null))} /> */}
-          <span>Blur</span>
+          <span>Text</span>
         </div>
         <button onClick={handleAddNewBlur} className='btn btn-success btn-xs outline-none border-none shadow-none'>
           New
