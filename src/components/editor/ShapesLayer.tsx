@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { editRectangle } from '../../redux/features/elementsSlice'
+import { editBlur, editRectangle, setCurrentElementId } from '../../redux/features/elementsSlice'
 
 function ShapesLayer() {
-  const { rectangles } = useAppSelector(state => state.elements)
+  const { rectangles,blurs } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   const [dragging, setDragging] = useState(false)
   const [draggedRect, setDraggedRect] = useState(null)
@@ -17,7 +17,7 @@ function ShapesLayer() {
     setInitialLeft(rect.startTime * 10) // Initial position of the rectangle
   }
 
-  const handleDrag = (e) => {
+  const handleDrag = (e,shape) => {
     if (!dragging || !draggedRect) return
 
     const deltaX = e.clientX - initialX // Calculate the distance moved
@@ -26,7 +26,10 @@ function ShapesLayer() {
     const newEndTime = newStartTime + (draggedRect.endTime - draggedRect.startTime) // Adjust the endTime accordingly
 
     // Dispatch an action to update the rectangle's position
+    if(shape=='rectangle')
     dispatch(editRectangle({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
+    else if(shape=='blur')
+      dispatch(editBlur({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
   }
 
   const handleDragEnd = () => {
@@ -37,24 +40,58 @@ function ShapesLayer() {
   }
 
   return (
-    <div className="relative top-12 w-full h-8 rounded-md overflow-hidden">
+    <div className="relative top-12 w-full h-64 rounded-md overflow-hidden">
       {rectangles?.map((rect, i) => {
         const width = (rect.endTime - rect.startTime) * 10
         const left = rect.startTime * 10
         return (
           <div
             key={i}
-            className="absolute group bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
+            className="absolute group top-6 h-6 bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
             style={{
               left: `${left}px`,
               width: `${width}px`,
-              height: '100%'
             }}
             onDragStart={(e) => handleDragStart(e, rect)}
-            onDrag={(e) => handleDrag(e)}
+            onDrag={(e) => handleDrag(e,'rectangle')}
             onDragEnd={handleDragEnd}
+            onClick={()=>{
+              console.log('cliecked redct')
+              dispatch(setCurrentElementId({id:rect.id,type:'rectangle'}))
+            }}
             draggable
           >
+                        <span className='flex items-center justify-center capitalize'>rect</span>
+            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+
+          </div>
+        )
+      })}
+      {blurs?.map((rect, i) => {
+        const width = (rect.endTime - rect.startTime) * 10
+        const left = rect.startTime * 10
+        return (
+          <div
+            key={i}
+            className="absolute group h-6 bg-blue-500  rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'blur'}
+            style={{
+              left: `${left}px`,
+              width: `${width}px`,
+            }}
+            onDragStart={(e) => handleDragStart(e, rect)}
+            onDrag={(e) => handleDrag(e,'blur')}
+            onDragEnd={handleDragEnd}
+            onClick={()=>{
+              dispatch(setCurrentElementId({id:rect.id,type:'blur'}))
+            }}
+            draggable
+          >
+            <span className='flex items-center justify-center capitalize'>blur</span>
             
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
               <span className='text-black'>|</span>

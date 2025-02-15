@@ -17,7 +17,7 @@ const RectangleOptions = () => {
   const [cornerRadius, setCornerRadius] = useState([1, 1, 1, 1])
   const [fillColor, setFillColor] = useState('')
   const [startTime, setStartTime] = useState(0)
-  const [endTime, setEndTime] = useState(0)
+  const [endTime, setEndTime] = useState(5)
 
   const handleSetTransparent = () => {
     setFillColor('transparent')
@@ -27,6 +27,15 @@ const RectangleOptions = () => {
       strokeColorRef.current.click()
     }
   }
+
+  useEffect(()=>{
+    const currentRect=rectangles.find(rect=>rect.id===currentElementId)
+    if(currentRect){
+      setStartTime(currentRect.startTime)
+      setEndTime(currentRect.endTime)
+    }
+  },[rectangles])
+
 
 useEffect(()=>{
   setStartTime(played)
@@ -71,8 +80,8 @@ useEffect(()=>{
 
 
   useEffect(() => {
-    dispatch(editRectangle({ id: currentElementId, strokeColor, strokeWidth, fillColor, cornerRadius }))
-  }, [strokeColor, strokeWidth, fillColor, cornerRadius])
+    dispatch(editRectangle({ id: currentElementId, strokeColor, strokeWidth, fillColor, cornerRadius,startTime,endTime }))
+  }, [strokeColor, strokeWidth, fillColor, cornerRadius,startTime,endTime])
   return (
     <div className='w-full h-full py-4 px-2 flex flex-col gap-3 relative'>
       <div className='flex font-semibold text-slate-500 absolute'>
@@ -168,7 +177,7 @@ useEffect(()=>{
           <input
             className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
             type='number'
-            min={0}
+            min={startTime+5}
             max={duration}
             value={endTime}
             onChange={(e) => setEndTime(e.target.valueAsNumber)}

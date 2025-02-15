@@ -3,9 +3,10 @@ import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutl
 import {GoRepoPush} from 'react-icons/go'
 import { useDispatch } from 'react-redux'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { addRectangle, RectangleElementState, setCurrentElement } from '../../redux/features/elementsSlice'
+import { addBlur, addRectangle, BlurElementState, RectangleElementState, setCurrentElement } from '../../redux/features/elementsSlice'
 import { useAppSelector } from '../../redux/hooks'
 import RectangleOptions from './Elements/RectangleOptions'
+import BlurOptions from './Elements/BlurOptions'
 function ElementsAddComponent() {
   const {currentElement}=useAppSelector(state=>state.elements)
   const dispatch=useDispatch()
@@ -15,7 +16,7 @@ function ElementsAddComponent() {
   // },[])
 
   if(currentElement=='rectangle') return <RectangleOptions/>
-
+  if(currentElement=='blur') return <BlurOptions/>
   if(currentElement==null)
   return (
     <>
@@ -42,6 +43,7 @@ function ElementTypeComponent({icon,label}) {
   const {played}=useAppSelector(state=>state.video)
   const dispatch=useDispatch()
   function handleAddShape(shape:string) {
+    console.log('shape',shape)
     if(shape=='rectangle') {
       dispatch(setAddingElements(true))
       const rectData:RectangleElementState={
@@ -55,10 +57,25 @@ function ElementTypeComponent({icon,label}) {
         cornerRadius:[1,1,1,1],
         fillColor:'transparent',
         startTime:played,
-        endTime:10
+        endTime:played+5
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
+    }
+    if(shape=='blur'){
+      dispatch(setAddingElements(true))
+      const blurData:BlurElementState={
+        id:Date.now().toString(),
+        x:0,
+        y:0,
+        width:100,
+        height:100,
+        blurRadius:5,
+        startTime:played,
+        endTime:played+5
+      }
+      dispatch(addBlur(blurData))
+      dispatch(setCurrentElement('blur'))
     }
   }
 
