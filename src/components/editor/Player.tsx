@@ -13,9 +13,10 @@ import TimeLineEditor from "./TimeLineEditor";
 import SubtitlesOverlay from "./SubtitlesOverlay";
 import { getSecondsFromTime } from "../../helpers";
 import ElementsOverlay from "./ElementsOverlay";
+import { MdPauseCircleOutline, MdPlayCircleOutline } from "react-icons/md";
 
 const Player = ({ playerRef }) => {
-  const { url, playing, duration, played, subtitles, currentSubtitle,addingElements } = useAppSelector(
+  const { url, playing, duration, played, subtitles, currentSubtitle, addingElements } = useAppSelector(
     (state) => state.video
   );
 
@@ -57,16 +58,15 @@ const Player = ({ playerRef }) => {
   return (
     <div className="w-full h-full relative border-b-[1px] border-slate-700 bg-black">
       <div className="w-full h-[70%] relative">
-        {addingElements?<div className="w-full h-full absolute z-10">
+        {addingElements ? <div className="w-full h-full absolute z-10">
           <ElementsOverlay />
-        </div>:''}
+        </div> : ''}
         <SubtitlesOverlay />
         <ReactPlayer
           ref={playerRef}
           url={url}
           width={"100%"}
           height={"100%"}
-          controls
           style={{ zIndex: 10 }}
           playing={playing}
           onDuration={(duration) => dispatch(setVideoDuration(duration))}
@@ -74,7 +74,13 @@ const Player = ({ playerRef }) => {
           onSeek={(time) => dispatch(setVideoPlayed(time))}
         />
       </div>
-      <div className="w-full h-[29%] relative">
+      <div className="w-full h-[29%] relative left-10">
+        <div className="bg-slate-900 absolute -left-10 h-full w-10 text-slate-200 flex items-center justify-center flex-col ">
+          <button className=" cursor-pointer" onClick={() => dispatch(setVideoPlaying(!playing))}>
+            {!playing ? <MdPlayCircleOutline size={36} />
+              : <MdPauseCircleOutline size={36} />}
+          </button>
+        </div>
         <TimeLineEditor duration={duration} currentTime={played} onSeek={handleTimelineChange} />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutlineCenterFocusStrong } from 'react-icons/md'
 import {GoRepoPush} from 'react-icons/go'
 import { useDispatch } from 'react-redux'
@@ -7,11 +7,13 @@ import { addRectangle, RectangleElementState, setCurrentElement } from '../../re
 import { useAppSelector } from '../../redux/hooks'
 import RectangleOptions from './Elements/RectangleOptions'
 function ElementsAddComponent() {
-  const dispatch=useDispatch()
-  useEffect(()=>{
-    dispatch(setAddingElements(true))
-  },[])
   const {currentElement}=useAppSelector(state=>state.elements)
+  const dispatch=useDispatch()
+
+  // useEffect(()=>{
+  //   dispatch(setAddingElements(true))
+  // },[])
+
   if(currentElement=='rectangle') return <RectangleOptions/>
 
   if(currentElement==null)
@@ -37,9 +39,10 @@ function ElementsAddComponent() {
 export default ElementsAddComponent
 
 function ElementTypeComponent({icon,label}) {
+  const {played}=useAppSelector(state=>state.video)
   const dispatch=useDispatch()
-  useEffect(()=>{
-    if(label=='rectangle') {
+  function handleAddShape(shape:string) {
+    if(shape=='rectangle') {
       dispatch(setAddingElements(true))
       const rectData:RectangleElementState={
         id:Date.now().toString(),
@@ -51,14 +54,16 @@ function ElementTypeComponent({icon,label}) {
         strokeWidth:3,
         cornerRadius:[1,1,1,1],
         fillColor:'transparent',
-        startTime:0,
+        startTime:played,
         endTime:10
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
     }
-  },[])
+  }
+
+
   return (
-  <button className='btn bg-[#02BC7D] text-slate-800 w-[160px]' onClick={()=>dispatch(setCurrentElement(label))}>{icon}<small className='capitalize'>{label}</small></button>
+  <button className='btn bg-[#02BC7D] text-slate-800 w-[160px]' onClick={()=>handleAddShape(label)}>{icon}<small className='capitalize'>{label}</small></button>
   )
 }

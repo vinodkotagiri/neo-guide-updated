@@ -62,7 +62,7 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
   };
 
   return (
-    <div ref={containerRef} className="h-64 bg-slate-900 flex overflow-x-scroll relative opacity-40" onWheel={handleWheel}>
+    <div ref={containerRef} className="h-64 bg-slate-900 flex overflow-x-scroll relative opacity-40 w-[calc(100%-40px)]" onWheel={handleWheel}>
       <div ref={waveformRef} className="absolute top-0 left-0 w-full h-full opacity-50" />
       {timeMarkers.map((time) => (
         <div key={time}>
@@ -90,9 +90,10 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
         drag="x"
         dragConstraints={{ left: 0, right: duration * 10 }}
         onDrag={(event, info) => {
+          console.log("info",info)
           // Update local dragging time without affecting currentTime directly
-          const newTime = Math.max(0, Math.min(duration, Math.round(info.point.x / 10)));
-          setDraggingTime(newTime);
+          const newTime = Math.max(0, Math.min(duration, Math.round(info.offset.x / 10)));
+          setDraggingTime(currentTime+newTime);
         }}
         onDragEnd={() => {
           // Ensure that the final time is synced correctly after drag ends

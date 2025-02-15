@@ -8,7 +8,7 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 
 const RectangleOptions = () => {
   const { currentElementId, rectangles } = useAppSelector(state => state.elements)
-  const { duration } = useAppSelector(state => state.video)
+  const { duration,played } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const fillColorRef = useRef<HTMLInputElement>(null)
@@ -28,6 +28,9 @@ const RectangleOptions = () => {
     }
   }
 
+useEffect(()=>{
+  setStartTime(played)
+},[])
   const handleFillColorPickerClick = () => {
     if (fillColorRef.current) {
       fillColorRef.current.click()
@@ -73,7 +76,11 @@ const RectangleOptions = () => {
   return (
     <div className='w-full h-full py-4 px-2 flex flex-col gap-3 relative'>
       <div className='flex font-semibold text-slate-500 absolute'>
-        <MdChevronLeft size={24} className='cursor-pointer' onClick={() => dispatch(setCurrentElement(null))} /></div>
+        <MdChevronLeft size={24} className='cursor-pointer' onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          dispatch(setCurrentElement(null))
+          }} /></div>
       <div className='flex items-center justify-between w-full h-6 px-6'>
         <div className='flex font-semibold text-slate-500'>
           {/* <MdChevronLeft size={24} className='cursor-pointer' onClick={() => dispatch(setCurrentElement(null))} /> */}
@@ -109,6 +116,7 @@ const RectangleOptions = () => {
             className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
             type='range'
             onChange={(e) => setStrokeWidth(e.target.valueAsNumber)}
+            value={strokeWidth} 
           />
         </div>
         {/* FILL COLOR */}

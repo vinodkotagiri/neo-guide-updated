@@ -14,7 +14,7 @@ const EditorSider = () => {
   const { percentage, status } = useAppSelector(state => state.loader)
   const [rightActiveArea,setRightActiveArea]=useState(1)
   return (
-    <div className='w-full h-full bg-black-op rounded-md  flex'>
+    <div className='w-full h-full bg-black-op rounded-md  flex z-50'>
       {/* <div>
       <EditorLeftTopBar setDub={setDub} />
       </div> */}
