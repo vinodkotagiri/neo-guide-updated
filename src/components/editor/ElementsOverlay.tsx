@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Layer, Rect, Stage, Text, Transformer } from 'react-konva';
+import { Arrow, Layer, Rect, Stage, Text, Transformer } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { editBlur, editRectangle, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
+import { editArrow, editBlur, editRectangle, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
 
 function ElementsOverlay() {
@@ -11,7 +11,7 @@ function ElementsOverlay() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-  const { rectangles, blurs ,texts} = useAppSelector((state) => state.elements);
+  const { rectangles, blurs, texts, arrows } = useAppSelector((state) => state.elements);
   const { played } = useAppSelector(state => state.video)
   useEffect(() => {
     const updateStageSize = () => {
@@ -96,7 +96,7 @@ function ElementsOverlay() {
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
               filters={[Konva.Filters.Blur]} // Apply blur filter
-              blurRadius={ 100} // Adjust blur intensity dynamically
+              blurRadius={100} // Adjust blur intensity dynamically
               ref={(node) => {
                 if (node) {
                   node.cache(); // Required for filters
@@ -160,7 +160,50 @@ function ElementsOverlay() {
               }}
             />
           ))}
-          <Transformer ref={transformerRef} />
+
+          {arrows.map((arrow) => (
+            <Arrow
+              key={arrow.id}
+              id={arrow.id}
+              points={arrow.points}
+              stroke={arrow.stroke}
+              strokeWidth={arrow.strokeWidth}
+              pointerLength={10}
+              pointerWidth={10}
+              draggable
+              visible={arrow.startTime <= played && arrow.endTime >= played}
+              onClick={() => setSelectedId(arrow.id)}
+              onDragMove={(e) => {
+                const node = e.target;
+                const points = node.points();
+                dispatch(
+                  editArrow({
+                    id: arrow.id,
+                    points: [points[0] + e.evt.movementX, points[1] + e.evt.movementY, points[2] + e.evt.movementX, points[3] + e.evt.movementY],
+                  })
+                );
+              }}
+              onTransformEnd={(e) => {
+                const node = e.target;
+                const scaleX = node.scaleX();
+                const scaleY = node.scaleY();
+                const rotation = node.rotation();
+                const points = node.points().map((p, i) => (i % 2 === 0 ? p * scaleX : p * scaleY));
+
+                dispatch(
+                  editArrow({
+                    id: arrow.id,
+                    points,
+                    rotation
+                  })
+                );
+
+                node.scaleX(1);
+                node.scaleY(1);
+              }}
+            />
+          ))}
+          <Transformer ref={transformerRef} rotateEnabled={true} />
         </Layer>
       </Stage>
     </div>

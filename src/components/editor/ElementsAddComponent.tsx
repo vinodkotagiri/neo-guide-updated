@@ -3,7 +3,7 @@ import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutl
 import {GoRepoPush} from 'react-icons/go'
 import { useDispatch } from 'react-redux'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { addBlur, addRectangle, addText, BlurElementState, RectangleElementState, setCurrentElement, TextElementState } from '../../redux/features/elementsSlice'
+import { addArrow, addBlur, addRectangle, addText, ArrowElementState, BlurElementState, RectangleElementState, setCurrentElement, TextElementState } from '../../redux/features/elementsSlice'
 import { useAppSelector } from '../../redux/hooks'
 import RectangleOptions from './Elements/RectangleOptions'
 import BlurOptions from './Elements/BlurOptions'
@@ -94,6 +94,24 @@ function ElementTypeComponent({icon,label}) {
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))
+    }
+    if(shape=='arrow'){
+      dispatch(setAddingElements(true))
+      const arrowData:ArrowElementState={
+        id:Date.now().toString(),
+        x:0,
+        y:0,
+        points:[0,0,50,50],
+        strokeWidth:3,
+        stroke:'red',
+        pointerLenght:10,
+        rotation:0,
+        pointerWidth:10,
+        startTime:played,
+        endTime:played+5
+      }
+      dispatch(addArrow(arrowData))
+      dispatch(setCurrentElement('arrow'))
     }
   }
 

@@ -40,11 +40,25 @@ export interface TextElementState {
   endTime: number;
 }
 
+export interface ArrowElementState {
+  id:string;
+  x: number;
+  y: number;
+  points: Array<number>;
+  stroke:string;
+  strokeWidth:number;
+  pointerLenght:number;
+  pointerWidth:number;
+  rotation:number;
+  startTime: number;
+  endTime: number;
+}
+
 interface ElementsState {
   currentElementId:string|null;
   currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "pop-over" | null;
   rectangles: RectangleElementState[];
-  arrows: RectangleElementState[];
+  arrows: ArrowElementState[];
   blurs: BlurElementState[];
   texts: TextElementState[];
   spotLights: RectangleElementState[];
@@ -78,6 +92,7 @@ const elementsSlice = createSlice({
     },
     addArrow(state, action) {
       state.arrows.push(action.payload);
+      state.currentElementId = action.payload.id
     },
     addBlur(state, action) {
       state.blurs.push(action.payload);
@@ -101,7 +116,11 @@ const elementsSlice = createSlice({
     },
     editArrow(state, action) {
       const index = state.arrows.findIndex((e) => e.id === action.payload.id);
-      state.arrows[index] = action.payload;
+      const arrow=state.arrows[index]
+      for(const key of Object.keys(arrow)){
+        if(action.payload[key]) arrow[key]=action.payload[key]
+      }
+      state.arrows[index] = arrow
     },
     editBlur(state, action) {
       const index = state.blurs.findIndex((e) => e.id === action.payload.id);
@@ -129,7 +148,9 @@ const elementsSlice = createSlice({
       state.currentElement = null
     },
     deleteArrow(state, action) {
-      state.arrows = state.arrows.filter((e) => e.id !== action.payload);
+      state.arrows = state.arrows.filter((e) => e.id !== action.payload.id);
+      state.currentElementId = null
+      state.currentElement = null
     },
     deleteBlur(state, action) {
       state.blurs = state.blurs.filter((e) => e.id !== action.payload.id);

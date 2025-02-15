@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { editBlur, editRectangle, editText, setCurrentElementId } from '../../redux/features/elementsSlice'
 
 function ShapesLayer() {
-  const { rectangles,blurs,texts } = useAppSelector(state => state.elements)
+  const { rectangles, blurs, texts,arrows } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   const [dragging, setDragging] = useState(false)
   const [draggedRect, setDraggedRect] = useState(null)
@@ -17,7 +17,7 @@ function ShapesLayer() {
     setInitialLeft(rect.startTime * 10) // Initial position of the rectangle
   }
 
-  const handleDrag = (e,shape) => {
+  const handleDrag = (e, shape) => {
     if (!dragging || !draggedRect) return
 
     const deltaX = e.clientX - initialX // Calculate the distance moved
@@ -25,13 +25,13 @@ function ShapesLayer() {
     const newStartTime = newLeft / 10 // Convert pixel position back to startTime
     let newEndTime = newStartTime + (draggedRect.endTime - draggedRect.startTime) // Adjust the endTime accordingly
 
-    if(newEndTime<=newStartTime) newEndTime=newStartTime+10
+    if (newEndTime <= newStartTime) newEndTime = newStartTime + 10
     // Dispatch an action to update the rectangle's position
-    if(shape=='rectangle')
-    dispatch(editRectangle({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
-    else if(shape=='blur')
+    if (shape == 'rectangle')
+      dispatch(editRectangle({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
+    else if (shape == 'blur')
       dispatch(editBlur({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
-    else if(shape=='text')
+    else if (shape == 'text')
       dispatch(editText({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }))
   }
 
@@ -56,15 +56,15 @@ function ShapesLayer() {
               width: `${width}px`,
             }}
             onDragStart={(e) => handleDragStart(e, rect)}
-            onDrag={(e) => handleDrag(e,'blur')}
+            onDrag={(e) => handleDrag(e, 'blur')}
             onDragEnd={handleDragEnd}
-            onClick={()=>{
-              dispatch(setCurrentElementId({id:rect.id,type:'blur'}))
+            onClick={() => {
+              dispatch(setCurrentElementId({ id: rect.id, type: 'blur' }))
             }}
             draggable
           >
             <span className='flex items-center justify-center capitalize'>blur</span>
-            
+
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
               <span className='text-black'>|</span>
             </div>
@@ -87,15 +87,15 @@ function ShapesLayer() {
               width: `${width}px`,
             }}
             onDragStart={(e) => handleDragStart(e, rect)}
-            onDrag={(e) => handleDrag(e,'rectangle')}
+            onDrag={(e) => handleDrag(e, 'rectangle')}
             onDragEnd={handleDragEnd}
-            onClick={()=>{
+            onClick={() => {
               console.log('cliecked redct')
-              dispatch(setCurrentElementId({id:rect.id,type:'rectangle'}))
+              dispatch(setCurrentElementId({ id: rect.id, type: 'rectangle' }))
             }}
             draggable
           >
-                        <span className='flex items-center justify-center capitalize'>rect</span>
+            <span className='flex items-center justify-center capitalize'>rect</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
               <span className='text-black'>|</span>
             </div>
@@ -106,7 +106,7 @@ function ShapesLayer() {
           </div>
         )
       })}
-       {texts?.map((rect, i) => {
+      {texts?.map((rect, i) => {
         const width = (rect.endTime - rect.startTime) * 10
         const left = rect.startTime * 10
         return (
@@ -118,14 +118,14 @@ function ShapesLayer() {
               width: `${width}px`,
             }}
             onDragStart={(e) => handleDragStart(e, rect)}
-            onDrag={(e) => handleDrag(e,'text')}
+            onDrag={(e) => handleDrag(e, 'text')}
             onDragEnd={handleDragEnd}
-            onClick={()=>{
-              dispatch(setCurrentElementId({id:rect.id,type:'text'}))
+            onClick={() => {
+              dispatch(setCurrentElementId({ id: rect.id, type: 'text' }))
             }}
             draggable
           >
-                        <span className='flex items-center justify-center capitalize'>text</span>
+            <span className='flex items-center justify-center capitalize'>text</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
               <span className='text-black'>|</span>
             </div>
@@ -136,7 +136,37 @@ function ShapesLayer() {
           </div>
         )
       })}
-      
+      {arrows?.map((rect, i) => {
+        const width = (rect.endTime - rect.startTime) * 10
+        const left = rect.startTime * 10
+        return (
+          <div
+            key={i}
+            className="absolute group top-18 h-6 bg-red-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'text'}
+            style={{
+              left: `${left}px`,
+              width: `${width}px`,
+            }}
+            onDragStart={(e) => handleDragStart(e, rect)}
+            onDrag={(e) => handleDrag(e, 'text')}
+            onDragEnd={handleDragEnd}
+            onClick={() => {
+              dispatch(setCurrentElementId({ id: rect.id, type: 'text' }))
+            }}
+            draggable
+          >
+            <span className='flex items-center justify-center capitalize'>arrow</span>
+            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
+              <span className='text-black'>|</span>
+            </div>
+
+          </div>
+        )
+      })}
+
     </div>
   )
 }
