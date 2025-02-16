@@ -1,10 +1,6 @@
 //@ts-nocheck
-import React, { useEffect, useState } from 'react'
-import EditorLeftTopBar from './EditorLeftTopBar'
-import { useAppSelector } from '../../redux/hooks'
-import LocalLoader from '../global/LocalLoader'
+import React, { useState } from 'react'
 import RightMenuIcons from './RightMenuIcons'
-import DubHeader from './DubHeader'
 import DubAreaComponent from './DubAreaComponent'
 import SubtitleAreaComponent from './SubtitleAreaComponent'
 import ElementsAddComponent from './ElementsAddComponent'

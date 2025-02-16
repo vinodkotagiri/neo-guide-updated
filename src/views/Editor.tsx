@@ -27,7 +27,6 @@ const Editor = () => {
 
   useEffect(() => {
     if (!articleData.length && !window.localStorage.getItem('articleData')) {
-      console.log('insideeee')
       dispatch(setLoader({ loading: true }));
       dispatch(setLocked(true))
       createArticle({ video_url: url })
@@ -65,7 +64,7 @@ const Editor = () => {
             clearInterval(progessInterval)
             const data = res?.result;
             dispatch(setArticleData(data))
-            setLocked(false)
+            dispatch(setLocked(false))
           } else {
             dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
           }

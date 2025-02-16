@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useRef, useState, useEffect } from 'react';
 import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';

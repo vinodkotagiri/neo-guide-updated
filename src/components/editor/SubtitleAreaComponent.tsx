@@ -1,21 +1,22 @@
+//@ts-nocheck
 import React, { useEffect, useState } from 'react'
 import SubtitleHeader from './SubtitleHeader'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { getSecondsFromTime } from '../../helpers'
 import { getProgress, getSubtitles } from '../../api/axios'
 import toast from 'react-hot-toast'
-import { setLocked, updateSubtitleData } from '../../redux/features/videoSlice'
+import { setLocked, updateRetries, updateSubtitleData } from '../../redux/features/videoSlice'
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice'
 import TimeLineLoader from './TimeLineLoader'
 import LocalLoader from '../global/LocalLoader'
 
 function SubtitleAreaComponent() {
-  const { subtitles, played, url } = useAppSelector(state => state.video)
+  const { subtitles, played, url,retries } = useAppSelector(state => state.video)
    const { percentage, status } = useAppSelector(state => state.loader)
   const [reqId, setReqId] = useState('')
   const dispatch = useAppDispatch()
   useEffect(() => {
-    if (!subtitles.data.length) {
+    if (!subtitles.data.length && retries<3) {
       getSubtitles({ target_language: 'en', video_path: url }).then((res) => {
         const request_id = res?.request_id;
         if (request_id) {
@@ -27,12 +28,13 @@ function SubtitleAreaComponent() {
       })
         .catch(() => {
           toast.error('Error uploading video');
+          dispatch(setLocked(false))
         })
         .finally(() => {
           dispatch(setLocked(false))
         });
     }
-  }, [subtitles.data])
+  }, [])
 
   function isActiveStyle(start, end) {
     const startSeconds = getSecondsFromTime(start);
@@ -60,6 +62,7 @@ function SubtitleAreaComponent() {
               if(data?.error){
                 dispatch(setLocked(false))
                 dispatch(updateSubtitleData([]))
+                dispatch(updateRetries())
                 return toast.error(data?.error)
               }
               dispatch(updateSubtitleData(data))

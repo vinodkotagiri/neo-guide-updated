@@ -31,10 +31,6 @@ const App = () => {
       subtitles =JSON.parse( window.localStorage.getItem('subtitles'))
       if(subtitles?.length) dispatch(updateSubtitleData(subtitles))
     }
-    
-   
-    
-
   }, [])
 
   return (
