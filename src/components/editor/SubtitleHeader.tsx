@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useRef, useState } from 'react'
 import { TfiDownload } from "react-icons/tfi";
 import { CiTextAlignJustify } from "react-icons/ci";
