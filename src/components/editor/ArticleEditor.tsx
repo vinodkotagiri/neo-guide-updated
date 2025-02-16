@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ArticleMenu from './ArticleMenu';
@@ -7,26 +7,16 @@ import ArticleMenu from './ArticleMenu';
 const ArticleEditor = ({ articleData, onSave }) => {
   const [quillValue, setQuillValue] = useState('');
   const modules = {
-    toolbar: { container: "#custom-toolbar" }, // Attach the toolbar outside
+    toolbar: { container: "#custom-toolbar" },
   };
 
-
   const formats = [
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "code-block",
-    "list",
-    "indent",
-    "size",
-    "header",
-    "color",
-    "background",
-    "font",
-    "align",
-    "image",
+    "bold", "italic", "underline", "strike", "code-block",
+    "list", "indent", "size", "header", "color", "background",
+    "font", "align", "image",
   ];
+
+  const quillRef = useRef(null);
 
   useEffect(() => {
     if (articleData && articleData.length > 0) {
@@ -40,6 +30,45 @@ const ArticleEditor = ({ articleData, onSave }) => {
             img.src = item.image_url;
             img.alt = `Article Image ${index}`;
             img.className = "w-full h-auto rounded-md border-2 border-slate-900";
+            img.style.cursor = 'pointer';
+
+            img.addEventListener('click', (e) => {
+              e.preventDefault();
+              const menu = document.createElement('div');
+              menu.style.position = 'absolute';
+              menu.style.top = `${e.clientY}px`;
+              menu.style.left = `${e.clientX}px`;
+              menu.style.backgroundColor = 'white';
+              menu.style.border = '1px solid black';
+              menu.style.padding = '5px';
+              menu.style.zIndex = '1000';
+
+              const gifButton = document.createElement('button');
+              gifButton.textContent = 'Create GIF';
+              gifButton.addEventListener('click', () => {
+                console.log('Creating GIF from:', img.src);
+                // Implement your GIF creation logic here (using a library)
+                menu.remove();
+              });
+              menu.appendChild(gifButton);
+
+              document.body.appendChild(menu);
+
+              const handleClickOutside = (event) => {
+                if (!menu.contains(event.target)) {
+                  menu.remove();
+                  document.removeEventListener('click', handleClickOutside);
+                }
+              };
+
+              document.addEventListener('click', handleClickOutside);
+            });
+
+            img.addEventListener('contextmenu', (e) => {
+              e.preventDefault(); // Prevent default context menu
+              img.click(); // Trigger the regular click event
+            });
+
             tempDiv.appendChild(img);
           }
 
@@ -77,7 +106,6 @@ const ArticleEditor = ({ articleData, onSave }) => {
         const img = div.querySelector('img');
         const textDiv = div.querySelector('.prose.p-4');
 
-
         updatedArticleData.push({
           image_url: img ? img.src : null,
           text: textDiv ? textDiv.innerHTML : null,
@@ -87,21 +115,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
       onSave(updatedArticleData);
     }
   };
-  // const modules = {
-  //   toolbar: [
-  //     ['bold', 'italic', 'underline', 'strike'],
-  //     ['blockquote', 'code-block'],
-  //     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-  //     [{ 'indent': '-1' }, { 'indent': '+1' }],
-  //     [{ 'size': ['small', false, 'large', 'huge'] }],
-  //     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  //     [{ 'color': [] }, { 'background': [] }],
-  //     [{ 'font': [] }],
-  //     [{ 'align': [] }],
-  //     ['link', 'image', 'video'], // Include image and video
-  //     ['clean']
-  //   ]
-  // }
+
   return (
     <>
       <div className="flex bg-black rounded-md justify-between items-center">
@@ -110,7 +124,6 @@ const ArticleEditor = ({ articleData, onSave }) => {
           <button className="ql-italic" />
           <button className="ql-underline" />
           <button className="ql-strike" />
-
           <button className="ql-code-block" />
           <button className="ql-list" value="ordered" />
           <button className="ql-list" value="bullet" />
@@ -135,18 +148,13 @@ const ArticleEditor = ({ articleData, onSave }) => {
           <select className="ql-background" />
           <select className="ql-font" />
           <select className="ql-align" />
-
           <button className="ql-image" />
         </div>
         <ArticleMenu />
       </div>
 
-      <div className=" w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative p-3">
-        {/* <div className='w-full text-right top-8 right-0  text-white z-50 sticky '>WELCOME</div> */}
-        <ReactQuill theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules} />
-        {/* <button onClick={handleSave} className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Save
-      </button> */}
+      <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative p-3">
+        <ReactQuill theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules} ref={quillRef} />
       </div>
     </>
   );

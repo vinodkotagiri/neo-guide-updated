@@ -218,6 +218,7 @@ export async function articleStep(payload: {
     api
       .post("/article_step", payload)
       .then((res) => {
+        console.log('res',res)
         resolve(res.data);
       })
       .catch((error) => {
