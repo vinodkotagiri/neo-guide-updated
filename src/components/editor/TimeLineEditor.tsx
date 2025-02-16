@@ -109,7 +109,7 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
       {/* ELEMENTS LAYER */}
 
       
-      <ShapesLayer />
+      <ShapesLayer onSeek={onSeek} />
     </div>
   );
 }

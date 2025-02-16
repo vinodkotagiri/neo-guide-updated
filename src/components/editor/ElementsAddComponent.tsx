@@ -9,18 +9,20 @@ import RectangleOptions from './Elements/RectangleOptions'
 import BlurOptions from './Elements/BlurOptions'
 import ArrowOptions from './Elements/ArrowOptions'
 import TextOptions from './Elements/TextOptions'
+import SpotlightOptions from './Elements/SpotlightOptions'
 function ElementsAddComponent() {
   const {currentElement}=useAppSelector(state=>state.elements)
   const dispatch=useDispatch()
 
-  // useEffect(()=>{
-  //   dispatch(setAddingElements(true))
-  // },[])
+  useEffect(()=>{
+    dispatch(setAddingElements(true))
+  },[])
 
   if(currentElement=='rectangle') return <RectangleOptions/>
   if(currentElement=='blur') return <BlurOptions/>
   if(currentElement=='arrow') return <ArrowOptions/>
   if(currentElement=='text') return <TextOptions/>
+  if(currentElement=='spotlight') return <SpotlightOptions/>
   if(currentElement==null)
   return (
     <>
@@ -74,7 +76,7 @@ function ElementTypeComponent({icon,label}) {
         y:100,
         width:100,
         height:100,
-        blurRadius:-15,
+        blurRadius:15,
         startTime:played,
         endTime:played+5
       }
@@ -89,7 +91,7 @@ function ElementTypeComponent({icon,label}) {
         y:100,
         text:'Hello world',
         font:'Open Sans',
-        fontSize:12,
+        fontSize:24,
         backgroundColor:'green',
         justify:'left',
         fontColor:'red',
@@ -105,7 +107,7 @@ function ElementTypeComponent({icon,label}) {
         id:Date.now().toString(),
         x:0,
         y:0,
-        points:[0,0,50,50],
+        points:[50,50,50,50],
         strokeWidth:3,
         stroke:'red',
         pointerLenght:10,
@@ -122,11 +124,13 @@ function ElementTypeComponent({icon,label}) {
     
       const spotlightData:SpotElementElementState = {
         id: Date.now().toString(),
-        x: 100, // Default X position
-        y: 100, // Default Y position
-        width: 100, // Spotlight width
-        height: 100, // Spotlight height
-        radius:50,
+        x: 100, 
+        y: 100,
+        width:100,
+        height:100,
+        glowColor: '#0ff',
+        glowRadius:50,
+        cornerRadius:[20,0,20,0],
         startTime: played,
         endTime: played + 5
       };

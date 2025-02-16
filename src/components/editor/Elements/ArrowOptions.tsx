@@ -16,7 +16,7 @@ const ArrowOptions = () => {
   const [pointerWidth, setPointerWidth] = useState(2);
   const [rotation, setRotation] = useState(0);
   const [startTime, setStartTime] = useState(0)
-  const [endTime, setEndTime] = useState(5)
+  const [endTime, setEndTime] = useState(0)
 
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const handleStrokeColorPickerClick = () => {
@@ -24,6 +24,8 @@ const ArrowOptions = () => {
       strokeColorRef.current.click()
     }
   }
+
+
   useEffect(() => {
     setStartTime(played)
   }, [])

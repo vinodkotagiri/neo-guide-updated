@@ -14,7 +14,6 @@ export interface RectangleElementState {
   endTime: number;
 }
 
-
 export interface BlurElementState {
   id: string;
   x: number;
@@ -27,46 +26,48 @@ export interface BlurElementState {
 }
 
 export interface TextElementState {
-  id:string;
+  id: string;
   x: number;
   y: number;
   text: string;
-  font:string;
-  fontSize:number;
-  fontColor:string;
-  backgroundColor:string;
-  justify:string;
+  font: string;
+  fontSize: number;
+  fontColor: string;
+  backgroundColor: string;
+  justify: string;
   startTime: number;
   endTime: number;
 }
 
 export interface ArrowElementState {
-  id:string;
+  id: string;
   x: number;
   y: number;
   points: Array<number>;
-  stroke:string;
-  strokeWidth:number;
-  pointerLenght:number;
-  pointerWidth:number;
-  rotation:number;
+  stroke: string;
+  strokeWidth: number;
+  pointerLenght: number;
+  pointerWidth: number;
+  rotation: number;
   startTime: number;
   endTime: number;
 }
 
 export interface SpotElementElementState {
-  id:string;
+  id: string;
   x: number;
   y: number;
-width:number;
-height:number;
-radius:number;
+  width: number;
+  height: number;
+  glowColor: string;
+  glowRadius: number;
+  cornerRadius: Array<number>;
   startTime: number;
   endTime: number;
 }
 
 interface ElementsState {
-  currentElementId:string|null;
+  currentElementId: string | null;
   currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "pop-over" | null;
   rectangles: RectangleElementState[];
   arrows: ArrowElementState[];
@@ -76,7 +77,7 @@ interface ElementsState {
 }
 
 const INITIAL_STATE: ElementsState = {
-  currentElementId:null,
+  currentElementId: null,
   currentElement: null,
   rectangles: [],
   arrows: [],
@@ -91,91 +92,98 @@ const elementsSlice = createSlice({
   reducers: {
     setCurrentElementId(state, action) {
       state.currentElementId = action.payload.id;
-      state.currentElement = action.payload.type
+      state.currentElement = action.payload.type;
     },
     setCurrentElement(state, action) {
       state.currentElement = action.payload;
-      if(action.payload==null) state.currentElementId=null
+      if (action.payload == null) state.currentElementId = null;
     },
     addRectangle(state, action) {
       state.rectangles.push(action.payload);
-      state.currentElementId = action.payload.id
+      state.currentElementId = action.payload.id;
     },
     addArrow(state, action) {
       state.arrows.push(action.payload);
-      state.currentElementId = action.payload.id
+      state.currentElementId = action.payload.id;
     },
     addBlur(state, action) {
       state.blurs.push(action.payload);
-      state.currentElementId = action.payload.id
+      state.currentElementId = action.payload.id;
     },
     addText(state, action) {
       state.texts.push(action.payload);
-      state.currentElementId = action.payload.id
+      state.currentElementId = action.payload.id;
+      
     },
     addSpotLight(state, action) {
       state.spotLights.push(action.payload);
+      state.currentElementId = action.payload.id;
     },
     editRectangle(state, action) {
       const index = state.rectangles.findIndex((e) => e.id === action.payload.id);
-      const rect=state.rectangles[index]
-      
-      for(const key of Object.keys(rect)){
-        if(action.payload[key]) rect[key]=action.payload[key]
+      const rect = state.rectangles[index];
+
+      for (const key of Object.keys(rect)) {
+        if (action.payload[key]) rect[key] = action.payload[key];
       }
-      state.rectangles[index] = rect
+      state.rectangles[index] = rect;
     },
     editArrow(state, action) {
       const index = state.arrows.findIndex((e) => e.id === action.payload.id);
-      const arrow=state.arrows[index]
-      for(const key of Object.keys(arrow)){
-        if(action.payload[key]) arrow[key]=action.payload[key]
+      const arrow = state.arrows[index];
+      for (const key of Object.keys(arrow)) {
+        if (action.payload[key]) arrow[key] = action.payload[key];
       }
-      state.arrows[index] = arrow
+      state.arrows[index] = arrow;
     },
     editBlur(state, action) {
       const index = state.blurs.findIndex((e) => e.id === action.payload.id);
-      const blur=state.blurs[index]
-      for(const key of Object.keys(blur)){
-        if(action.payload[key]) blur[key]=action.payload[key]
+      const blur = state.blurs[index];
+      for (const key of Object.keys(blur)) {
+        if (action.payload[key]) blur[key] = action.payload[key];
       }
-      state.blurs[index] = blur
+      state.blurs[index] = blur;
     },
     editText(state, action) {
       const index = state.texts.findIndex((e) => e.id === action.payload.id);
-      const text=state.texts[index]
-      for(const key of Object.keys(text)){
-        if(action.payload[key]) text[key]=action.payload[key]
+      const text = state.texts[index];
+      for (const key of Object.keys(text)) {
+        if (action.payload[key]) text[key] = action.payload[key];
       }
-      state.texts[index] = text
+      state.texts[index] = text;
     },
     editSpotLight(state, action) {
       const index = state.spotLights.findIndex((e) => e.id === action.payload.id);
-      state.spotLights[index] = action.payload;
+      const spot = state.spotLights[index];
+console.log('action',action.payload)
+      for (const key of Object.keys(spot)) {
+        if (action.payload[key]) spot[key] = action.payload[key];
+      }
+      state.spotLights[index] = spot;
     },
     deleteRectangle(state, action) {
       state.rectangles = state.rectangles.filter((e) => e.id !== action.payload.id);
-      state.currentElementId = null
-      state.currentElement = null
+      state.currentElementId = null;
+      state.currentElement = null;
     },
     deleteArrow(state, action) {
       state.arrows = state.arrows.filter((e) => e.id !== action.payload.id);
-      state.currentElementId = null
-      state.currentElement = null
+      state.currentElementId = null;
+      state.currentElement = null;
     },
     deleteBlur(state, action) {
       state.blurs = state.blurs.filter((e) => e.id !== action.payload.id);
-      state.currentElementId = null
-      state.currentElement = null
+      state.currentElementId = null;
+      state.currentElement = null;
     },
     deleteText(state, action) {
       state.texts = state.texts.filter((e) => e.id !== action.payload);
-      state.currentElementId = null
-      state.currentElement = null
+      state.currentElementId = null;
+      state.currentElement = null;
     },
     deleteSpotLight(state, action) {
-      state.spotLight = state.spotLight.filter((e) => e.id !== action.payload);
-    },
+      state.spotLights = state.spotLights.filter((e) => e.id !== action.payload.id);
+    }
   }
 });
 
@@ -197,5 +205,5 @@ export const {
   deleteBlur,
   deleteText,
   deleteSpotLight,
-  setCurrentElement,
+  setCurrentElement
 } = elementsSlice.actions;

@@ -12,8 +12,12 @@ const BlurOptions = () => {
   const dispatch = useAppDispatch()
   const [blurRadius,setBlurRadius]=useState(5);
   const [startTime, setStartTime] = useState(0)
-  const [endTime, setEndTime] = useState(5)
+  const [endTime, setEndTime] = useState(0)
 
+  
+useEffect(()=>{
+  setEndTime(startTime+5)
+},[startTime])
 useEffect(()=>{
   setStartTime(played)
 },[])
