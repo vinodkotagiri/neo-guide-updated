@@ -57,6 +57,11 @@ function SubtitleAreaComponent() {
             if (res?.status?.toLowerCase() == 'completed') {
               clearInterval(progessInterval)
               const data = res?.result?.subtitles;
+              if(data?.error){
+                dispatch(setLocked(false))
+                dispatch(updateSubtitleData([]))
+                return toast.error(data?.error)
+              }
               dispatch(updateSubtitleData(data))
               dispatch(setLocked(false))
             } else {

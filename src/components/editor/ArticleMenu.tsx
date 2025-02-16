@@ -7,7 +7,6 @@ import { setArticleData } from '../../redux/features/articleSlice';
 import { useDispatch } from 'react-redux';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 import toast from 'react-hot-toast';
-import { setLocked } from '../../redux/features/videoSlice';
 
 const ArticleMenu = ({ languageIcon }) => {
   const { articleData } = useAppSelector(state => state.article)
@@ -46,7 +45,7 @@ const ArticleMenu = ({ languageIcon }) => {
 
   async function getArticleData(request_id:string) {
     if (request_id) {
-      dispatch(setLocked(true))
+
       const progessInterval = setInterval(() => {
         dispatch(setLoader({loading:true}))
         getProgress(request_id).then(res => {
@@ -55,7 +54,6 @@ const ArticleMenu = ({ languageIcon }) => {
             dispatch(setLoader({loading:false}))
             const data = res?.result;
             dispatch(setArticleData(data))
-            setLocked(false)
           } else {
             dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
           }
