@@ -50,7 +50,7 @@ const Player = ({ playerRef }) => {
 
   useEffect(() => {
     const currentSub = subtitles.data.find(
-      (item) => getSecondsFromTime(item.start) <= played && getSecondsFromTime(item.end) >= played
+      (item) => getSecondsFromTime(item.start_time) <= played && getSecondsFromTime(item.end_time) >= played
     );
     if (JSON.stringify(currentSubtitle) !== JSON.stringify(currentSub)) dispatch(setCurrentSubtitle(currentSub));
   }, [played, subtitles.data]);

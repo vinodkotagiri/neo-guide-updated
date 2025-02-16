@@ -30,6 +30,7 @@ function SubtitleHeader() {
 
   return (
     <div className='w-full border-b-[1px] h-12   border-slate-600 flex items-center justify-between '>
+      <p>translate</p>
       <div className='flex w-full px-1 gap-1'>
         <div className='w-10 h-10 flex items-center justify-center border-[1px] border-slate-800 cursor-pointer'>
           <TfiDownload size={18} />

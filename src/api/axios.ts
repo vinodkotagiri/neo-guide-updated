@@ -8,10 +8,10 @@ const BASE_URL =
 
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Content-Type": "application/json"
-  }
+  // headers: {
+  //   "Access-Control-Allow-Origin": "*",
+  //   "Content-Type": "application/json"
+  // }
 });
 
 export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVideoResponse | null> {
