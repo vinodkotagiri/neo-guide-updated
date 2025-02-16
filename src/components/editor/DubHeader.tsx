@@ -5,8 +5,8 @@ import { IoIosMic } from "react-icons/io";
 
 function DubHeader() {
   const [selectedLanguage,setSelectedLanguage]=useState({})
-  const [selectedVoice,setSelectedVoice]=useState({})
   const [languageList,setLanguageList]=useState([])
+  const [selectedVoice,setSelectedVoice]=useState({})
   useEffect(()=>{
     setSelectedLanguage(languages[0])
     setLanguageList(languages.map(lang=>Object.keys(lang)[0]))

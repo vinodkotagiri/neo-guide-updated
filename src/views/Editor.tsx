@@ -11,6 +11,7 @@ import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
 import { useDispatch } from 'react-redux'
 import { setArticleData } from '../redux/features/articleSlice'
 import { useNavigate } from 'react-router-dom'
+import { setLocked } from '../redux/features/videoSlice'
 
 const Editor = () => {
   const { isArticle, url } = useAppSelector(state => state.video)
@@ -18,15 +19,16 @@ const Editor = () => {
   const [requestId, setRequestId] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
+  
   // // useEffect(() => {
   //   if (!url) navigate('/')
   //   else
   // }, [url])
 
   useEffect(() => {
-    if (articleData.length == 0) {
+    if (!articleData.length && !window.localStorage.getItem('articleData')) {
       dispatch(setLoader({ loading: true }));
+      dispatch(setLocked(true))
       createArticle({ video_url: url })
         .then((res) => {
           const request_id = res?.request_id;
@@ -42,9 +44,10 @@ const Editor = () => {
         })
         .finally(() => {
           dispatch(setLoader({ loading: false }));
+          dispatch(setLocked(false))
         });
     }
-  }, [url]); // Run when url changes
+  }, [url,articleData]); // Run when url changes
 
 
   useEffect(() => {
@@ -54,14 +57,14 @@ const Editor = () => {
   }, [requestId])
   async function getArticleData(request_id) {
     if (request_id) {
-      // dispatch(setLoader({loading:true}))
+      dispatch(setLocked(true))
       const progessInterval = setInterval(() => {
         getProgress(request_id).then(res => {
           if (res?.status?.toLowerCase() == 'completed') {
             clearInterval(progessInterval)
             const data = res?.result;
             dispatch(setArticleData(data))
-            // dispatch(setLoader({loading:false}))
+            dispatch(setLocked(false))
           } else {
             dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
           }
@@ -69,6 +72,7 @@ const Editor = () => {
       }, 5000)
     }
   }
+
 
   function handleNewUpload(){
     window.localStorage.clear();
