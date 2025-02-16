@@ -73,6 +73,7 @@ const Editor = () => {
     }
   }
 
+
   function handleNewUpload(){
     window.localStorage.clear();
     navigate('/')

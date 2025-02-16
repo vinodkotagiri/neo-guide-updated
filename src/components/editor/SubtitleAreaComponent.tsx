@@ -15,6 +15,7 @@ function SubtitleAreaComponent() {
    const { percentage, status } = useAppSelector(state => state.loader)
   const [reqId, setReqId] = useState('')
   const dispatch = useAppDispatch()
+
   useEffect(() => {
     if (!subtitles.data.length && retries<3) {
       getSubtitles({ target_language: 'en', video_path: url }).then((res) => {
@@ -35,6 +36,35 @@ function SubtitleAreaComponent() {
         });
     }
   }, [])
+  useEffect(() => {
+    if (reqId) {
+      getArticleData(reqId)
+    }
+  }, [reqId])
+
+  async function getArticleData(request_id) {
+    if (request_id) {
+      dispatch(setLocked(true))
+      const progessInterval = setInterval(() => {
+        getProgress(request_id).then(res => {
+          if (res?.status?.toLowerCase() == 'completed') {
+            clearInterval(progessInterval)
+            const data = res?.result?.subtitles;
+            if(data?.error){
+              dispatch(setLocked(false))
+              dispatch(updateSubtitleData([]))
+              dispatch(updateRetries())
+              return toast.error(data?.error)
+            }
+            dispatch(updateSubtitleData(data))
+            dispatch(setLocked(false))
+          } else {
+            dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
+          }
+        })
+      }, 5000)
+    }
+  }
 
   function isActiveStyle(start, end) {
     const startSeconds = getSecondsFromTime(start);
@@ -45,35 +75,7 @@ function SubtitleAreaComponent() {
     return false;
   }
 
-  useEffect(() => {
-      if (reqId) {
-        getArticleData(reqId)
-      }
-    }, [reqId])
 
-    async function getArticleData(request_id) {
-      if (request_id) {
-        dispatch(setLocked(true))
-        const progessInterval = setInterval(() => {
-          getProgress(request_id).then(res => {
-            if (res?.status?.toLowerCase() == 'completed') {
-              clearInterval(progessInterval)
-              const data = res?.result?.subtitles;
-              if(data?.error){
-                dispatch(setLocked(false))
-                dispatch(updateSubtitleData([]))
-                dispatch(updateRetries())
-                return toast.error(data?.error)
-              }
-              dispatch(updateSubtitleData(data))
-              dispatch(setLocked(false))
-            } else {
-              dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
-            }
-          })
-        }, 5000)
-      }
-    }
   
 
   return (
