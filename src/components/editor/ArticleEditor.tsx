@@ -5,7 +5,8 @@ import "react-quill/dist/quill.snow.css";
 import { generateGIF, getProgress } from "../../api/axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import toast from "react-hot-toast";
-import { setLoader } from "../../redux/features/loaderSlice";
+import { setLoader, setLoaderData } from "../../redux/features/loaderSlice";
+import ArticleMenu from "./ArticleMenu";
 
 const ArticleEditor = ({ articleData, onSave }) => {
   const [quillValue, setQuillValue] = useState("");
@@ -220,6 +221,7 @@ const {url}=useAppSelector(state=>state.video)
           <select className="ql-align" />
           <button className="ql-image" />
         </div>
+        <ArticleMenu />
       </div>
 
       <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">

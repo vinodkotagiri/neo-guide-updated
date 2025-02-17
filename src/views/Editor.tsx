@@ -26,7 +26,7 @@ const Editor = () => {
   // }, [url])
 
   useEffect(() => {
-    if (!articleData.length && !window.localStorage.getItem('articleData')) {
+    if (!articleData.length ) {
       dispatch(setLoader({ loading: true }));
       dispatch(setLocked(true))
       createArticle({ video_url: url })
@@ -47,7 +47,7 @@ const Editor = () => {
           dispatch(setLocked(false))
         });
     }
-  }, [url,articleData]); // Run when url changes
+  }, [url]); // Run when url changes
 
 
   useEffect(() => {
