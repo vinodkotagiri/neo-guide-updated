@@ -1,99 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogPanel } from '@headlessui/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/app/store';
-import { setIsRecording } from '@/app/features/workingSlice';
-import { useDispatch } from 'react-redux';
-import { MdStart, MdStop } from 'react-icons/md';
-import { BsFillRecordCircleFill } from 'react-icons/bs';
-import { FaStopCircle } from 'react-icons/fa';
+import { setIsRecording } from "@/app/features/workingSlice"
+import { AppDispatch, RootState } from "@/app/store"
+import { Dialog, DialogPanel } from "@headlessui/react"
+import { AnimatePresence, motion } from "framer-motion"
+import { useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
+import { useReactMediaRecorder } from "react-media-recorder"
+import { useState } from "react"
+import { FaStop, FaPlay } from "react-icons/fa"
 
-const RecordDialouge: React.FC = () => {
-  const { isRecording } = useSelector((state: RootState) => state.working);
-  const [recording, setRecording] = useState(false)
-  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
-  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+function RecordDialouge() {
+  const { isRecording } = useSelector((state: RootState) => state.working)
+  const dispatch = useDispatch<AppDispatch>()
+  const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
+    useReactMediaRecorder({ video: true, audio: true })
 
-
-  useEffect(() => {
-    return () => {
-      if (screenStream) {
-        const tracks = screenStream.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-    };
-  }, [screenStream]);
-
-  const startScreenRecording = async () => {
+  // Handle media permissions and start recording
+  const handleStartRecording = async () => {
     try {
-      setRecording(true)
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: { echoCancellation: true, noiseSuppression: true }
-      });
-
-      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      const combinedStream = new MediaStream([
-        ...screenStream.getVideoTracks(),
-        ...screenStream.getAudioTracks(),
-        ...audioStream.getAudioTracks()
-      ]);
-
-      setScreenStream(combinedStream);
-
-      const recorder = new MediaRecorder(combinedStream);
-      const recordedChunks: Blob[] = [];
-
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
-
-      recorder.onstop = () => {
-        const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
-        const videoUrl = URL.createObjectURL(videoBlob);
-        setRecordedVideoUrl(videoUrl);
-      };
-
-      recorder.start();
-      setMediaRecorder(recorder);
-      setIsRecording(true);
+      // Request screen or tab capture
+      const captureStream = await navigator.mediaDevices.getDisplayMedia({
+        video: { mediaSource: 'screen' }, // You can modify this based on user choice
+        audio: true,
+      })
+      
+      // Start recording after permissions are granted
+      startRecording() // This will trigger the recording process
     } catch (err) {
-      console.error("Error accessing screen:", err);
-
+      console.error("Permission denied or error while accessing media devices", err)
+      alert("Please allow camera, microphone, and screen/tab access.")
     }
-  };
+  }
 
-  const stopScreenRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-    }
-    setRecording(false);
-  };
-
-
-  const handleSaveRecording = async () => {
-    if (recordedVideoUrl) {
-      try {
-        const a = document.createElement('a');
-        a.href = recordedVideoUrl;
-        a.download = 'screen_recording.mp4';
-        a.click();
-
-        const blob = await fetch(recordedVideoUrl).then(r => r.blob());
-        const file = new File([blob], 'screen_recording.mp4', { type: 'video/mp4' });
-        console.log('file:::', file)
-      } catch (error) {
-        console.error("Error uploading video:", error);
-      }
-    }
-  };
+  // Handle stop recording and reset
+  const handleStopRecording = () => {
+    console.log('mediaBlobUrl',mediaBlobUrl)
+    stopRecording()
+    // Clear the blob URL after stopping
+    clearBlobUrl()
+    // Optionally reset state for clean-up
+    dispatch(setIsRecording(false))
+  }
 
   return (
     <AnimatePresence>
@@ -103,57 +49,66 @@ const RecordDialouge: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
           />
-          <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+          <div className="fixed inset-0 flex w-screen items-center justify-center p-6">
             <DialogPanel
               as={motion.div}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-lg space-y-4 bg-white p-12 rounded-md"
+              className="w-full max-w-xl bg-white p-8 rounded-xl shadow-xl"
             >
-              <div className='flex gap-4'>
-                <button
-                  className='cursor-pointer'
-                  onClick={() => (recording ? stopScreenRecording() : startScreenRecording())}
-                >
-                  {recording ? (
-                    <FaStopCircle size={32} className='text-red-500' />
-                  ) : (
-                    <BsFillRecordCircleFill size={32} className='text-green-500' />
-                  )}
-                </button>
+              <div className="space-y-6">
+                <div className="text-center">
+                  <p className="text-xl font-semibold text-gray-700">{status}</p>
+                </div>
 
-                {recordedVideoUrl && (
-                  <button
-                    onClick={handleSaveRecording}
-                    className='btn btn-success btn-sm'
+                {/* Start/Stop Recording with Icons */}
+                <div className="flex justify-center space-x-6 mt-4">
+                  <motion.button
+                    onClick={handleStartRecording}
+                    className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Save Recording
-                  </button>
+                    <FaPlay className="mr-2" />
+                    Start Recording
+                  </motion.button>
+                  <motion.button
+                    onClick={handleStopRecording}
+                    className="flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FaStop className="mr-2" />
+                    Stop Recording
+                  </motion.button>
+                </div>
+
+                {/* Video Preview */}
+                {mediaBlobUrl && (
+                  <div className="mt-4">
+                    <motion.video
+                      src={mediaBlobUrl}
+                      controls
+                      autoPlay
+                      loop
+                      className="w-full rounded-lg shadow-md"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
                 )}
               </div>
-
-              {/* Screen Recording Video */}
-              <div style={{ position: 'relative' }} className='w-full h-full border-slate-700'>
-                <video
-                  controls
-                  width="100%"
-                  height="auto"
-                  src={recordedVideoUrl || ''}
-                  autoPlay
-                  muted
-                  style={{ width: '100%', height: 'auto' }}
-                ></video>
-              </div>
-
             </DialogPanel>
           </div>
         </Dialog>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default RecordDialouge;
+export default RecordDialouge
