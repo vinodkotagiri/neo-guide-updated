@@ -1,25 +1,14 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import path from "path";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
-    port: 3000,
-    cors: {
-      origin: '*',
-    },
-  },
-  define: {
-    global: "window" // This polyfills `global` to `window`
-  },
   resolve: {
     alias: {
-      buffer: "buffer",
-      crypto: "crypto-browserify"
+      "@": path.resolve(__dirname, "./src")
     }
-  },
-  optimizeDeps: {
-    include: ["buffer", "crypto-browserify"]
   }
 });
