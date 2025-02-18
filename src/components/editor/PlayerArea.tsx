@@ -1,6 +1,6 @@
 function PlayerArea() {
   return (
-    <div className="w-full h-4/6 rounded-md bg-slate-800">
+    <div className="w-full h-full rounded-md bg-slate-800">
 
     </div>
   )

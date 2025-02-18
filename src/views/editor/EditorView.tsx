@@ -17,8 +17,12 @@ function EditorView() {
         <div className="flex w-full gap-1">
         <Sidebar />
         <div className="flex-1 h-[calc(100%-8px)] mb-2 flex flex-col pr-2 gap-2 rounded-md overflow-hidden">
+          <div className="h-4/6 w-full">
           <PlayerArea />
+          </div>
+          <div className="h-2/6 w-full">
           <TimelineArea />
+          </div>
         </div>
       </div>
       </div>
