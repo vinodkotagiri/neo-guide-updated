@@ -71,7 +71,7 @@ function ShapesLayer({ onSeek }) {
               dispatch(setCurrentElementId({ id: rect.id, type: 'blur' }))
               onSeek(rect.startTime)
             }}
-            // draggable
+          // draggable
           >
             <span className='flex items-center justify-center capitalize'>blur</span>
 
@@ -103,7 +103,7 @@ function ShapesLayer({ onSeek }) {
               dispatch(setCurrentElementId({ id: rect.id, type: 'rectangle' }))
               onSeek(rect.startTime)
             }}
-            // draggable
+          // draggable
           >
             <span className='flex items-center justify-center capitalize'>rect</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
@@ -122,7 +122,7 @@ function ShapesLayer({ onSeek }) {
         return (
           <div
             key={i}
-            className="absolute group top-12 h-6 bg-yellow-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'text'}
+            className="absolute group top-12 h-6 bg-amber-950  rounded-md border-[1px] border-slate-600 cursor-pointer   tooltip" data-tip={'text'}
             style={{
               left: `${left}px`,
               width: `${width}px`,
@@ -134,9 +134,9 @@ function ShapesLayer({ onSeek }) {
               dispatch(setCurrentElementId({ id: rect.id, type: 'text' }))
               onSeek(rect.startTime)
             }}
-            // draggable
+          // draggable
           >
-            <span className='flex items-center justify-center capitalize'>text</span>
+            <span className='flex items-center justify-center capitalize text-white'>text</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
               <span className='text-black'>|</span>
             </div>
@@ -165,7 +165,7 @@ function ShapesLayer({ onSeek }) {
               dispatch(setCurrentElementId({ id: rect.id, type: 'arrow' }))
               onSeek(rect.startTime)
             }}
-            // draggable
+          // draggable
           >
             <span className='flex items-center justify-center capitalize'>arrow</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
@@ -196,7 +196,7 @@ function ShapesLayer({ onSeek }) {
               dispatch(setCurrentElementId({ id: rect.id, type: 'spotlight' }))
               onSeek(rect.startTime)
             }}
-            // draggable
+          // draggable
           >
             <span className='flex items-center justify-center capitalize'>spot</span>
             <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>

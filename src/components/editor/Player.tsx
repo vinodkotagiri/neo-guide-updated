@@ -74,16 +74,16 @@ const Player = ({ playerRef }) => {
           onSeek={(time) => dispatch(setVideoPlayed(time))}
         />
       </div>
-      <div className="w-full h-[29%] relative left-10">
-        <div className="bg-slate-900 absolute -left-10 h-full w-10 text-slate-200 flex items-center justify-center flex-col ">
-        <button className=" cursor-pointer" onClick={() =>  {
-           if (playerRef.current) {
-            playerRef.current.seekTo(0, 'seconds'); // Seek to the beginning
-            setPlayed(0); // Reset the played value
-            setIsPlaying(true); // Optionally, resume playback after reset
-          }
-        }}>
-           <MdRestore size={36}/>
+      <div className="w-full h-[29%] relative   flex-col flex">
+        <div className="bg-slate-900      w-full text-slate-200 flex items-center justify-center flex-row ">
+          <button className=" cursor-pointer" onClick={() => {
+            if (playerRef.current) {
+              playerRef.current.seekTo(0, 'seconds'); // Seek to the beginning
+              setPlayed(0); // Reset the played value
+              setIsPlaying(true); // Optionally, resume playback after reset
+            }
+          }}>
+            <MdRestore size={36} />
           </button>
           <button className=" cursor-pointer" onClick={() => dispatch(setVideoPlaying(!playing))}>
             {!playing ? <MdPlayCircleOutline size={36} />

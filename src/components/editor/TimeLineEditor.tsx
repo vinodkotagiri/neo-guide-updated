@@ -64,7 +64,7 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
   };
 
   return (
-    <div ref={containerRef} className="h-64 bg-slate-900 flex overflow-x-scroll relative opacity-40 w-[calc(100%-40px)]" onWheel={handleWheel}>
+    <div ref={containerRef} className="h-64 bg-slate-900 flex overflow-x-scroll relative  w-full" onWheel={handleWheel}>
       <div ref={waveformRef} className="absolute top-0 left-0 w-full h-full opacity-50" />
       {timeMarkers.map((time) => (
         <div key={time}>
@@ -109,7 +109,7 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
       </motion.div>
       {/* ELEMENTS LAYER */}
 
-      
+
       <ShapesLayer onSeek={onSeek} />
     </div>
   );
