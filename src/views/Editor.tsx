@@ -80,7 +80,7 @@ const Editor = () => {
   }
 
   return (
-    <div className='w-full h-full bg-gradient-to-br from-blue-700 to-pink-500 overflow-hidden'>
+    <div className='w-full h-full bg-slate-900'>
       <Navbar from={'editor'} />
       <div className='w-full h-[calc(100vh-64px)] flex  rounded-md fixed top-[72px]'>
 
