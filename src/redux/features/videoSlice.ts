@@ -15,6 +15,7 @@ interface VideoState {
   duration: number;
   language: string;
   playing: boolean;
+  currentPlayTime:number;
   played: number;
   seeked: number;
   isArticle: boolean;
@@ -59,6 +60,7 @@ const initialState: VideoState = {
   duration: 0,
   language: "",
   playing: false,
+  currentPlayTime:0,
   played: 0,
   seeked: 0,
   locked:false,
@@ -114,6 +116,9 @@ const videoSlice = createSlice({
     setLocked:(state,action)=>{
       state.locked=action.payload
     },
+    setCurrentPlayTime:(state,action)=>{
+      state.currentPlayTime=action.payload
+    },
     setAddingElements:(state,action)=>{
       state.addingElements=action.payload
     },
@@ -167,6 +172,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setCurrentPlayTime,
   setLocked,
   updateRetries,
   setAddingElements,

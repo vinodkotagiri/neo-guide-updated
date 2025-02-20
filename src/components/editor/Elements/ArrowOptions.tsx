@@ -8,7 +8,7 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 
 const ArrowOptions = () => {
   const { currentElementId, arrows } = useAppSelector(state => state.elements)
-  const { duration, played } = useAppSelector(state => state.video)
+  const { duration, currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const [stroke, setStroke] = useState('#fff');
   const [strokeWidth, setStrokeWidth] = useState(2);
@@ -26,10 +26,10 @@ const ArrowOptions = () => {
   }
 
 
-  useEffect(() => {
-    setStartTime(played)
-  }, [])
-
+useEffect(()=>{
+  setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
+},[currentPlayTime])
 
   function handleAddNewBlur() {
     dispatch(setAddingElements(true))
@@ -43,8 +43,8 @@ const ArrowOptions = () => {
       pointerLength: pointerLength,
       rotation: rotation,
       pointerWidth: pointerWidth,
-      startTime: played,
-      endTime: played + 5
+      startTime: currentPlayTime,
+      endTime: currentPlayTime + 5
     }
     dispatch(addArrow(arrowData))
     dispatch(setCurrentElement('arrow'))

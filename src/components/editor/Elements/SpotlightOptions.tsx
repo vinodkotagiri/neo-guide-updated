@@ -8,7 +8,7 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 
 const SpotlightOptions = () => {
   const { currentElementId, spotLights } = useAppSelector(state => state.elements)
-  const { duration,played } = useAppSelector(state => state.video)
+  const { duration,currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const [strokeColor, setStrokeColor] = useState('#fff')
@@ -21,9 +21,9 @@ const SpotlightOptions = () => {
 console.log(currentElementId)
 
 useEffect(()=>{
-  setStartTime(played)
-},[])
-
+  setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
+},[currentPlayTime])
 
   useEffect(() => {
     if (currentElementId) {
@@ -55,8 +55,8 @@ const handleStrokeColorPickerClick = () => {
       glowColor: '#fff',
       glowRadius: 50,
       cornerRadius: [50, 50, 50, 50],
-      startTime: played,
-      endTime: played + 5
+      startTime: currentPlayTime,
+      endTime: currentPlayTime + 5
     }
     dispatch(addSpotLight(rectData))
     dispatch(setCurrentElement('spotlight'))

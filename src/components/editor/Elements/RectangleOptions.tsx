@@ -8,7 +8,7 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 
 const RectangleOptions = () => {
   const { currentElementId, rectangles } = useAppSelector(state => state.elements)
-  const { duration,played } = useAppSelector(state => state.video)
+  const { duration,currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const fillColorRef = useRef<HTMLInputElement>(null)
@@ -31,8 +31,9 @@ const RectangleOptions = () => {
 
 
 useEffect(()=>{
-  setStartTime(played)
-},[])
+  setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
+},[currentPlayTime])
 
   const handleFillColorPickerClick = () => {
     if (fillColorRef.current) {

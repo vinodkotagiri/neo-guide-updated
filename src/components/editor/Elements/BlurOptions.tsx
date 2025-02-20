@@ -8,20 +8,17 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 
 const BlurOptions = () => {
   const { currentElementId, blurs } = useAppSelector(state => state.elements)
-  const { duration,played } = useAppSelector(state => state.video)
+  const { duration,currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-  const [blurRadius,setBlurRadius]=useState(5);
+  const [blurRadius,setBlurRadius]=useState(50);
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
 
   
 useEffect(()=>{
-  setEndTime(startTime+5)
-},[startTime])
-useEffect(()=>{
-  setStartTime(played)
-},[])
-  
+  setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
+},[currentPlayTime])
 
   function handleAddNewBlur() {
     dispatch(setAddingElements(true))

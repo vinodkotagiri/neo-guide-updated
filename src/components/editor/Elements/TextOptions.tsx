@@ -6,11 +6,10 @@ import { addText, deleteBlur, editText, setCurrentElement, TextElementState } fr
 import { setAddingElements } from '../../../redux/features/videoSlice'
 import { CiTextAlignJustify } from 'react-icons/ci'
 import { RiFontColor } from 'react-icons/ri'
-import { BiColorFill } from 'react-icons/bi'
 
 const TextOptions = () => {
   const { currentElementId, texts } = useAppSelector(state => state.elements)
-  const { duration, played } = useAppSelector(state => state.video)
+  const { duration, currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const [text, setText] = useState('');
   const [font, setFont] = useState('Open Sans');
@@ -26,12 +25,9 @@ const TextOptions = () => {
   const [endTime, setEndTime] = useState(0)
 
 useEffect(()=>{
-  setEndTime(startTime+5)
-},[startTime])
-
-  useEffect(() => {
-    setStartTime(played)
-  }, [])
+  setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
+},[currentPlayTime])
 
 
   function handleAddNewBlur() {

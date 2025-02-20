@@ -46,10 +46,9 @@ function ElementsAddComponent() {
 export default ElementsAddComponent
 
 function ElementTypeComponent({icon,label}) {
-  const {played}=useAppSelector(state=>state.video)
+  const {currentPlayTime}=useAppSelector(state=>state.video)
   const dispatch=useDispatch()
   function handleAddShape(shape:string) {
-    console.log('shape',shape)
     if(shape=='rectangle') {
       dispatch(setAddingElements(true))
       const rectData:RectangleElementState={
@@ -59,11 +58,11 @@ function ElementTypeComponent({icon,label}) {
         width:100,
         height:100,
         strokeColor:'#fff',
-        strokeWidth:3,
+        strokeWidth:4,
         cornerRadius:[1,1,1,1],
         fillColor:'transparent',
-        startTime:played,
-        endTime:played+5
+        startTime:currentPlayTime,
+        endTime:currentPlayTime+5
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
@@ -76,9 +75,9 @@ function ElementTypeComponent({icon,label}) {
         y:100,
         width:100,
         height:100,
-        blurRadius:15,
-        startTime:played,
-        endTime:played+5
+        blurRadius:50,
+        startTime:currentPlayTime,
+        endTime:currentPlayTime+5
       }
       dispatch(addBlur(blurData))
       dispatch(setCurrentElement('blur'))
@@ -95,8 +94,8 @@ function ElementTypeComponent({icon,label}) {
         backgroundColor:'green',
         justify:'left',
         fontColor:'red',
-        startTime:played,
-        endTime:played+5
+        startTime:currentPlayTime,
+        endTime:currentPlayTime+5
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))
@@ -107,14 +106,14 @@ function ElementTypeComponent({icon,label}) {
         id:Date.now().toString(),
         x:0,
         y:0,
-        points:[50,50,50,50],
-        strokeWidth:3,
+      points:[0,0,100,100],
+        strokeWidth:4,
         stroke:'red',
-        pointerLength:10,
+        pointerLength:20,
         rotation:0,
-        pointerWidth:10,
-        startTime:played,
-        endTime:played+5
+        pointerWidth:20,
+        startTime:currentPlayTime,
+        endTime:currentPlayTime+5
       }
       dispatch(addArrow(arrowData))
       dispatch(setCurrentElement('arrow'))
@@ -130,9 +129,9 @@ function ElementTypeComponent({icon,label}) {
         height:100,
         glowColor: '#0ff',
         glowRadius:50,
-        cornerRadius:[20,0,20,0],
-        startTime: played,
-        endTime: played + 5
+        cornerRadius:[20,20,20,20],
+        startTime: currentPlayTime,
+        endTime: currentPlayTime + 5
       };
     
       dispatch(addSpotLight(spotlightData));

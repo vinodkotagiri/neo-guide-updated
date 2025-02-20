@@ -19,7 +19,7 @@ const VideoEditor = () => {
         {addingElements ? <div className="w-full h-full absolute z-10">
           <ElementsOverlay />
         </div> : ''}
-        <SubtitlesOverlay />
+        <SubtitlesOverlay/>
           <SubtitlesOverlay />
           <Player playerRef={playerRef} />
         </div>
