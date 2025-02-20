@@ -4,7 +4,55 @@ import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'rea
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
+Konva.Filters.RadialBlur = function (imageData) {
+  const data = imageData.data;
+  const width = imageData.width;
+  const height = imageData.height;
+  const radius = this.blurRadius() || 10;
+  const centerX = width / 2;
+  const centerY = height / 2;
 
+  // Create a temporary buffer
+  const tempData = new Uint8ClampedArray(data);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      
+      // Calculate distance from center
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Calculate blur amount based on distance
+      const blurAmount = Math.min(1, distance / radius);
+      
+      // Sample neighboring pixels
+      let r = 0, g = 0, b = 0, a = 0;
+      let samples = 0;
+      
+      for (let offset = -2; offset <= 2; offset++) {
+        const sampleX = Math.round(x + (dx * blurAmount * offset * 0.1));
+        const sampleY = Math.round(y + (dy * blurAmount * offset * 0.1));
+        
+        if (sampleX >= 0 && sampleX < width && sampleY >= 0 && sampleY < height) {
+          const sampleIdx = (sampleY * width + sampleX) * 4;
+          r += tempData[sampleIdx];
+          g += tempData[sampleIdx + 1];
+          b += tempData[sampleIdx + 2];
+          a += tempData[sampleIdx + 3];
+          samples++;
+        }
+      }
+
+      // Average the samples
+      data[idx] = r / samples;
+      data[idx + 1] = g / samples;
+      data[idx + 2] = b / samples;
+      data[idx + 3] = a / samples;
+    }
+  }
+};
 function ElementsOverlay() {
   const containerRef = useRef<HTMLDivElement>(null); // For the parent div
   const stageRef = useRef<any>(null); // For the Stage component
@@ -42,7 +90,7 @@ function ElementsOverlay() {
     }
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights,played]);
 
-
+ 
 
 
   return (
@@ -90,11 +138,13 @@ function ElementsOverlay() {
           ))}
           {blurs.map((rect) => (
             <Rect
+            ref={blurRectRef}
               key={rect.id}
               id={rect.id}
               x={rect.x}
               y={rect.y}
-              fill={'rgba(0,0,0,99)'}
+              fill={'#dfdfdf'}
+              opacity={20}
               width={rect.width}
               height={rect.height}
               draggable
@@ -168,7 +218,9 @@ function ElementsOverlay() {
             <Arrow
               key={arrow.id}
               id={arrow.id}
-              points={arrow.points}
+              x={0}
+              y={0}
+              points={[0,0,100,100]}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
               pointerLength={arrow.pointerLength}
@@ -211,8 +263,6 @@ function ElementsOverlay() {
               }}
             />
           ))}
-
-
           {spotLights.map((spotlight) => (
             <Group>
               {/* Dark Overlay */}

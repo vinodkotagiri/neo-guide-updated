@@ -14,7 +14,7 @@ const TextOptions = () => {
   const dispatch = useAppDispatch()
   const [text, setText] = useState('');
   const [font, setFont] = useState('Open Sans');
-  const [fontSize, setFontSize] = useState(12);
+  const [fontSize, setFontSize] = useState(24);
   const [fontColor, setFontColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('#000000');
   const [justify, setJustify] = useState('left');

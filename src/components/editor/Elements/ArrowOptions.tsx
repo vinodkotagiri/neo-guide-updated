@@ -12,8 +12,8 @@ const ArrowOptions = () => {
   const dispatch = useAppDispatch()
   const [stroke, setStroke] = useState('#fff');
   const [strokeWidth, setStrokeWidth] = useState(2);
-  const [pointerLength, setpointerLength] = useState(10);
-  const [pointerWidth, setPointerWidth] = useState(2);
+  const [pointerLength, setpointerLength] = useState(20);
+  const [pointerWidth, setPointerWidth] = useState(20);
   const [rotation, setRotation] = useState(0);
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
@@ -37,7 +37,7 @@ const ArrowOptions = () => {
       id: Date.now().toString(),
       x: 0,
       y: 0,
-      points: [100, 100, 50, 50],
+      points: [0, 0, 100, 100],
       strokeWidth: strokeWidth,
       stroke: stroke,
       pointerLength: pointerLength,
