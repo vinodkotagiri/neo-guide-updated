@@ -29,9 +29,11 @@ const ArrowOptions = () => {
 useEffect(()=>{
   setStartTime(currentPlayTime)
   setEndTime(currentPlayTime+5)
-},[currentPlayTime])
+},[])
 
   function handleAddNewBlur() {
+    setStartTime(currentPlayTime)
+    setEndTime(currentPlayTime+5)
     dispatch(setAddingElements(true))
     const arrowData: ArrowElementState = {
       id: Date.now().toString(),

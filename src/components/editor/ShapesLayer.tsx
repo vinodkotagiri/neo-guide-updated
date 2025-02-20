@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice'
+import { setVideoPlayed } from '../../redux/features/videoSlice';
 
-function ShapesLayer({ onSeek }) {
-  const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector(state => state.elements)
+function ShapesLayer({ playerRef }) {
   const dispatch = useAppDispatch()
+ 
+  const {duration}=useAppSelector(state => state.video)
+  const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector(state => state.elements)
   const [dragging, setDragging] = useState(false)
   const [draggedRect, setDraggedRect] = useState(null)
   const [initialX, setInitialX] = useState(0)
@@ -15,7 +18,7 @@ function ShapesLayer({ onSeek }) {
   //   setDragging(true)
   //   setDraggedRect(rect)
   //   setInitialX(e.clientX) // Get initial mouse position
-  //   setInitialLeft(rect.startTime * 10) // Initial position of the rectangle
+  //   setInitialLeft(rect.startTime * 8) // Initial position of the rectangle
   //   setInitialDuration(rect.endTime - rect.startTime)
   // }
 
@@ -50,12 +53,17 @@ function ShapesLayer({ onSeek }) {
   //   setInitialX(0);
   //   setInitialLeft(0);
   // }
-
+  function onSeek(newTime) {
+    if (playerRef?.current) {
+      playerRef.current?.seekTo(newTime / duration, "fraction");
+      dispatch(setVideoPlayed(newTime));
+    }
+  }
   return (
     <div className="relative top-12 w-full h-64 rounded-md overflow-hidden">
       {blurs?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 10
-        const left = rect.startTime * 10
+        const width = (rect.endTime - rect.startTime) * 8
+        const left = rect.startTime * 8
         return (
           <div
             key={i}
@@ -86,12 +94,12 @@ function ShapesLayer({ onSeek }) {
         )
       })}
       {rectangles?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 10
-        const left = rect.startTime * 10
+        const width = (rect.endTime - rect.startTime) * 8
+        const left = rect.startTime * 8
         return (
           <div
             key={i}
-            className="absolute group top-6 h-6 bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
+            className="absolute group top-6 h-10 bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
             style={{
               left: `${left}px`,
               width: `${width}px`,
@@ -117,8 +125,8 @@ function ShapesLayer({ onSeek }) {
         )
       })}
       {texts?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 10
-        const left = rect.startTime * 10
+        const width = (rect.endTime - rect.startTime) * 8
+        const left = rect.startTime * 8
         return (
           <div
             key={i}
@@ -148,8 +156,8 @@ function ShapesLayer({ onSeek }) {
         )
       })}
       {arrows?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 10
-        const left = rect.startTime * 10
+        const width = (rect.endTime - rect.startTime) * 8
+        const left = rect.startTime * 8
         return (
           <div
             key={i}
@@ -179,8 +187,8 @@ function ShapesLayer({ onSeek }) {
         )
       })}
       {spotLights?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 10
-        const left = rect.startTime * 10
+        const width = (rect.endTime - rect.startTime) * 8
+        const left = rect.startTime * 8
         return (
           <div
             key={i}

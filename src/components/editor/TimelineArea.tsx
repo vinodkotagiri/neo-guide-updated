@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
+import ShapesLayer from './ShapesLayer';
 
 function TimelineArea({ playerRef }) {
   const [markers, setMarkers] = useState([]);
@@ -218,6 +219,7 @@ function TimelineArea({ playerRef }) {
           whileHover="hover"
           onMouseDown={handleMouseDown}
         />
+        <ShapesLayer playerRef={playerRef} />
       </div>
     </div>
   );

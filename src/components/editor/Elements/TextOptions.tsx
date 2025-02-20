@@ -27,10 +27,12 @@ const TextOptions = () => {
 useEffect(()=>{
   setStartTime(currentPlayTime)
   setEndTime(currentPlayTime+5)
-},[currentPlayTime])
+},[])
 
 
   function handleAddNewBlur() {
+    setStartTime(currentPlayTime)
+    setEndTime(currentPlayTime+5)
     dispatch(setAddingElements(true))
     const textData: TextElementState = {
       id: Date.now().toString(),

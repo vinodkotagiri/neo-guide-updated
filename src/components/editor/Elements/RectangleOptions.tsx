@@ -33,7 +33,7 @@ const RectangleOptions = () => {
 useEffect(()=>{
   setStartTime(currentPlayTime)
   setEndTime(currentPlayTime+5)
-},[currentPlayTime])
+},[])
 
   const handleFillColorPickerClick = () => {
     if (fillColorRef.current) {
@@ -42,6 +42,8 @@ useEffect(()=>{
   }
 
   function handleAddNewRectangle() {
+    setStartTime(currentPlayTime)
+  setEndTime(currentPlayTime+5)
     dispatch(setAddingElements(true))
     const rectData: RectangleElementState = {
       id: Date.now().toString(),

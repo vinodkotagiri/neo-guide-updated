@@ -23,7 +23,7 @@ console.log(currentElementId)
 useEffect(()=>{
   setStartTime(currentPlayTime)
   setEndTime(currentPlayTime+5)
-},[currentPlayTime])
+},[])
 
   useEffect(() => {
     if (currentElementId) {
@@ -45,6 +45,8 @@ const handleStrokeColorPickerClick = () => {
 }
 
   function handleAddNewRectangle() {
+    setStartTime(currentPlayTime)
+    setEndTime(currentPlayTime+5)
     dispatch(setAddingElements(true))
     const rectData: SpotElementElementState = {
       id: Date.now().toString(),

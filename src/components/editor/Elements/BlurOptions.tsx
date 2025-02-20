@@ -18,9 +18,11 @@ const BlurOptions = () => {
 useEffect(()=>{
   setStartTime(currentPlayTime)
   setEndTime(currentPlayTime+5)
-},[currentPlayTime])
+},[])
 
   function handleAddNewBlur() {
+    setStartTime(currentPlayTime)
+    setEndTime(currentPlayTime+5)
     dispatch(setAddingElements(true))
     const blurData: BlurElementState = {
       id: Date.now().toString(),
