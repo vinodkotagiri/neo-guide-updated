@@ -13,7 +13,7 @@ function TimelineArea({ playerRef }) {
   useEffect(() => {
     // Sync cursor position with video play time
     const cleanup = () => {
-      if (playerRef?.current.getCurrentTime) {
+      if (playerRef?.current?.getCurrentTime) {
         const intervalId = setInterval(() => {
           const newCursorPosition = playerRef.current.getCurrentTime() * 8;
           setCursorPosition(newCursorPosition);
@@ -21,7 +21,6 @@ function TimelineArea({ playerRef }) {
           // Scroll if cursor goes out of view
           if (scrollRef.current) {
             const timelineWidth = timelineRef.current.offsetWidth;
-            const scrollWidth = scrollRef.current.scrollWidth;
             const scrollLeft = scrollRef.current.scrollLeft;
 
             if (newCursorPosition > scrollLeft + timelineWidth - 100 || newCursorPosition < scrollLeft + 100) {
