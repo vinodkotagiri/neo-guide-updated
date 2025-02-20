@@ -110,7 +110,7 @@ function ElementTypeComponent({icon,label}) {
         points:[50,50,50,50],
         strokeWidth:3,
         stroke:'red',
-        pointerLenght:10,
+        pointerLength:10,
         rotation:0,
         pointerWidth:10,
         startTime:played,

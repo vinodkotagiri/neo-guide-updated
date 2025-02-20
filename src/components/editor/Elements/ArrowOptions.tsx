@@ -12,7 +12,7 @@ const ArrowOptions = () => {
   const dispatch = useAppDispatch()
   const [stroke, setStroke] = useState('#fff');
   const [strokeWidth, setStrokeWidth] = useState(2);
-  const [pointerLenght, setPointerLenght] = useState(10);
+  const [pointerLength, setpointerLength] = useState(10);
   const [pointerWidth, setPointerWidth] = useState(2);
   const [rotation, setRotation] = useState(0);
   const [startTime, setStartTime] = useState(0)
@@ -40,7 +40,7 @@ const ArrowOptions = () => {
       points: [100, 100, 50, 50],
       strokeWidth: strokeWidth,
       stroke: stroke,
-      pointerLenght: pointerLenght,
+      pointerLength: pointerLength,
       rotation: rotation,
       pointerWidth: pointerWidth,
       startTime: played,
@@ -61,9 +61,9 @@ const ArrowOptions = () => {
 
   useEffect(() => {
     if (currentElementId) {
-      dispatch(editArrow({ id: currentElementId, startTime: startTime, endTime: endTime, rotation, stroke, strokeWidth,pointerLenght,pointerWidth}))
+      dispatch(editArrow({ id: currentElementId, startTime: startTime, endTime: endTime, rotation, stroke, strokeWidth,pointerLength,pointerWidth}))
     }
-  }, [startTime, endTime, currentElementId, rotation,stroke,strokeWidth,pointerLenght,pointerWidth])
+  }, [startTime, endTime, currentElementId, rotation,stroke,strokeWidth,pointerLength,pointerWidth])
 
 
 
@@ -117,9 +117,9 @@ const ArrowOptions = () => {
           className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
           type='range'
           min={1}
-          max={50}
-          onChange={(e) => setPointerLenght(e.target.valueAsNumber)}
-          value={pointerLenght}
+          max={100}
+          onChange={(e) => setpointerLength(e.target.valueAsNumber)}
+          value={pointerLength}
         />
       </div>
             {/* POINTER WIDTH */}

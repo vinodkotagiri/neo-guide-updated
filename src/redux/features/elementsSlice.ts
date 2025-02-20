@@ -46,7 +46,7 @@ export interface ArrowElementState {
   points: Array<number>;
   stroke: string;
   strokeWidth: number;
-  pointerLenght: number;
+  pointerLength: number;
   pointerWidth: number;
   rotation: number;
   startTime: number;

@@ -171,7 +171,7 @@ function ElementsOverlay() {
               points={arrow.points}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
-              pointerLength={arrow.pointerLenght}
+              pointerLength={arrow.pointerLength}
               pointerWidth={arrow.pointerWidth}
               rotation={arrow.rotation}
               fill={arrow.stroke}

@@ -17,13 +17,13 @@ function TimelineArea({ playerRef }) {
         const intervalId = setInterval(() => {
           const newCursorPosition = playerRef.current.getCurrentTime() * 8;
           setCursorPosition(newCursorPosition);
-          
+
           // Scroll if cursor goes out of view
           if (scrollRef.current) {
             const timelineWidth = timelineRef.current.offsetWidth;
             const scrollWidth = scrollRef.current.scrollWidth;
             const scrollLeft = scrollRef.current.scrollLeft;
-            
+
             if (newCursorPosition > scrollLeft + timelineWidth - 100 || newCursorPosition < scrollLeft + 100) {
               scrollRef.current.scrollLeft = newCursorPosition - timelineWidth / 2;
             }
@@ -36,7 +36,7 @@ function TimelineArea({ playerRef }) {
     if (playerRef?.current) {
       cleanup();
     }
-    
+
     return cleanup;
   }, [playerRef]);
 
@@ -63,19 +63,19 @@ function TimelineArea({ playerRef }) {
       const timelineRect = timelineRef.current.getBoundingClientRect();
       const scrollLeft = scrollRef.current.scrollLeft;
       const timelineWidth = timelineRef.current.scrollWidth; // Full width, including overflow
-  
+
       // Calculate new cursor position
       let mouseX = event.clientX - timelineRect.left + scrollLeft;
-  
+
       // Ensure cursor stays within bounds
       mouseX = Math.max(0, Math.min(mouseX, timelineWidth));
-  
+
       // Convert pixel position to time
-      const newTime = mouseX / 8; 
+      const newTime = mouseX / 8;
       playerRef.current.seekTo(newTime);
-  
+
       setCursorPosition(mouseX);
-  
+
       // Smooth auto-scroll
       const buffer = 100;
       if (mouseX > scrollLeft + timelineRect.width - buffer) {
@@ -85,7 +85,7 @@ function TimelineArea({ playerRef }) {
       }
     }
   };
-  
+
   const handleMouseUp = () => {
     document.removeEventListener('mousemove', handleCursorDrag);
     document.removeEventListener('mouseup', handleMouseUp);
@@ -115,10 +115,10 @@ function TimelineArea({ playerRef }) {
 
   const loadingVariants = {
     start: { opacity: 0, scale: 0.5 },
-    end: { 
-      opacity: 1, 
+    end: {
+      opacity: 1,
       scale: 1,
-      transition: { 
+      transition: {
         duration: 0.5,
         repeat: Infinity,
         repeatType: 'reverse'
@@ -138,7 +138,7 @@ function TimelineArea({ playerRef }) {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         className='w-full h-full flex justify-center items-center bg-gray-900'
         variants={loadingVariants}
         initial="start"
@@ -150,17 +150,17 @@ function TimelineArea({ playerRef }) {
   }
 
   return (
-    <div 
-      ref={scrollRef} 
+    <div
+      ref={scrollRef}
       className='w-full h-full overflow-x-scroll bg-gray-900'
     >
       <div ref={timelineRef} className='w-full h-full relative'>
         {markers.map((item, index) => (
-          <motion.div 
-            key={index} 
+          <motion.div
+            key={index}
             className='absolute top-0 cursor-pointer z-10 bg-slate-400'
-            style={{ 
-              left: `${item * 8}px`, 
+            style={{
+              left: `${item * 8}px`,
               height: item % 10 === 0 ? '8px' : '4px',
               ...neonGlow
             }}
@@ -176,11 +176,11 @@ function TimelineArea({ playerRef }) {
         <AnimatePresence>
           {markers.map((item, index) => (
             item % 10 === 0 && (
-              <motion.div 
-                key={index} 
+              <motion.div
+                key={index}
                 className='absolute top-3 left-4 cursor-pointer z-10 text-xs'
-                style={{ 
-                  left: `${item * 8}px`, 
+                style={{
+                  left: `${item * 8}px`,
                   color: '#cbd5e0'
                 }}
                 variants={{
@@ -196,10 +196,10 @@ function TimelineArea({ playerRef }) {
             )
           ))}
         </AnimatePresence>
-        <div className='absolute h-[calc(100%-36px)] top-[36px]' style={{width: markers[markers.length-1] * 8}}>
+        <div className='absolute h-[calc(100%-36px)] top-[36px]' style={{ width: markers[markers.length - 1] * 8 }}>
           <div className='absolute h-[48px] w-full bg-black opacity-10 -top-[36px] -z-10' />
         </div>
-        <motion.div 
+        <motion.div
           className='absolute cursor-grab'
           style={{
             left: `${cursorPosition}px`,
@@ -210,8 +210,8 @@ function TimelineArea({ playerRef }) {
           }}
           variants={{
             ...cursorVariants,
-            hover: { 
-              ...cursorVariants.hover, 
+            hover: {
+              ...cursorVariants.hover,
               ...neonGlowHover,
             }
           }}
