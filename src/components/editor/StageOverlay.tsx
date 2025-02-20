@@ -1,24 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import Konva from 'konva';
+import { RectangleElementState } from '../../redux/features/elementsSlice';
 
 // Define the rectangle type
-interface Rectangle {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
-  stroke: string;
-  strokeWidth: number;
-  rotation: number;
-}
+
 
 const StageOverlay: React.FC<{width:number,height:number}> = ({width, height}) => {
   // State for tracking drawing
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
-  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+  const [rectangles, setRectangles] = useState<RectangleElementState[]>([]);
   const [startPos, setStartPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   
   // State for selected rectangle
@@ -107,8 +98,8 @@ const StageOverlay: React.FC<{width:number,height:number}> = ({width, height}) =
             y={rect.y}
             width={rect.width}
             height={rect.height}
-            fill={rect.fill}
-            stroke={rect.stroke}
+            fill={rect.fillColor}
+            stroke={rect.strokeColor}
             strokeWidth={rect.strokeWidth}
             rotation={rect.rotation}
             draggable

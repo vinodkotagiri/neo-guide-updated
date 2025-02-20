@@ -12,6 +12,7 @@ export interface RectangleElementState {
   cornerRadius: Array<number>;
   startTime: number;
   endTime: number;
+  rotation: number;
 }
 
 export interface BlurElementState {
