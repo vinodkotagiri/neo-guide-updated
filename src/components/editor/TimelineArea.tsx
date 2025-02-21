@@ -9,24 +9,19 @@ function TimelineArea({ playerRef }) {
   const [loading, setLoading] = useState(true);
   const timelineRef = useRef(null);
   const scrollRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const lastMouseX = useRef(0); // Track last mouse position for deltaX
   const { duration } = useAppSelector(state => state.video);
 
   useEffect(() => {
-    // Sync cursor position with video play time
     const cleanup = () => {
       if (playerRef?.current?.getCurrentTime) {
         const intervalId = setInterval(() => {
-          const newCursorPosition = playerRef.current.getCurrentTime() * 8;
-          setCursorPosition(newCursorPosition);
-
-          // Scroll if cursor goes out of view
-          if (scrollRef.current) {
-            const timelineWidth = timelineRef.current.offsetWidth;
-            const scrollLeft = scrollRef.current.scrollLeft;
-
-            if (newCursorPosition > scrollLeft + timelineWidth - 100 || newCursorPosition < scrollLeft + 100) {
-              scrollRef.current.scrollLeft = newCursorPosition - timelineWidth / 2;
-            }
+          if (!isDraggingRef.current) {
+            const newCursorPosition = playerRef.current.getCurrentTime() * 8;
+            setCursorPosition(newCursorPosition);
+            autoScroll(newCursorPosition);
           }
         }, 100);
         return () => clearInterval(intervalId);
@@ -34,10 +29,8 @@ function TimelineArea({ playerRef }) {
     };
 
     if (playerRef?.current) {
-      cleanup();
+      return cleanup();
     }
-
-    return cleanup;
   }, [playerRef]);
 
   useEffect(() => {
@@ -49,55 +42,74 @@ function TimelineArea({ playerRef }) {
           setLoading(false);
         } catch (error) {
           console.error('Error setting up markers:', error);
-          setLoading(false); // Ensure loading state is set to false even on error
+          setLoading(false);
         }
       }
     };
-
     initMarkers();
   }, [duration]);
 
-  // Handle cursor drag
-  const handleCursorDrag = (event) => {
-    if (timelineRef.current && scrollRef.current) {
-      const timelineRect = timelineRef.current.getBoundingClientRect();
+  const autoScroll = (position) => {
+    if (scrollRef.current) {
+      const timelineWidth = timelineRef.current.offsetWidth;
       const scrollLeft = scrollRef.current.scrollLeft;
-      const timelineWidth = timelineRef.current.scrollWidth; // Full width, including overflow
-
-      // Calculate new cursor position
-      let mouseX = event.clientX - timelineRect.left + scrollLeft;
-
-      // Ensure cursor stays within bounds
-      mouseX = Math.max(0, Math.min(mouseX, timelineWidth));
-
-      // Convert pixel position to time
-      const newTime = mouseX / 8;
-      playerRef.current.seekTo(newTime);
-
-      setCursorPosition(mouseX);
-
-      // Smooth auto-scroll
       const buffer = 100;
-      if (mouseX > scrollLeft + timelineRect.width - buffer) {
-        scrollRef.current.scrollLeft = Math.min(scrollRef.current.scrollLeft + buffer, timelineWidth - timelineRect.width);
-      } else if (mouseX < scrollLeft + buffer) {
-        scrollRef.current.scrollLeft = Math.max(scrollRef.current.scrollLeft - buffer, 0);
+
+      if (position > scrollLeft + timelineWidth - buffer) {
+        scrollRef.current.scrollLeft = position - timelineWidth + buffer;
+      } else if (position < scrollLeft + buffer) {
+        scrollRef.current.scrollLeft = position - buffer;
       }
     }
   };
 
-  const handleMouseUp = () => {
-    document.removeEventListener('mousemove', handleCursorDrag);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
   const handleMouseDown = (e) => {
     e.preventDefault();
-    document.addEventListener('mousemove', handleCursorDrag);
-    document.addEventListener('mouseup', handleMouseUp);
+    e.stopPropagation();
+    console.log('Mouse down:', { x: e.clientX, cursorPosition });
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    lastMouseX.current = e.clientX; // Initialize last mouse position
+    document.body.addEventListener('mousemove', handleMouseMove);
+    document.body.addEventListener('mouseup', handleMouseUp);
   };
 
-  // Framer Motion variants for animations
+  const handleMouseMove = (e) => {
+    if (isDraggingRef.current) {
+      const deltaX = e.clientX - lastMouseX.current;
+      console.log('Dragging:', { 
+        clientX: e.clientX, 
+        deltaX, 
+        currentPosition: cursorPosition 
+      });
+
+      setCursorPosition(prev => {
+        const newPosition = prev + deltaX;
+        const maxPosition = duration ? (duration - 1) * 8 : 0;
+        const boundedPosition = Math.max(0, Math.min(newPosition, maxPosition));
+        
+        autoScroll(boundedPosition);
+        
+        if (playerRef.current?.seekTo) {
+          playerRef.current.seekTo(boundedPosition / 8);
+        }
+        
+        return boundedPosition;
+      });
+
+      lastMouseX.current = e.clientX; // Update last mouse position
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    console.log('Mouse up');
+    isDraggingRef.current = false;
+    setIsDragging(false);
+    document.body.removeEventListener('mousemove', handleMouseMove);
+    document.body.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  // Framer Motion variants
   const markerVariants = {
     hover: { width: 2, backgroundColor: '#4a5568' },
     rest: { width: 1, backgroundColor: '#cbd5e0' },
@@ -106,6 +118,7 @@ function TimelineArea({ playerRef }) {
   const cursorVariants = {
     hover: { backgroundColor: '#a855f7', scale: 1.05 },
     rest: { backgroundColor: '#d946ef', scale: 1 },
+    dragging: { backgroundColor: '#9333ea', scale: 1.1 }
   };
 
   const numberVariants = {
@@ -126,7 +139,6 @@ function TimelineArea({ playerRef }) {
     }
   };
 
-  // Neon glow effect styles
   const neonGlow = {
     boxShadow: '0 0 10px #4a5568, 0 0 20px #4a5568, 0 0 30px #4a5568, 0 0 40px #4a5568',
     transition: 'box-shadow 0.3s ease-in-out'
@@ -153,8 +165,18 @@ function TimelineArea({ playerRef }) {
     <div
       ref={scrollRef}
       className='w-full h-full overflow-x-scroll bg-gray-900'
+      style={{ 
+        scrollBehavior: 'smooth', 
+        userSelect: 'none', 
+        position: 'relative',
+        minHeight: '100px'
+      }}
     >
-      <div ref={timelineRef} className='w-full h-full relative'>
+      <div 
+        ref={timelineRef} 
+        className='w-full h-full relative' 
+        style={{ pointerEvents: 'auto' }}
+      >
         {markers.map((item, index) => (
           <motion.div
             key={index}
@@ -196,27 +218,28 @@ function TimelineArea({ playerRef }) {
             )
           ))}
         </AnimatePresence>
-        <div className='absolute h-[calc(100%-36px)] top-[36px]' style={{ width: markers[markers.length - 1] * 8 }}>
+        <div 
+          className='absolute h-[calc(100%-36px)] top-[36px]' 
+          style={{ width: markers.length > 0 ? markers[markers.length - 1] * 8 : 0 }}
+        >
           <div className='absolute h-[48px] w-full bg-black opacity-10 -top-[36px] -z-10' />
         </div>
         <motion.div
-          className='absolute cursor-grab'
+          className={`absolute ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} `}
+          
           style={{
             left: `${cursorPosition}px`,
-            width: '2px', // I-beam width
-            height: '100%', // Full height of the timeline
+            width: '4px',
+            height: '100%',
             backgroundColor: '#d946ef',
-            ...neonGlow
+            ...neonGlow,
+            zIndex: 20,
+            transform: 'translateX(-50%)'
           }}
-          variants={{
-            ...cursorVariants,
-            hover: {
-              ...cursorVariants.hover,
-              ...neonGlowHover,
-            }
-          }}
+          variants={cursorVariants}
           initial="rest"
-          whileHover="hover"
+          animate={isDragging ? "dragging" : "rest"}
+          whileHover={!isDragging && "hover"}
           onMouseDown={handleMouseDown}
         />
         <ShapesLayer playerRef={playerRef} />
