@@ -77,23 +77,23 @@ function TimelineArea({ playerRef }) {
   const handleMouseMove = (e) => {
     if (isDraggingRef.current) {
       const deltaX = e.clientX - lastMouseX.current;
-      console.log('Dragging:', { 
-        clientX: e.clientX, 
-        deltaX, 
-        currentPosition: cursorPosition 
+      console.log('Dragging:', {
+        clientX: e.clientX,
+        deltaX,
+        currentPosition: cursorPosition
       });
 
       setCursorPosition(prev => {
         const newPosition = prev + deltaX;
         const maxPosition = duration ? (duration - 1) * 8 : 0;
         const boundedPosition = Math.max(0, Math.min(newPosition, maxPosition));
-        
+
         autoScroll(boundedPosition);
-        
+
         if (playerRef.current?.seekTo) {
           playerRef.current.seekTo(boundedPosition / 8);
         }
-        
+
         return boundedPosition;
       });
 
@@ -165,16 +165,16 @@ function TimelineArea({ playerRef }) {
     <div
       ref={scrollRef}
       className='w-full h-full overflow-x-scroll bg-gray-900'
-      style={{ 
-        scrollBehavior: 'smooth', 
-        userSelect: 'none', 
+      style={{
+        scrollBehavior: 'smooth',
+        userSelect: 'none',
         position: 'relative',
         minHeight: '100px'
       }}
     >
-      <div 
-        ref={timelineRef} 
-        className='w-full h-full relative' 
+      <div
+        ref={timelineRef}
+        className='w-full h-full relative'
         style={{ pointerEvents: 'auto' }}
       >
         {markers.map((item, index) => (
@@ -218,15 +218,15 @@ function TimelineArea({ playerRef }) {
             )
           ))}
         </AnimatePresence>
-        <div 
-          className='absolute h-[calc(100%-36px)] top-[36px]' 
+        <div
+          className='absolute h-[calc(100%-36px)] top-[36px]'
           style={{ width: markers.length > 0 ? markers[markers.length - 1] * 8 : 0 }}
         >
           <div className='absolute h-[48px] w-full bg-black opacity-10 -top-[36px] -z-10' />
         </div>
         <motion.div
           className={`absolute ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} `}
-          
+
           style={{
             left: `${cursorPosition}px`,
             width: '4px',
@@ -242,7 +242,8 @@ function TimelineArea({ playerRef }) {
           whileHover={!isDragging && "hover"}
           onMouseDown={handleMouseDown}
         />
-        <ShapesLayer playerRef={playerRef} />
+        <ShapesLayer numSegments={6}
+          thumbnailHeight={150} width={markers[markers.length - 1] * 8} />
       </div>
     </div>
   );

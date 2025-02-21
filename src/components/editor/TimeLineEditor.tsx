@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import WaveSurfer from "wavesurfer.js";
-import ShapesLayer from "./ShapesLayer";
+import ShapesLayer from "./ShapesLayerOld";
 import { Range } from "react-range";
 
 function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {

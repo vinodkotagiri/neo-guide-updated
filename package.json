@@ -21,6 +21,7 @@
     "konva": "^9.3.18",
     "language-flags": "^1.1.5",
     "lodash": "^4.17.21",
+    "mp4box": "^0.5.3",
     "re-resizable": "^6.10.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

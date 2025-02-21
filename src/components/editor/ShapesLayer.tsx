@@ -1,225 +1,152 @@
-import React, { useEffect, useState } from 'react'
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice'
-import { setVideoPlayed } from '../../redux/features/videoSlice';
+import React, { useEffect, useState } from 'react';
+import { useAppSelector } from '../../redux/hooks';
+import MP4Box from 'mp4box';
 
-function ShapesLayer({ playerRef }) {
-  const dispatch = useAppDispatch()
- 
-  const {duration}=useAppSelector(state => state.video)
-  const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector(state => state.elements)
-  const [dragging, setDragging] = useState(false)
-  const [draggedRect, setDraggedRect] = useState(null)
-  const [initialX, setInitialX] = useState(0)
-  const [initialLeft, setInitialLeft] = useState(0)
-  const [initialDuration, setInitialDuration] = useState(0)
+function ShapesLayer({ width, numSegments = 4, thumbnailHeight = 100 }) {
+  const { url } = useAppSelector((state) => state.video);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [segments, setSegments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const handleDragStart = (e, rect) => {
-  //   setDragging(true)
-  //   setDraggedRect(rect)
-  //   setInitialX(e.clientX) // Get initial mouse position
-  //   setInitialLeft(rect.startTime * 8) // Initial position of the rectangle
-  //   setInitialDuration(rect.endTime - rect.startTime)
-  // }
+  // Generate thumbnail using canvas
+  const generateThumbnail = (video, time) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      video.currentTime = time;
 
+      video.onseeked = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg'));
+      };
+    });
+  };
 
-  // const handleDrag = (e, shape) => {
-  //   const deltaX = e.clientX - initialX; // Calculate horizontal movement
-  //   const newLeft = initialLeft + deltaX; // Calculate new left position
-  //   const newStartTime = Math.max(0, newLeft / 10); // Ensure startTime is not negative
-  //   const newEndTime = newStartTime + initialDuration; // Maintain duration
-  //   if ((newEndTime - newStartTime )==initialDuration) {
-  //     setDraggedRect((prev) => ({
-  //       ...prev,
-  //       startTime: newStartTime,
-  //       endTime: newEndTime,
-  //     })); // Update local state for smooth drag feedback
+  // Process video with MP4Box and create segments
+  const processVideoWithMP4Box = async (videoUrl) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(videoUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      
+      const mp4boxfile = MP4Box.createFile();
+      arrayBuffer.fileStart = 0;
+      
+      mp4boxfile.onReady = async (info) => {
+        const duration = info.duration / info.timescale;
+        setVideoDuration(duration);
 
-  //     if (shape === "rectangle")
-  //       dispatch(editRectangle({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }));
-  //     else if (shape === "blur")
-  //       dispatch(editBlur({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }));
-  //     else if (shape === "text")
-  //       dispatch(editText({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }));
-  //     else if (shape === "arrow")
-  //       dispatch(editArrow({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }));
-  //     else if (shape === "spotlight")
-  //       dispatch(editSpotLight({ id: draggedRect.id, startTime: newStartTime, endTime: newEndTime }));
-  //   }
-  // };
-  // const handleDragEnd = () => {
-  //   setDragging(false);
-  //   setDraggedRect(null);
-  //   setInitialX(0);
-  //   setInitialLeft(0);
-  // }
-  function onSeek(newTime) {
-    if (playerRef?.current) {
-      playerRef.current?.seekTo(newTime / duration, "fraction");
-      dispatch(setVideoPlayed(newTime));
+        const segmentLength = duration / numSegments;
+        const videoElement = document.createElement('video');
+        videoElement.src = videoUrl;
+        videoElement.crossOrigin = 'anonymous';
+
+        const newSegments = [];
+        for (let i = 0; i < numSegments; i++) {
+          const start = segmentLength * i;
+          const midPoint = start + segmentLength / 2;
+          const thumbnail = await generateThumbnail(videoElement, midPoint);
+          
+          newSegments.push({
+            start,
+            end: start + segmentLength,
+            color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+            thumbnail
+          });
+        }
+        
+        setSegments(newSegments);
+        setIsLoading(false);
+      };
+
+      mp4boxfile.onError = (error) => {
+        console.error('MP4Box error:', error);
+        setIsLoading(false);
+      };
+
+      mp4boxfile.appendBuffer(arrayBuffer);
+      mp4boxfile.flush();
+    } catch (error) {
+      console.error('Error processing video:', error);
+      setIsLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (url) {
+      processVideoWithMP4Box(url);
+    }
+  }, [url, numSegments]);
+
   return (
-    <div className="relative top-12 w-full h-64 rounded-md overflow-hidden">
-      {blurs?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 8
-        const left = rect.startTime * 8
-        return (
+    <div className='w-full relative' style={{ width }}>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          Loading...
+        </div>
+      )}
+      
+      {/* 48px height segment bar */}
+      <div className='h-12 absolute top-0 w-full' style={{ height: '48px' }}>
+        {videoDuration > 0 && segments.map((segment, index) => (
           <div
-            key={i}
-            className="absolute group h-6 bg-blue-500  rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'blur'}
+            key={index}
+            className="h-full absolute flex items-center justify-center text-white text-xs"
             style={{
-              left: `${left}px`,
-              width: `${width}px`,
+              left: `${(segment.start / videoDuration) * 100}%`,
+              width: `${((segment.end - segment.start) / videoDuration) * 100}%`,
+              backgroundColor: segment.color,
+              opacity: 0.8,
+              borderRight: index < numSegments - 1 ? '1px solid white' : 'none'
             }}
-            // onDragStart={(e) => handleDragStart(e, rect)}
-            // onDrag={(e) => handleDrag(e, 'blur')}
-            // onDragEnd={handleDragEnd}
-            onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'blur' }))
-              onSeek(rect.startTime)
-            }}
-          // draggable
           >
-            <span className='flex items-center justify-center capitalize'>blur</span>
-
-            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-
+            {/* Display segment duration */}
+            {`${((segment.end - segment.start)).toFixed(1)}s`}
           </div>
-        )
-      })}
-      {rectangles?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 8
-        const left = rect.startTime * 8
-        return (
+        ))}
+      </div>
+      
+      {/* Thumbnails section */}
+      <div className='w-full flex justify-between pt-14' style={{ paddingTop: '56px' }}>
+        {segments.map((segment, index) => (
           <div
-            key={i}
-            className="absolute group top-6 h-10 bg-green-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'rectangle'}
+            key={index}
+            className="relative"
             style={{
-              left: `${left}px`,
-              width: `${width}px`,
+              width: `${100 / numSegments}%`,
             }}
-            // onDragStart={(e) => handleDragStart(e, rect)}
-            // onDrag={(e) => handleDrag(e, 'rectangle')}
-            // onDragEnd={handleDragEnd}
-            onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'rectangle' }))
-              onSeek(rect.startTime)
-            }}
-          // draggable
           >
-            <span className='flex items-center justify-center capitalize'>rect</span>
-            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-
+            {segment.thumbnail && (
+              <img
+                src={segment.thumbnail}
+                alt={`Segment ${index + 1}`}
+                style={{
+                  width: '100%',
+                  height: thumbnailHeight,
+                  objectFit: 'cover',
+                  border: '2px solid white',
+                  borderRadius: '4px'
+                }}
+              />
+            )}
+            <span className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-1 rounded">
+              {`${segment.start.toFixed(1)}s`}
+            </span>
           </div>
-        )
-      })}
-      {texts?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 8
-        const left = rect.startTime * 8
-        return (
-          <div
-            key={i}
-            className="absolute group top-12 h-6 bg-amber-950  rounded-md border-[1px] border-slate-600 cursor-pointer   tooltip" data-tip={'text'}
-            style={{
-              left: `${left}px`,
-              width: `${width}px`,
-            }}
-            // onDragStart={(e) => handleDragStart(e, rect)}
-            // onDrag={(e) => handleDrag(e, 'text')}
-            // onDragEnd={handleDragEnd}
-            onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'text' }))
-              onSeek(rect.startTime)
-            }}
-          // draggable
-          >
-            <span className='flex items-center justify-center capitalize text-white'>text</span>
-            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-
-          </div>
-        )
-      })}
-      {arrows?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 8
-        const left = rect.startTime * 8
-        return (
-          <div
-            key={i}
-            className="absolute group top-18 h-6 bg-red-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'text'}
-            style={{
-              left: `${left}px`,
-              width: `${width}px`,
-            }}
-            // onDragStart={(e) => handleDragStart(e, rect)}
-            // onDrag={(e) => handleDrag(e, 'arrow')}
-            // onDragEnd={handleDragEnd}
-            onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'arrow' }))
-              onSeek(rect.startTime)
-            }}
-          // draggable
-          >
-            <span className='flex items-center justify-center capitalize'>arrow</span>
-            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-
-          </div>
-        )
-      })}
-      {spotLights?.map((rect, i) => {
-        const width = (rect.endTime - rect.startTime) * 8
-        const left = rect.startTime * 8
-        return (
-          <div
-            key={i}
-            className="absolute group top-24 h-6 bg-purple-500 rounded-md border-[1px] border-slate-600 cursor-pointer opacity-75 tooltip" data-tip={'text'}
-            style={{
-              left: `${left}px`,
-              width: `${width}px`,
-            }}
-            // onDragStart={(e) => handleDragStart(e, rect)}
-            // onDrag={(e) => handleDrag(e, 'arrow')}
-            // onDragEnd={handleDragEnd}
-            onClick={() => {
-              dispatch(setCurrentElementId({ id: rect.id, type: 'spotlight' }))
-              onSeek(rect.startTime)
-            }}
-          // draggable
-          >
-            <span className='flex items-center justify-center capitalize'>spot</span>
-            <div className='absolute top-0 left-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-            <div className='absolute top-0 right-0 h-full w-2 bg-slate-400  group-hover:flex items-center justify-center cursor-ew-resize hidden'>
-              <span className='text-black'>|</span>
-            </div>
-
-          </div>
-        )
-      })}
-
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 
-export default ShapesLayer
+import PropTypes from 'prop-types';
+
+ShapesLayer.propTypes = {
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  numSegments: PropTypes.number,
+  thumbnailHeight: PropTypes.number
+};
+
+export default ShapesLayer;
