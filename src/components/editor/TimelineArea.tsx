@@ -242,8 +242,8 @@ function TimelineArea({ playerRef }) {
           whileHover={!isDragging && "hover"}
           onMouseDown={handleMouseDown}
         />
-        <ShapesLayer numSegments={6}
-          thumbnailHeight={150} width={markers[markers.length - 1] * 8} />
+        <ShapesLayer numSegments={Math.ceil(duration/10)}
+          thumbnailHeight={40} width={markers[markers.length - 1] * 8} />
       </div>
     </div>
   );

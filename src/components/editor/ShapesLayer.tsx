@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import MP4Box from 'mp4box';
 
-function ShapesLayer({ width, numSegments = 4, thumbnailHeight = 100 }) {
+function ShapesLayer({ width, numSegments, thumbnailHeight }) {
   const { url } = useAppSelector((state) => state.video);
   const [videoDuration, setVideoDuration] = useState(0);
   const [segments, setSegments] = useState([]);
@@ -89,24 +89,7 @@ function ShapesLayer({ width, numSegments = 4, thumbnailHeight = 100 }) {
       )}
       
       {/* 48px height segment bar */}
-      <div className='h-12 absolute top-0 w-full' style={{ height: '48px' }}>
-        {videoDuration > 0 && segments.map((segment, index) => (
-          <div
-            key={index}
-            className="h-full absolute flex items-center justify-center text-white text-xs"
-            style={{
-              left: `${(segment.start / videoDuration) * 100}%`,
-              width: `${((segment.end - segment.start) / videoDuration) * 100}%`,
-              backgroundColor: segment.color,
-              opacity: 0.8,
-              borderRight: index < numSegments - 1 ? '1px solid white' : 'none'
-            }}
-          >
-            {/* Display segment duration */}
-            {`${((segment.end - segment.start)).toFixed(1)}s`}
-          </div>
-        ))}
-      </div>
+     
       
       {/* Thumbnails section */}
       <div className='w-full flex justify-between pt-14' style={{ paddingTop: '56px' }}>
