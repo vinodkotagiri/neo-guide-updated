@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutlineCenterFocusStrong } from 'react-icons/md'
-import {GoRepoPush} from 'react-icons/go'
+import  { useEffect } from 'react'
+import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields,MdArrowOutward,MdOutlineCenterFocusStrong, MdSmartButton } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
 import { setAddingElements } from '../../redux/features/videoSlice'
 import { addArrow, addBlur, addRectangle, addSpotLight, addText, ArrowElementState, BlurElementState, RectangleElementState, setCurrentElement, SpotElementElementState, TextElementState } from '../../redux/features/elementsSlice'
@@ -36,7 +35,7 @@ function ElementsAddComponent() {
         <ElementTypeComponent icon={<MdOutlineTextFields size={32}/>} label={'text'}/>
         <ElementTypeComponent icon={<MdArrowOutward size={32}/>} label={'arrow'}/>
         <ElementTypeComponent icon={<MdOutlineCenterFocusStrong size={32}/>} label={'spotlight'}/>
-        <ElementTypeComponent icon={<GoRepoPush size={32}/>} label={'pop-over'}/>
+        <ElementTypeComponent icon={<MdSmartButton size={32}/>} label={'button'}/>
       </div>
     </div>
     </>
@@ -62,7 +61,7 @@ function ElementTypeComponent({icon,label}) {
         cornerRadius:[1,1,1,1],
         fillColor:'transparent',
         startTime:currentPlayTime,
-        endTime:currentPlayTime+5
+        endTime:currentPlayTime+15
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
@@ -77,7 +76,7 @@ function ElementTypeComponent({icon,label}) {
         height:100,
         blurRadius:50,
         startTime:currentPlayTime,
-        endTime:currentPlayTime+5
+        endTime:currentPlayTime+15
       }
       dispatch(addBlur(blurData))
       dispatch(setCurrentElement('blur'))
@@ -95,7 +94,7 @@ function ElementTypeComponent({icon,label}) {
         justify:'left',
         fontColor:'red',
         startTime:currentPlayTime,
-        endTime:currentPlayTime+5
+        endTime:currentPlayTime+15
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))
@@ -113,7 +112,7 @@ function ElementTypeComponent({icon,label}) {
         rotation:0,
         pointerWidth:20,
         startTime:currentPlayTime,
-        endTime:currentPlayTime+5
+        endTime:currentPlayTime+15
       }
       dispatch(addArrow(arrowData))
       dispatch(setCurrentElement('arrow'))
@@ -131,7 +130,7 @@ function ElementTypeComponent({icon,label}) {
         glowRadius:50,
         cornerRadius:[20,20,20,20],
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 5
+        endTime: currentPlayTime + 15
       };
     
       dispatch(addSpotLight(spotlightData));
@@ -141,6 +140,6 @@ function ElementTypeComponent({icon,label}) {
 
 
   return (
-  <button className='btn bg-[#02BC7D] text-slate-800 w-[160px]' onClick={()=>handleAddShape(label)}>{icon}<small className='capitalize'>{label}</small></button>
+  <button className='bg-[#02BC7D] text-slate-800 w-[160px] aspect-square flex items-center justify-center rounded-md shadow-xl cursor-pointer' onClick={()=>handleAddShape(label)}>{icon}<small className='capitalize'>{label}</small></button>
   )
 }

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import MP4Box from 'mp4box';
 
-function ShapesLayer({ width, numSegments, thumbnailHeight }) {
+function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef,playerRef }) {
   const { url } = useAppSelector((state) => state.video);
   const [videoDuration, setVideoDuration] = useState(0);
   const [segments, setSegments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const rectLayerRef = useRef(null);
+  const { rectangles, blurs, spotLights, texts, arrows } = useAppSelector(state => state.elements)
+  const sliceRef = useRef(null)
   // Generate thumbnail using canvas
   const generateThumbnail = (video, time) => {
     return new Promise((resolve) => {
@@ -30,10 +32,10 @@ function ShapesLayer({ width, numSegments, thumbnailHeight }) {
     try {
       const response = await fetch(videoUrl);
       const arrayBuffer = await response.arrayBuffer();
-      
+
       const mp4boxfile = MP4Box.createFile();
       arrayBuffer.fileStart = 0;
-      
+
       mp4boxfile.onReady = async (info) => {
         const duration = info.duration / info.timescale;
         setVideoDuration(duration);
@@ -48,15 +50,15 @@ function ShapesLayer({ width, numSegments, thumbnailHeight }) {
           const start = segmentLength * i;
           const midPoint = start + segmentLength / 2;
           const thumbnail = await generateThumbnail(videoElement, midPoint);
-          
+
           newSegments.push({
             start,
             end: start + segmentLength,
-            color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
             thumbnail
           });
         }
-        
+
         setSegments(newSegments);
         setIsLoading(false);
       };
@@ -81,50 +83,95 @@ function ShapesLayer({ width, numSegments, thumbnailHeight }) {
   }, [url, numSegments]);
 
   return (
-    <div className='w-full relative' style={{ width }}>
-      {isLoading && (
+    <div className='w-full relative flex flex-col gap-1' style={{ width }} >
+      {isLoading ?
         <div className="absolute inset-0 flex items-center justify-center">
           Loading...
         </div>
-      )}
-      
-      {/* 48px height segment bar */}
-     
-      
-      {/* Thumbnails section */}
-      <div className='w-full flex justify-between pt-14' style={{ paddingTop: '56px' }}>
-        {segments.map((segment, index) => (
-          <div
-            key={index}
-            className="relative"
-            style={{
-              width: `${100 / numSegments}%`,
-            }}
-          >
-            {segment.thumbnail && (
-              <img
-                src={segment.thumbnail}
-                alt={`Segment ${index + 1}`}
+        : <>
+          {/* Thumbnails section */}
+          <div className='w-full flex justify-between' style={{ paddingTop: '30px' }}>
+            {segments.map((segment, index) => (
+              <div
+                key={index}
+                className="relative cursor-pointer"
                 style={{
-                  width: '100%',
-                  height: thumbnailHeight,
-                  objectFit: 'cover',
-                  border: '2px solid white',
-                  borderRadius: '4px'
+                  width: `${100 / numSegments}%`,
                 }}
-              />
-            )}
-            <span className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-1 rounded">
-              {`${segment.start.toFixed(1)}s`}
-            </span>
+                onClick={() => playerRef?.current?.seekTo(segment.start)}
+              >
+                {segment.thumbnail && (
+                  <img
+                    src={segment.thumbnail}
+                    alt={`Segment ${index + 1}`}
+                    style={{
+                      width: '100%',
+                      height: thumbnailHeight,
+                      objectFit: 'cover',
+                      border: '2px solid white',
+                      borderRadius: '4px'
+                    }}
+                  />
+                )}
+                <span className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-20 px-1 rounded">
+                  {`${(Math.ceil(segment.start))}s`}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* RECTANGLE LAYER */}
+          <div className='h-[36px] w-full border-b-[1px] border-slate-800 relative' ref={rectLayerRef}>
+            {rectangles.map((rectangle) => {
+              return (
+                <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'rectangle'} key={rectangle.id} shapeType={'rectangle'} shape={rectangle} color='#16C47F'/>
+              )
+            })}
+          </div>
+
+          {/* BLUR LAYER */}
+          <div className='h-[36px] w-full border-b-[1px] border-slate-800 relative' ref={rectLayerRef}>
+            {blurs.map((blur) => {
+              return (
+                <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'blur'} key={blur.id} shapeType={'blur'} shape={blur} color='#FFD65A'/>
+              )
+            })}
+          </div>
+
+          {/* ARROW LAYER */}
+          <div className='h-[36px] w-full border-b-[1px] border-slate-800 relative' ref={rectLayerRef}>
+            {arrows.map((arrow) => {
+              return (
+                <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'arrow'} key={arrow.id} shapeType={'arrow'} shape={arrow} color='#FF9D23'/>
+              )
+            })}
+          </div>
+
+
+          {/* TEXT LAYER */}
+          <div className='h-[36px] w-full border-b-[1px] border-slate-800 relative' ref={rectLayerRef}>
+            {texts.map((text) => {
+              return (
+                <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'text'} key={text.id} shapeType={'text'} shape={text} color='#F93827'/>
+              )
+            })}
+          </div>
+
+          {/* SPOTLIGHT LAYER */}
+          <div className='h-[36px] w-full border-b-[1px] border-slate-800 relative' ref={rectLayerRef}>
+            {spotLights.map((spotlight) => {
+              return (
+                <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'spotlight'} key={spotlight.id} shapeType={'spotlight'} shape={spotlight} color='#640D5F' />
+              )
+            })}
+          </div>
+        </>}
     </div>
   );
 }
 
 import PropTypes from 'prop-types';
+import DraggableResizableSlice from './DraggableResizableSlice';
 
 ShapesLayer.propTypes = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

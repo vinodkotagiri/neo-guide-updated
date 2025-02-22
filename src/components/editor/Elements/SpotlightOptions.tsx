@@ -22,7 +22,7 @@ console.log(currentElementId)
 
 useEffect(()=>{
   setStartTime(currentPlayTime)
-  setEndTime(currentPlayTime+5)
+  setEndTime(currentPlayTime+15)
 },[])
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const handleStrokeColorPickerClick = () => {
 
   function handleAddNewRectangle() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime+5)
+    setEndTime(currentPlayTime+15)
     dispatch(setAddingElements(true))
     const rectData: SpotElementElementState = {
       id: Date.now().toString(),
@@ -58,7 +58,7 @@ const handleStrokeColorPickerClick = () => {
       glowRadius: 50,
       cornerRadius: [50, 50, 50, 50],
       startTime: currentPlayTime,
-      endTime: currentPlayTime + 5
+      endTime: currentPlayTime + 15
     }
     dispatch(addSpotLight(rectData))
     dispatch(setCurrentElement('spotlight'))

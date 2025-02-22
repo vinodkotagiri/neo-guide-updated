@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { MdChevronLeft, MdDelete, MdOutlineFormatAlignCenter, MdOutlineFormatAlignJustify, MdOutlineFormatAlignLeft, MdOutlineFormatAlignRight } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { addText, deleteBlur, editText, setCurrentElement, TextElementState } from '../../../redux/features/elementsSlice'
+import { addText, deleteBlur, deleteText, editText, setCurrentElement, TextElementState } from '../../../redux/features/elementsSlice'
 
 import { setAddingElements } from '../../../redux/features/videoSlice'
 import { CiTextAlignJustify } from 'react-icons/ci'
@@ -26,13 +26,13 @@ const TextOptions = () => {
 
 useEffect(()=>{
   setStartTime(currentPlayTime)
-  setEndTime(currentPlayTime+5)
+  setEndTime(currentPlayTime+15)
 },[])
 
 
   function handleAddNewBlur() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime+5)
+    setEndTime(currentPlayTime+15)
     dispatch(setAddingElements(true))
     const textData: TextElementState = {
       id: Date.now().toString(),
@@ -91,7 +91,7 @@ useEffect(()=>{
         <button onClick={handleAddNewBlur} className='btn btn-success btn-xs outline-none border-none shadow-none'>
           New
         </button>
-        <button className='cursor-pointer' onClick={() => dispatch(deleteBlur({ id: currentElementId }))}>
+        <button className='cursor-pointer' onClick={() => dispatch(deleteText({ id: currentElementId }))}>
           <MdDelete size={20} color='red' />
         </button>
       </div>
