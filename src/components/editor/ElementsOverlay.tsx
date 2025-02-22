@@ -18,23 +18,23 @@ Konva.Filters.RadialBlur = function (imageData) {
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * 4;
-      
+
       // Calculate distance from center
       const dx = x - centerX;
       const dy = y - centerY;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      
+
       // Calculate blur amount based on distance
       const blurAmount = Math.min(1, distance / radius);
-      
+
       // Sample neighboring pixels
       let r = 0, g = 0, b = 0, a = 0;
       let samples = 0;
-      
+
       for (let offset = -2; offset <= 2; offset++) {
         const sampleX = Math.round(x + (dx * blurAmount * offset * 0.1));
         const sampleY = Math.round(y + (dy * blurAmount * offset * 0.1));
-        
+
         if (sampleX >= 0 && sampleX < width && sampleY >= 0 && sampleY < height) {
           const sampleIdx = (sampleY * width + sampleX) * 4;
           r += tempData[sampleIdx];
@@ -62,7 +62,7 @@ function ElementsOverlay() {
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector((state) => state.elements);
-  const { played,currentPlayTime } = useAppSelector(state => state.video)
+  const { played, currentPlayTime } = useAppSelector(state => state.video)
 
   useEffect(() => {
     const updateStageSize = () => {
@@ -88,13 +88,17 @@ function ElementsOverlay() {
         transformer.nodes([]);
       }
     }
-  }, [selectedId, rectangles, blurs, texts, arrows, spotLights,played]);
+  }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played]);
 
- 
+
 
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+      {blurs.map((rect) => (
+        <BlurOverlay key={rect.id} rect={rect} played={played}/>
+      ))}
+
       <Stage ref={stageRef} width={stageSize.width} height={stageSize.height}>
         <Layer>
           {rectangles.map((rect) => (
@@ -138,19 +142,16 @@ function ElementsOverlay() {
           ))}
           {blurs.map((rect) => (
             <Rect
-            ref={blurRectRef}
+              ref={blurRectRef}
               key={rect.id}
               id={rect.id}
               x={rect.x}
               y={rect.y}
-              fill={'#dfdfdf'}
-              opacity={20}
+              fill={'transparent'}
               width={rect.width}
               height={rect.height}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
-              filters={[Konva.Filters.Blur]} // Apply blur filter
-              blurRadius={100} // Adjust blur intensity dynamically
               ref={(node) => {
                 if (node) {
                   node.cache(); // Required for filters
@@ -220,7 +221,7 @@ function ElementsOverlay() {
               id={arrow.id}
               x={0}
               y={0}
-              points={[0,0,100,100]}
+              points={[0, 0, 100, 100]}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
               pointerLength={arrow.pointerLength}
@@ -283,8 +284,8 @@ function ElementsOverlay() {
                 height={spotlight.height}
                 shadowColor={spotlight.glowColor}
                 shadowBlur={spotlight.glowRadius}
-           
-                 fill={spotlight.glowColor}
+
+                fill={spotlight.glowColor}
                 cornerRadius={spotlight.cornerRadius}
                 draggable
                 globalCompositeOperation="destination-out" // CUTOUT EFFECT
@@ -325,3 +326,24 @@ function ElementsOverlay() {
 }
 
 export default ElementsOverlay;
+
+const BlurOverlay = ({ rect,played }) => {
+  if(rect.startTime <= played && rect.endTime >= played){
+    return (
+      <div
+        className="blur-overlay"
+        style={{
+          position: "absolute",
+          top: rect.y,
+          left: rect.x,
+          width: rect.width,
+          height: rect.height,
+          backdropFilter: "blur(10px)", // Apply blur effect
+          pointerEvents: "none", // Allow interactions through the blur
+        }}
+      ></div>
+    );
+  }
+  
+};
+
