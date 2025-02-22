@@ -18,7 +18,6 @@ const SpotlightOptions = () => {
   const [endTime, setEndTime] = useState(0)
 
 
-console.log(currentElementId)
 
 useEffect(()=>{
   setStartTime(currentPlayTime)
@@ -57,8 +56,8 @@ const handleStrokeColorPickerClick = () => {
       glowColor: '#fff',
       glowRadius: 50,
       cornerRadius: [50, 50, 50, 50],
-      startTime: currentPlayTime,
-      endTime: currentPlayTime + 15
+      startTime: startTime,
+      endTime: endTime
     }
     dispatch(addSpotLight(rectData))
     dispatch(setCurrentElement('spotlight'))

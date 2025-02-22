@@ -1,6 +1,6 @@
 import  { useEffect, useState } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
-import { editRectangle, setCurrentElementId } from '../../redux/features/elementsSlice';
+import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 
 
 const DraggableResizableSlice = ({playerRef,wrapperRef,layerRef,sliceRef,label,shapeType,shape,color='#02BC7D'}) => {
@@ -28,6 +28,18 @@ const DraggableResizableSlice = ({playerRef,wrapperRef,layerRef,sliceRef,label,s
       const startTime=sliceStyle.left/8,endTime=(sliceStyle.left+sliceStyle.width)/8
       if(shapeType=='rectangle'){
         dispatch(editRectangle({id:shape.id,startTime,endTime}))
+      }
+      else if(shapeType=='spotlight'){
+        dispatch(editSpotLight({id:shape.id,startTime,endTime}))
+      }
+      else if(shapeType=='blur'){
+        dispatch(editBlur({id:shape.id,startTime,endTime}))
+      }
+      else if(shapeType=='text'){
+        dispatch(editText({id:shape.id,startTime,endTime}))
+      }
+      else if(shapeType=='arrow'){
+        dispatch(editArrow({id:shape.id,startTime,endTime}))
       }
     },[sliceStyle])
 

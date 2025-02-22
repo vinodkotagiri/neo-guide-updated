@@ -62,7 +62,7 @@ function ElementsOverlay() {
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector((state) => state.elements);
-  const { played } = useAppSelector(state => state.video)
+  const { played,currentPlayTime } = useAppSelector(state => state.video)
 
   useEffect(() => {
     const updateStageSize = () => {
@@ -110,7 +110,7 @@ function ElementsOverlay() {
               strokeWidth={rect.strokeWidth}
               cornerRadius={rect.cornerRadius}
               draggable
-              visible={rect.startTime <= played && rect.endTime >= played}
+              visible={rect.startTime <= currentPlayTime && rect.endTime >= currentPlayTime}
               onClick={() => {
                 setSelectedId(rect.id);
                 dispatch(setCurrentElementId({ type: 'rectangle', id: rect.id }));
