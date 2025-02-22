@@ -84,11 +84,11 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef,playerRef
 
   return (
     <div className='w-full relative flex flex-col gap-1' style={{ width }} >
-      {isLoading ?
+      {isLoading &&
         <div className="absolute inset-0 flex items-center justify-center">
           Loading...
-        </div>
-        : <>
+        </div>}
+
           {/* Thumbnails section */}
           <div className='w-full flex justify-between' style={{ paddingTop: '30px' }}>
             {segments.map((segment, index) => (
@@ -165,7 +165,6 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef,playerRef
               )
             })}
           </div>
-        </>}
     </div>
   );
 }
