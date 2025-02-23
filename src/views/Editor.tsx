@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Article from '../components/editor/Article'
 import EditorSider from '../components/editor/EditorSider'
 import VideoEditor from '../components/editor/VideoEditor'
@@ -19,7 +19,7 @@ const Editor = () => {
   const [requestId, setRequestId] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  
+  const playerRef = useRef(null);
   // // useEffect(() => {
   //   if (!url) navigate('/')
   //   else
@@ -99,12 +99,11 @@ const Editor = () => {
         </dialog>
 
         {isArticle ? <Article /> : <>
-          <div className='h-full w-[48px] border-r-[1px] border-slate-700'></div>
-          <div className='w-[65%] h-full'>
-            <VideoEditor />
+          <div className='w-[70%] h-full'>
+            <VideoEditor playerRef={playerRef}/>
           </div>
-          <div className='w-[35%] h-full'>
-            <EditorSider />
+          <div className='w-[30%] h-full'>
+            <EditorSider playerRef={playerRef} />
           </div>
         </>}
       </div>

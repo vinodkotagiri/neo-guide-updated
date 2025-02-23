@@ -6,8 +6,8 @@ import { IoMdColorPalette } from 'react-icons/io'
 import { BsTransparency } from 'react-icons/bs'
 import { setAddingElements } from '../../../redux/features/videoSlice'
 
-const ArrowOptions = () => {
-  const { currentElementId, arrows } = useAppSelector(state => state.elements)
+const ArrowOptions = ({playerRef}) => {
+  const { currentElementId, arrows,currentElement } = useAppSelector(state => state.elements)
   const { duration, currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const [stroke, setStroke] = useState('#fff');
@@ -62,10 +62,10 @@ useEffect(()=>{
   }, [arrows, currentElementId])
 
   useEffect(() => {
-    if (currentElementId) {
+    if (currentElementId && currentElement=='arrow') {
       dispatch(editArrow({ id: currentElementId, startTime: startTime, endTime: endTime, rotation, stroke, strokeWidth,pointerLength,pointerWidth}))
     }
-  }, [startTime, endTime, currentElementId, rotation,stroke,strokeWidth,pointerLength,pointerWidth])
+  }, [startTime, endTime, rotation,stroke,strokeWidth,pointerLength,pointerWidth])
 
 
 

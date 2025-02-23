@@ -90,7 +90,7 @@ function EditorLeftTopBar({ setDub }) {
                 const data = res?.result;
                 const s3Url = data.split(': ')[1]
                 dispatch(setVideoUrl(s3Url))
-                console.log('data:::', data)
+                // console.log('data:::', data)
                 // dispatch(setArticleData(data))
                 setDub(false)
               } else if (res?.status?.toLowerCase().includes('error')) {

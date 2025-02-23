@@ -2,7 +2,7 @@
 import { setIsArticle } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
-import { MdAdd} from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 
 interface NavbarProps {
   from?: string
@@ -23,7 +23,7 @@ function Navbar({ from }: NavbarProps) {
     <div className="navbar ">
       <div className="fixed px-4 flex  items-center justify-center gap-6">
         <a><img src={logo} alt="logo" /></a>
-      <button className='btn btn-success' onClick={handleNewUpload}><MdAdd/>New</button>
+        <button className='btn btn-success' onClick={handleNewUpload}><MdAdd />New</button>
       </div>
       {from == 'editor' && <div className="w-full items-center justify-center flex gap-2">
         <div className="nav-custom-btn">
@@ -32,7 +32,7 @@ function Navbar({ from }: NavbarProps) {
             <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
           </svg>
 
-            Article</button>
+            Guide</button>
           <button className={!isArticle ? "active" : ""} onClick={handleVideoArticleSwitch}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />

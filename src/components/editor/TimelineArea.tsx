@@ -164,7 +164,7 @@ function TimelineArea({ playerRef }) {
   return (
     <div
       ref={scrollRef}
-      className='w-full h-full overflow-x-scroll bg-gray-900'
+      className='w-full h-full overflow-x-scroll bg-[#16151a]'
       style={{
         scrollBehavior: 'smooth',
         userSelect: 'none',
@@ -242,9 +242,9 @@ function TimelineArea({ playerRef }) {
           whileHover={!isDragging && "hover"}
           onMouseDown={handleMouseDown}
         />
-       { playerRef.current&&<ShapesLayer wrapperRef={scrollRef}
-        playerRef={playerRef}
-         numSegments={Math.ceil(duration/5)}
+        {playerRef.current && <ShapesLayer wrapperRef={scrollRef}
+          playerRef={playerRef}
+          numSegments={Math.ceil(duration / 5)}
           thumbnailHeight={36} width={markers[markers.length - 1] * 8} />}
       </div>
     </div>

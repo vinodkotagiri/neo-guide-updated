@@ -7,8 +7,8 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 import { CiTextAlignJustify } from 'react-icons/ci'
 import { RiFontColor } from 'react-icons/ri'
 
-const TextOptions = () => {
-  const { currentElementId, texts } = useAppSelector(state => state.elements)
+const TextOptions = ({playerRef}) => {
+  const { currentElementId, texts, currentElement } = useAppSelector(state => state.elements)
   const { duration, currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const [text, setText] = useState('');
@@ -24,15 +24,18 @@ const TextOptions = () => {
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
 
-useEffect(()=>{
-  setStartTime(currentPlayTime)
-  setEndTime(currentPlayTime+15)
-},[])
+
+
+
+  useEffect(() => {
+    setStartTime(currentPlayTime)
+    setEndTime(currentPlayTime + 15)
+  }, [])
 
 
   function handleAddNewBlur() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime+15)
+    setEndTime(currentPlayTime + 15)
     dispatch(setAddingElements(true))
     const textData: TextElementState = {
       id: Date.now().toString(),
@@ -67,7 +70,7 @@ useEffect(()=>{
   }, [texts, currentElementId])
 
   useEffect(() => {
-    if (currentElementId) {
+    if (currentElementId && currentElement == 'text') {
       dispatch(editText({ id: currentElementId, startTime: startTime, endTime: endTime, text, font, fontSize, fontColor, backgroundColor, justify }))
     }
   }, [startTime, endTime, currentElementId, text, font, fontColor, backgroundColor, justify, fontSize])
@@ -97,7 +100,7 @@ useEffect(()=>{
       </div>
 
       <div>
-        <input className='input input-bordered bg-transparent border-slate-100 w-full max-w-xs' value={text} onChange={(e) => setText(e.target.value)}/>
+        <input className='input input-bordered bg-transparent border-slate-100 w-full max-w-xs' value={text} onChange={(e) => setText(e.target.value)} />
       </div>
       <div className='flex w-full px-1 gap-1'>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import  { useEffect, useRef, useState } from 'react'
 import { MdChevronLeft, MdDelete } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { addRectangle, deleteRectangle, editRectangle, RectangleElementState, setCurrentElement } from '../../../redux/features/elementsSlice'
@@ -6,8 +6,8 @@ import { IoMdColorPalette } from 'react-icons/io'
 import { BsTransparency } from 'react-icons/bs'
 import { setAddingElements } from '../../../redux/features/videoSlice'
 
-const RectangleOptions = () => {
-  const { currentElementId, rectangles } = useAppSelector(state => state.elements)
+const RectangleOptions = ({playerRef}) => {
+  const { currentElementId, rectangles,currentElement } = useAppSelector(state => state.elements)
   const { duration,currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
@@ -24,7 +24,7 @@ const RectangleOptions = () => {
   }
   const handleStrokeColorPickerClick = () => {
     if (strokeColorRef.current) {
-      strokeColorRef.current.click()
+      strokeColorRef.current?.click()
     }
   }
 
@@ -79,8 +79,13 @@ useEffect(()=>{
 
 
   useEffect(() => {
-    dispatch(editRectangle({ id: currentElementId, strokeColor, strokeWidth, fillColor, cornerRadius,startTime,endTime }))
+    if(currentElementId && currentElement=='rectangle'){
+      dispatch(editRectangle({ id: currentElementId, strokeColor, strokeWidth, fillColor, cornerRadius,startTime,endTime }))
+    }
   }, [strokeColor, strokeWidth, fillColor, cornerRadius,startTime,endTime])
+
+
+
   return (
     <div className='w-full h-full py-4 px-2 flex flex-col gap-3 relative'>
       <div className='flex font-semibold text-slate-500 absolute'>
