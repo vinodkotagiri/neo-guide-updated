@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import RightMenuIcons from './RightMenuIcons'
 import DubAreaComponent from './DubAreaComponent'
 import SubtitleAreaComponent from './SubtitleAreaComponent'
+import ElementsAddComponent from './ElementsAddComponent'
 import BlurOptions from './Elements/BlurOptions'
 import RectangleOptions from './Elements/RectangleOptions'
 import TextOptions from './Elements/TextOptions'
@@ -12,10 +13,10 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { setAddingElements } from '../../redux/features/videoSlice'
 import { addArrow, addBlur, addRectangle, addSpotLight, addText, setCurrentElement } from '../../redux/features/elementsSlice'
 
-const EditorSider = ({playerRef}) => {
+const EditorSider = ({ playerRef }) => {
   const [rightActiveArea, setRightActiveArea] = useState(1)
   const { currentPlayTime } = useAppSelector(state => state.video)
-  const { rectangles, blurs, texts, arrows, spotLights,currentElement,currentElementId } = useAppSelector(state => state.elements)
+  const { rectangles, blurs, texts, arrows, spotLights, currentElement, currentElementId } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   function handleAddShape(shape: string) {
     if (shape == 'rectangle') {
@@ -126,43 +127,43 @@ const EditorSider = ({playerRef}) => {
     }
   }, [rightActiveArea])
 
-  useEffect(()=>{
-    console.log('eleeeee',currentElement,currentElementId)
-    if(currentElementId){
-      if(currentElement == 'rectangle' && rightActiveArea!=5){
+  useEffect(() => {
+    console.log('eleeeee', currentElement, currentElementId)
+    if (currentElementId) {
+      if (currentElement == 'rectangle' && rightActiveArea != 5) {
         setRightActiveArea(5)
       }
-      if(currentElement == 'blur' && rightActiveArea!=4){
-        setRightActiveArea(4)   
+      if (currentElement == 'blur' && rightActiveArea != 4) {
+        setRightActiveArea(4)
       }
-      if(currentElement == 'text' && rightActiveArea!=6){
+      if (currentElement == 'text' && rightActiveArea != 6) {
         setRightActiveArea(6)
       }
-      if(currentElement == 'arrow' && rightActiveArea!=7){
+      if (currentElement == 'arrow' && rightActiveArea != 7) {
         setRightActiveArea(7)
       }
-      if(currentElement == 'spotlight' && rightActiveArea!=8){
+      if (currentElement == 'spotlight' && rightActiveArea != 8) {
         setRightActiveArea(8)
       }
     }
-  },[currentElement,currentElementId])
+  }, [currentElement, currentElementId])
 
   return (
-    <div className='w-full h-full  bg-[#16151a] rounded-md  flex z-50'>
+    <div className='w-full h-full  bg-[#16151a] border-[1px] border-[#303032] rounded-tl-2xl   flex z-50   '>
       {/* <div>
       <EditorLeftTopBar setDub={setDub} />
       </div> */}
-      <div className='w-[calc(100%-56px)] text-slate-600   h-full border-[1px] border-[#303032]'>
+      <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
         {rightActiveArea == 1 && <DubAreaComponent />}
         {rightActiveArea == 2 && <SubtitleAreaComponent />}
         {/* {rightActiveArea == 3 && <ElementsAddComponent />} */}
-        {rightActiveArea == 4 && <BlurOptions playerRef={playerRef}/>}
-        {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef}/>}
-        {rightActiveArea == 6 && <TextOptions playerRef={playerRef}/>}
-        {rightActiveArea == 7 && <ArrowOptions playerRef={playerRef}/>}
-        {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef}/>}
+        {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
+        {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
+        {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
+        {rightActiveArea == 7 && <ArrowOptions playerRef={playerRef} />}
+        {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
       </div>
-      <div className='w-[56px] h-full'>
+      <div className='w-[56px] h-full border-[#303032] border-l'>
         <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />
       </div>
 
