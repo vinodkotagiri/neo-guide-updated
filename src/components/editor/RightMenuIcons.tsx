@@ -8,7 +8,7 @@ function RightMenuIcons({ setRightActiveArea, rightActiveArea }) {
   return (
     <div className='h-full   w-full text-slate-400 flex flex-col  align-items-center'>
       <MenuIconButton label='Dub' icon={<RiSpeakAiLine size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={1} rightActiveArea={rightActiveArea} />
-      <MenuIconButton label='Subtitles' icon={<PiSubtitles size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={2} rightActiveArea={rightActiveArea} />
+      {/* <MenuIconButton label='Subtitles' icon={<PiSubtitles size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={2} rightActiveArea={rightActiveArea} /> */}
       {/* <MenuIconButton label='Elements' icon={<PiShapesLight size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={3} rightActiveArea={rightActiveArea} /> */}
       <MenuIconButton label='Blur' icon={<MdBlurOn size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={4} rightActiveArea={rightActiveArea} />
       <MenuIconButton label='Rectangle' icon={<MdOutlineRectangle size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={5} rightActiveArea={rightActiveArea} />

@@ -152,12 +152,7 @@ function ElementsOverlay() {
               height={rect.height}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
-              ref={(node) => {
-                if (node) {
-                  node.cache(); // Required for filters
-                  node.getLayer()?.batchDraw();
-                }
-              }}
+             
               onClick={() => {
                 setSelectedId(rect.id);
                 dispatch(setCurrentElementId({ type: 'blur', id: rect.id }));
