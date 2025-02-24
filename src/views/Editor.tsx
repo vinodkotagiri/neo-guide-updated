@@ -26,7 +26,7 @@ const Editor = () => {
   // }, [url])
 
   useEffect(() => {
-    if (!articleData.length ) {
+    if (!articleData.length) {
       dispatch(setLoader({ loading: true }));
       dispatch(setLocked(true))
       createArticle({ video_url: url })
@@ -74,13 +74,13 @@ const Editor = () => {
   }
 
 
-  function handleNewUpload(){
+  function handleNewUpload() {
     window.localStorage.clear();
     navigate('/')
   }
 
   return (
-    <div className='w-full h-full bg-slate-900'>
+    <div className='w-full h-full bg-[#16151a]'>
       <Navbar from={'editor'} />
       <div className='w-full h-[calc(100vh-64px)] flex  rounded-md fixed top-[72px]'>
 
@@ -100,9 +100,9 @@ const Editor = () => {
 
         {isArticle ? <Article /> : <>
           <div className='w-[70%] h-full'>
-            <VideoEditor playerRef={playerRef}/>
+            <VideoEditor playerRef={playerRef} />
           </div>
-          <div className='w-[30%] h-full'>
+          <div className='w-[30%] h-full pt-2'>
             <EditorSider playerRef={playerRef} />
           </div>
         </>}
