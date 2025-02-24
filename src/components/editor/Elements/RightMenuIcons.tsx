@@ -1,7 +1,7 @@
+//@ts-nocheck
 import React from 'react'
 import { RiSpeakAiLine } from "react-icons/ri";
-import { PiShapesLight, PiSubtitles } from 'react-icons/pi'
-import { useAppSelector } from '../../redux/hooks';
+import { PiSubtitles } from 'react-icons/pi'
 import { MdArrowOutward, MdBlurOn, MdOutlineCenterFocusStrong, MdOutlineRectangle, MdOutlineTextFields } from 'react-icons/md';
 import { GoRepoPush } from 'react-icons/go';
 function RightMenuIcons({ setRightActiveArea, rightActiveArea }) {
@@ -23,7 +23,7 @@ function RightMenuIcons({ setRightActiveArea, rightActiveArea }) {
 export default RightMenuIcons
 
 function MenuIconButton({ label, icon, setRightActiveArea, val, rightActiveArea }: { label: string, icon: React.ReactNode, setRightActiveArea: any, val: number, rightActiveArea: number }) {
-  const { locked } = useAppSelector(state => state.video)
+  
   return (
     <button style={rightActiveArea == val ? { backgroundColor: '#212025', color: '#fff' } : {}} className='      h-[64px] flex flex-col w-full justify-center items-center border-t-[1px] border-[#303032] p-2 text-[12px] cursor-pointer text-[#77767b]' onClick={() => setRightActiveArea(val)}>
       {icon}

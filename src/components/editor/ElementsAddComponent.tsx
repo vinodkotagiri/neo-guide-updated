@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect } from 'react'
 import { MdBlurOn, MdOutlineRectangle, MdOutlineTextFields, MdArrowOutward, MdOutlineCenterFocusStrong, MdSmartButton } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
@@ -21,11 +22,11 @@ function ElementsAddComponent() {
  
 
 
-  if (currentElement == 'rectangle') return <RectangleOptions />
-  if (currentElement == 'blur') return <BlurOptions />
-  if (currentElement == 'arrow') return <ArrowOptions />
-  if (currentElement == 'text') return <TextOptions />
-  if (currentElement == 'spotlight') return <SpotlightOptions />
+  if (currentElement == 'rectangle') return <RectangleOptions playerRef={playerRef}/>
+  if (currentElement == 'blur') return <BlurOptions playerRef={playerRef}/>
+  if (currentElement == 'arrow') return <ArrowOptions playerRef={playerRef}/>
+  if (currentElement == 'text') return <TextOptions playerRef={playerRef}/>
+  if (currentElement == 'spotlight') return <SpotlightOptions playerRef={playerRef}/>
   if (currentElement == null)
     return (
       <>

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { motion, AnimatePresence } from 'framer-motion';

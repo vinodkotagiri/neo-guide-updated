@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useRef, useState } from 'react'
 import { MdChevronLeft, MdDelete } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'

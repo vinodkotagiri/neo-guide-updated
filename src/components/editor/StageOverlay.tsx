@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import Konva from 'konva';

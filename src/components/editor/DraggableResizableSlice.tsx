@@ -73,8 +73,8 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
     if (!(isMouseDown || isResizingLeft || isResizingRight)) return;
 
     const deltaX = e.clientX - lastX;
-    const currentLeft = parseFloat(sliceStyle.left || 0);
-    const currentWidth = parseFloat(sliceStyle.width || 50);
+    const currentLeft = Number(sliceStyle.left)||0;
+    const currentWidth = Number(sliceStyle.width )||50;
     const layerWidth = layerRef.current.offsetWidth;
 
     let newLeft = currentLeft;

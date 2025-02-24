@@ -1,22 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import Player from "./Player";
+import { useEffect } from "react";
+import Player from "./Player"
 import TimelineArea from "./TimelineArea";
 import SubtitlesOverlay from "./SubtitlesOverlay";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { FaPlay } from "react-icons/fa";
-import { FaPauseCircle } from "react-icons/fa";
-import { MdFullscreen, MdPause, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
+import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
 import { setVideoPlaying } from "../../redux/features/videoSlice";
 import { formatTime } from "../../helpers";
 
-const VideoEditor = ({playerRef}) => {
+const VideoEditor = ({ playerRef }) => {
 
-  const {playing,currentPlayTime,duration}=useAppSelector(state=>state.video)
-  const dispatch=useAppDispatch()
-  const togglePlay = () => {
-    setPlaying((prev) => !prev);
-  };
+  const { playing, duration } = useAppSelector(state => state.video)
+  const dispatch = useAppDispatch()
+
 
   const enterFullscreen = () => {
     if (playerRef.current) {
@@ -45,10 +41,10 @@ const VideoEditor = ({playerRef}) => {
         </div>
         <div className="text-white flex justify-between w-[60%] mt-2">
           <div className="flex gap-3">
-          <div onClick={()=>playerRef.current?.seekTo(0)} className="cursor-pointer">
-              <MdSkipPrevious size={24} /> 
+            <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
+              <MdSkipPrevious size={24} />
             </div>
-            <div onClick={()=>dispatch(setVideoPlaying(!playing))} className="cursor-pointer">
+            <div onClick={() => dispatch(setVideoPlaying(!playing))} className="cursor-pointer">
               {!playing ? <MdPlayCircle size={24} /> : <MdPauseCircle size={24} />}
             </div>
             <div className="text-[#999]">{formatTime(playerRef.current?.getCurrentTime())} / {formatTime(duration)}</div>
