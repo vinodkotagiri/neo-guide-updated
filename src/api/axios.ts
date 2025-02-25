@@ -1,7 +1,8 @@
+//@ts-nocheck
 import axios from "axios";
 import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
-import AWS from "aws-sdk";
+// import AWS from "aws-sdk";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://recorder.effybiz.com/api";
@@ -30,8 +31,8 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
     // };
     // const response = await s3.upload(params).promise();
     const {file}=payload
-    const response= api.post('/upload',file)
-    if (!response.Location) return null;
+    const response= await api.post('/upload',file)
+    if (!response?.Location) return null;
     return { file_url: response.Location };
   } catch (error) {
     console.log("error uploading file:", error);

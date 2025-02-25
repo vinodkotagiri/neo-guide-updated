@@ -5,7 +5,8 @@ export interface InitiateRecordResponse{
 
 export interface UploadVideoResponse{
   // upload_id: string;
-  file_url:string;
+  Location?:string;
+  file_url?:string;
 }
 
 export interface getTranscriptResponse{
