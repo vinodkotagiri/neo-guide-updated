@@ -15,7 +15,7 @@ export interface ApplyZoomPayload{
 }
 
 export interface UploadVideoPayload{
-  user_id:string;
+  user_id?:string;
   file:File;
 }
 

@@ -16,19 +16,21 @@ const api = axios.create({
 
 export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVideoResponse | null> {
   try {
-    AWS.config.update({
-      region: import.meta.env.VITE_AWS_REGION as string,
-      accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string
-    });
-    const s3 = new AWS.S3();
-    const params = {
-      Bucket: import.meta.env.VITE_AWS_S3_BUCKET as string,
-      Key: payload.file.name,
-      Body: payload.file,
-      ContentType: payload.file.type
-    };
-    const response = await s3.upload(params).promise();
+    // AWS.config.update({
+    //   region: import.meta.env.VITE_AWS_REGION as string,
+    //   accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID as string,
+    //   secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY as string
+    // });
+    // const s3 = new AWS.S3();
+    // const params = {
+    //   Bucket: import.meta.env.VITE_AWS_S3_BUCKET as string,
+    //   Key: payload.file.name,
+    //   Body: payload.file,
+    //   ContentType: payload.file.type
+    // };
+    // const response = await s3.upload(params).promise();
+    const {file}=payload
+    const response= api.post('/upload',file)
     if (!response.Location) return null;
     return { file_url: response.Location };
   } catch (error) {
