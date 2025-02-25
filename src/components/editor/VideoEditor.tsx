@@ -28,8 +28,8 @@ const VideoEditor = ({ playerRef }) => {
   }, []);
 
   return (
-    <div className='w-full h-full flex flex-col gap-1 p-2 '>
-      <div className="w-full h-[65%]  flex items-center justify-between flex-col bg-[#212025] rounded-2xl  py-8">
+    <div className='w-full h-full flex flex-col gap-1 px-2 '>
+      <div className="w-full h-[65%]  flex items-center  flex-col bg-[#212025] rounded-2xl  py-8">
         <div className='w-[60%] aspect-16/9 relative overflow-hidden rounded-md'>
           {addingElements ? <div className="w-full h-full absolute z-10">
             <ElementsOverlay />
@@ -39,7 +39,7 @@ const VideoEditor = ({ playerRef }) => {
           <Player playerRef={playerRef} />
 
         </div>
-        <div className="text-white flex justify-between w-[60%] mt-2">
+        <div className="text-white flex justify-between w-[60%] mt-8">
           <div className="flex gap-3">
             <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
               <MdSkipPrevious size={24} />
