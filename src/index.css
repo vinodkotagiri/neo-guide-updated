@@ -44,14 +44,26 @@
 
  */
 .navbar {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  padding: 0;
+  min-height: unset;
+}
+
+.navbar-inside {
+  /* background-color: rgba(33, 33, 33, 1);*/
+  margin: 0.5rem 0.25rem 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 1rem;
+  justify-content: space-between;
+  padding: 5px;
 }
 
 .nav-custom-btn {
   display: flex;
-  background-color: #130b2c;
+  /*background-color: #130b2c;
   border-radius: 28px;
-  padding: 6px 18px;
+  padding: 6px 18px;*/
   align-items: center;
   gap: 15px;
 }
@@ -67,15 +79,17 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   padding: 10px;
   gap: 5px;
-  padding: 10px 35px;
+  padding: 5px 20px;
+  background-color: rgba(50, 50, 50, 1);
+  border-radius: 28px;
 }
 
 .nav-custom-btn button.active {
-  background-color: #02bc7d;
+  background-color: oklch(45% 0.24 277.023);
   border-radius: 28px;
 }
 
@@ -223,5 +237,5 @@
 }
 
 .timeline-editor-action {
-  background-color: #097969!important;
+  background-color: #097969 !important;
 }

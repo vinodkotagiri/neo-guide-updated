@@ -102,7 +102,7 @@ const Editor = () => {
           <div className='w-[70%] h-full'>
             <VideoEditor playerRef={playerRef} />
           </div>
-          <div className='w-[30%] h-full pt-2'>
+          <div className='w-[30%] h-full  '>
             <EditorSider playerRef={playerRef} />
           </div>
         </>}
