@@ -12,6 +12,7 @@ interface SubtitlesState {
 }
 interface VideoState {
   url: string;
+  muted:boolean;
   duration: number;
   language: string;
   playing: boolean;
@@ -58,6 +59,7 @@ const initialSubtitleState: SubtitlesState = {
 const initialState: VideoState = {
   url:'' ,
   duration: 0,
+  muted:true,
   language: "",
   playing: false,
   currentPlayTime:0,
@@ -113,6 +115,9 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setMuted:(state,action)=>{
+      state.muted=action.payload
+    },
     setLocked:(state,action)=>{
       state.locked=action.payload
     },
@@ -172,6 +177,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setMuted,
   setCurrentPlayTime,
   setLocked,
   updateRetries,

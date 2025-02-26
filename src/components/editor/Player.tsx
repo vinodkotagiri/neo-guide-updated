@@ -4,7 +4,7 @@ import { setCurrentPlayTime, setVideoDuration, setVideoPlayed } from "../../redu
 import { useEffect } from "react"
 
 function Player({ playerRef }) {
-  const { url, playing } = useAppSelector(state => state.video)
+  const { url, playing,muted } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   useEffect(() => {
     if (playerRef?.current?.getCurrentTime()) {
@@ -14,11 +14,11 @@ function Player({ playerRef }) {
   return (<>
     <ReactPlayer
       ref={playerRef}
-      // style={{ position: 'absolute', top: 0, left: 0, borderRadius: '0.375rem' }}
       width='100%'
       height='100%'
       controls={false}
       url={url}
+      muted={muted}
       playing={playing}
       onDuration={(duration) => dispatch(setVideoDuration(duration))}
       onProgress={(progress) => dispatch(setVideoPlayed(progress.playedSeconds))}

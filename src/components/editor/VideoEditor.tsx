@@ -4,13 +4,14 @@ import TimelineArea from "./TimelineArea";
 import SubtitlesOverlay from "./SubtitlesOverlay";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
-import { setVideoPlaying } from "../../redux/features/videoSlice";
+import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious, md } from "react-icons/md";
+import { setMuted, setVideoPlaying } from "../../redux/features/videoSlice";
 import { formatTime } from "../../helpers";
+import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
 
 const VideoEditor = ({ playerRef }) => {
 
-  const { playing, duration } = useAppSelector(state => state.video)
+  const { playing, duration,muted} = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
 
 
@@ -41,6 +42,10 @@ const VideoEditor = ({ playerRef }) => {
         </div>
         <div className="text-white flex justify-between w-[60%] mt-8">
           <div className="flex gap-3">
+          <div onClick={()=>{dispatch(setMuted(!muted))}} className="cursor-pointer">
+          {muted?<BsVolumeMute size={24} />
+          :<BsVolumeUpFill size={24} />}
+          </div>
             <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
               <MdSkipPrevious size={24} />
             </div>
@@ -52,6 +57,7 @@ const VideoEditor = ({ playerRef }) => {
           <div onClick={enterFullscreen} className="cursor-pointer">
             <MdFullscreen size={24} />
           </div>
+          
         </div>
       </div>
       <div className="w-full h-[35%] bg-black/30">
