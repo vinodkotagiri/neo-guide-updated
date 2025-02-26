@@ -30,8 +30,10 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
     //   ContentType: payload.file.type
     // };
     // const response = await s3.upload(params).promise();
+    const formData = new FormData();
+    formData.append('file', file);
     const {file}=payload
-    const response= await api.post('/upload',file)
+    const response= await api.post('/upload',formData,{headers:{'Content-Type': 'multipart/form-data'}})
     if (!response?.Location) return null;
     return { file_url: response.Location };
   } catch (error) {
