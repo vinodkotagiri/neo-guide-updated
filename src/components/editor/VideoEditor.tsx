@@ -1,62 +1,64 @@
-import { useRef } from 'react'
-import Player from './Player'
-import Controls from './Controls'
+import { useEffect } from "react";
+import Player from "./Player"
+import TimelineArea from "./TimelineArea";
+import SubtitlesOverlay from "./SubtitlesOverlay";
+import ElementsOverlay from "./ElementsOverlay";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
+import { setVideoPlaying } from "../../redux/features/videoSlice";
+import { formatTime } from "../../helpers";
 
-const VideoEditor = () => {
-  const playerRef = useRef(null);
+const VideoEditor = ({ playerRef }) => {
+
+  const { playing, duration } = useAppSelector(state => state.video)
+  const dispatch = useAppDispatch()
+
+
+  const enterFullscreen = () => {
+    if (playerRef.current) {
+      const iframe = playerRef.current.getInternalPlayer();
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      }
+    }
+  };
+  const { addingElements } = useAppSelector(state => state.video)
+  useEffect(() => {
+    // Setup for any initialization or cleanup
+  }, []);
+
   return (
-    <div className='w-full h-full flex flex-col gap-1 '>
+    <div className='w-full h-full flex flex-col gap-1 px-2 '>
+      <div className="w-full h-[65%]  flex items-center  flex-col bg-[#212025] rounded-2xl  py-8">
+        <div className='w-[60%] aspect-16/9 relative overflow-hidden rounded-md'>
+          {addingElements ? <div className="w-full h-full absolute z-10">
+            <ElementsOverlay />
+          </div> : ''}
+          <SubtitlesOverlay />
+          <SubtitlesOverlay />
+          <Player playerRef={playerRef} />
 
-      <div className='w-full h-full'>
-        <Player playerRef={playerRef} />
+        </div>
+        <div className="text-white flex justify-between w-[60%] mt-8">
+          <div className="flex gap-3">
+            <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
+              <MdSkipPrevious size={24} />
+            </div>
+            <div onClick={() => dispatch(setVideoPlaying(!playing))} className="cursor-pointer">
+              {!playing ? <MdPlayCircle size={24} /> : <MdPauseCircle size={24} />}
+            </div>
+            <div className="text-[#999]">{formatTime(playerRef.current?.getCurrentTime())} / {formatTime(duration)}</div>
+          </div>
+          <div onClick={enterFullscreen} className="cursor-pointer">
+            <MdFullscreen size={24} />
+          </div>
+        </div>
       </div>
-      {/* <div className='w-full h-[25%] p-2'>
-        <Controls playerRef={playerRef}/>
-      </div> */}
+      <div className="w-full h-[35%] bg-black/30">
+        <TimelineArea playerRef={playerRef} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default VideoEditor
-
-
-// {
-//   "progress": 100,
-//   "result": {
-//       "dubbed_video_url": "https://effybiz-devops.s3.ap-south-1.amazonaws.com/processed/dubbed_video.mp4",
-//       "translation_url": "https://effybiz-devops.s3.ap-south-1.amazonaws.com/processed/translated_sentences.json"
-//   },
-//   "status": "Completed"
-// }
-// [
-//   {
-//       "text": "मुझे पैलिस्टीनी लोगों की किस्मत से दुःख हुआ।",
-//       "start": 0.0,
-//       "end": 3.72
-//   },
-//   {
-//       "text": "वे एक बहुत अच्छे जीवन के लायक हैं।",
-//       "start": 4.18,
-//       "end": 6.44
-//   },
-//   {
-//       "text": "वे अपनी असाधारण क्षमता को प्राप्त करने का मौका पाने के हकदार हैं।",
-//       "start": 7.0,
-//       "end": 11.06
-//   },
-//   {
-//       "text": "फ़िलिस्तीनी आतंकवाद के चक्र में फंसे हुए हैं।",
-//       "start": 11.8,
-//       "end": 15.48
-//   },
-//   {
-//       "text": "गरीबी और हिंसा, जिनका उपयोग उनके मोहरे बनाने वाले व्यक्तियों द्वारा शोषित किया जा रहा है।",
-//       "start": 15.8,
-//       "end": 20.5
-//   },
-//   {
-//       "text": "आतंकवाद और उग्रवाद को बढ़ावा देना।",
-//       "start": 20.5,
-//       "end": 22.56
-//   }
-// ]
+export default VideoEditor;

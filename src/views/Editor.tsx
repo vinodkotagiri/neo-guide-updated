@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Article from '../components/editor/Article'
 import EditorSider from '../components/editor/EditorSider'
 import VideoEditor from '../components/editor/VideoEditor'
@@ -19,14 +19,14 @@ const Editor = () => {
   const [requestId, setRequestId] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  
+  const playerRef = useRef(null);
   // // useEffect(() => {
   //   if (!url) navigate('/')
   //   else
   // }, [url])
 
   useEffect(() => {
-    if (!articleData.length ) {
+    if (!articleData.length) {
       dispatch(setLoader({ loading: true }));
       dispatch(setLocked(true))
       createArticle({ video_url: url })
@@ -74,13 +74,13 @@ const Editor = () => {
   }
 
 
-  function handleNewUpload(){
+  function handleNewUpload() {
     window.localStorage.clear();
     navigate('/')
   }
 
   return (
-    <div className='w-full h-full bg-gradient-to-br from-blue-700 to-pink-500 overflow-hidden'>
+    <div className='w-full h-full bg-[#16151a]'>
       <Navbar from={'editor'} />
       <div className='w-full h-[calc(100vh-64px)] flex  rounded-md fixed top-[72px]'>
 
@@ -99,12 +99,11 @@ const Editor = () => {
         </dialog>
 
         {isArticle ? <Article /> : <>
-          <div className='h-full w-[48px] border-r-[1px] border-slate-700'></div>
-          <div className='w-[65%] h-full'>
-            <VideoEditor />
+          <div className='w-[70%] h-full'>
+            <VideoEditor playerRef={playerRef} />
           </div>
-          <div className='w-[35%] h-full'>
-            <EditorSider />
+          <div className='w-[30%] h-full  '>
+            <EditorSider playerRef={playerRef} />
           </div>
         </>}
       </div>

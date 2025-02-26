@@ -94,11 +94,11 @@ const InteractiveScreenRecorder: React.FC = () => {
       try {
       const a = document.createElement('a');
       a.href = recordedVideoUrl;
-      a.download = 'screen_recording.mp4';
+      a.download = 'screen_recording.webm';
       a.click();
       toast.success('file downloaded ')
         const blob = await fetch(recordedVideoUrl).then(r => r.blob()); // Convert URL to Blob
-        const file = new File([blob], 'screen_recording.mp4', { type: 'video/mp4' });
+        const file = new File([blob], 'screen_recording.webm', { type: 'video/webm' });
         const response=await uploadFile({user_id:'1',file})
         if (response) {
           dispatch(setVideoUrl(response.file_url));

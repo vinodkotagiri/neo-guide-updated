@@ -4,31 +4,31 @@ import { languages } from '../../constants'
 import { IoIosMic } from "react-icons/io";
 
 function DubHeader() {
-  const [selectedLanguage,setSelectedLanguage]=useState({})
-  const [languageList,setLanguageList]=useState([])
-  const [selectedVoice,setSelectedVoice]=useState({})
-  useEffect(()=>{
+  const [selectedLanguage, setSelectedLanguage] = useState({})
+  const [languageList, setLanguageList] = useState([])
+  const [selectedVoice, setSelectedVoice] = useState({})
+  useEffect(() => {
     setSelectedLanguage(languages[0])
-    setLanguageList(languages.map(lang=>Object.keys(lang)[0]))
-  },[languages])
-  
-  useEffect(()=>{
-    if(Object.keys(selectedLanguage).length){
-      const voices=Object.values(selectedLanguage)[0]?.voices
+    setLanguageList(languages.map(lang => Object.keys(lang)[0]))
+  }, [languages])
+
+  useEffect(() => {
+    if (Object.keys(selectedLanguage).length) {
+      const voices = Object.values(selectedLanguage)[0]?.voices
       setSelectedVoice(voices[0])
     }
-  },[selectedLanguage])
-function handleLanguageChange(e){
-  setSelectedLanguage(languages[e.target.value])
-}
-function handleVoiceChange(e){
-  setSelectedVoice(e.target.value)
-}
-console.log('selectedVOice',selectedVoice)
+  }, [selectedLanguage])
+  function handleLanguageChange(e) {
+    setSelectedLanguage(languages[e.target.value])
+  }
+  function handleVoiceChange(e) {
+    setSelectedVoice(e.target.value)
+  }
+  console.log('selectedVOice', selectedVoice)
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>
-      <div className='flex items-center justify-center gap-2'> 
+      <div className='flex items-center justify-center gap-2'>
         {/* <div className='dropdown'>
           <details>
           <summary className="btn m-1 bg-transparent  shadow-none outline-none border-none w-content text-blue-400"><span className='mr-2 text-xl'><span className='text-slate-500 text-xs'>{Object.keys(selectedLanguage)[0]}</span></summary>
@@ -39,9 +39,9 @@ console.log('selectedVOice',selectedVoice)
         </div> */}
         <div className='flex btn bg-transparent  shadow-none outline-none border-none w-content text-blue-400'>
           <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div>
-        <select className=' bg-transparent w-[180px] text-xs hovr:outline-none h-full outline-none border-none  text-slate-500  cursor-pointer' onChange={handleLanguageChange} value={selectedVoice.voice}>
-        {languageList.map((item,index)=><option key={index} value={index} className='block' >{item}</option>)}
-        </select>
+          <select className=' bg-transparent w-[180px] text-xs hovr:outline-none h-full outline-none border-none  text-slate-500  cursor-pointer' onChange={handleLanguageChange} value={selectedVoice.voice}>
+            {languageList.map((item, index) => <option key={index} value={index} className='block' >{item}</option>)}
+          </select>
         </div>
 
       </div>
@@ -55,11 +55,11 @@ console.log('selectedVOice',selectedVoice)
         </details>
       </div> */}
       <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
-     <IoIosMic size={24}/>
-       <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleVoiceChange}>
-       {Object.values(selectedLanguage)[0]?.voices.map(item=>(<option key={item.value} value={item}>{item.voice}</option>))}
+        <IoIosMic size={24} />
+        <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleVoiceChange}>
+          {Object.values(selectedLanguage)[0]?.voices.map(item => (<option key={item.value} value={item}>{item.voice}</option>))}
         </select>
-        </div>
+      </div>
     </div>
   )
 }

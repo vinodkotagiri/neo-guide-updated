@@ -2,10 +2,9 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import WaveSurfer from "wavesurfer.js";
-import ShapesLayer from "./ShapesLayerOld";
-import { Range } from "react-range";
+import ShapesLayer from "./ShapesLayer";
 
-function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
+function TimeLine({ duration, currentTime, onSeek, videoUrl }) {
   const [timeMarkers, setTimeMarkers] = useState([]);
   const cursorRef = useRef(null);
   const containerRef = useRef(null);
@@ -115,4 +114,4 @@ function TimeLineEditor({ duration, currentTime, onSeek, videoUrl }) {
   );
 }
 
-export default TimeLineEditor;
+export default TimeLine;

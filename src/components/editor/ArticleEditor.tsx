@@ -11,10 +11,10 @@ import ArticleMenu from "./ArticleMenu";
 const ArticleEditor = ({ articleData, onSave }) => {
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
-  const [requestId, setRequestId] = useState(null);  
+  const [requestId, setRequestId] = useState(null);
   const dispatch = useAppDispatch()
   const quillRef = useRef(null);
-const {url}=useAppSelector(state=>state.video)
+  const { url } = useAppSelector(state => state.video)
   const modules = {
     toolbar: { container: "#custom-toolbar" },
   };
@@ -36,10 +36,10 @@ const {url}=useAppSelector(state=>state.video)
     "image",
   ];
 
-  function handleGenerateGIF(imageURL){
-    generateGIF({reference_image_path:imageURL, video_path:url, gif_duration:15}).then(res=>{
-      console.log('res:::',res)
-      if(res?.request_id){
+  function handleGenerateGIF(imageURL) {
+    generateGIF({ reference_image_path: imageURL, video_path: url, gif_duration: 15 }).then(res => {
+      console.log('res:::', res)
+      if (res?.request_id) {
         setRequestId(res?.request_id)
       }
     })
@@ -61,38 +61,38 @@ const {url}=useAppSelector(state=>state.video)
       .catch(error => console.error("Error downloading image:", error));
   };
 
-  useEffect(()=>{
-    if(requestId){
+  useEffect(() => {
+    if (requestId) {
       getArticleData(requestId)
     }
-  },[requestId])
+  }, [requestId])
 
-    async function getArticleData(request_id) {
-      if (request_id) {
-        dispatch(setLoader({loading:true}))
-        const progessInterval = setInterval(() => {
-          getProgress(request_id).then(res => {
-            if (res?.status?.toLowerCase() == 'completed') {
-              clearInterval(progessInterval)
-              const data = res?.result?.gif_url;
-              if(data){
-                downloadImage(downloadImage);
-              }
-              dispatch(setLocked(false))
-              dispatch(setLoader({loading:false}))
-            } else if(res?.status?.toLocaleLowerCase().includes('failed')){
-              clearInterval(progessInterval)
-              dispatch(setLoader({loading:false}))
-              toast.error(res?.status)
+  async function getArticleData(request_id) {
+    if (request_id) {
+      dispatch(setLoader({ loading: true }))
+      const progessInterval = setInterval(() => {
+        getProgress(request_id).then(res => {
+          if (res?.status?.toLowerCase() == 'completed') {
+            clearInterval(progessInterval)
+            const data = res?.result?.gif_url;
+            if (data) {
+              downloadImage(downloadImage);
             }
-            else {
-              dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
-            }
-          })
-        }, 5000)
-      }
+            dispatch(setLocked(false))
+            dispatch(setLoader({ loading: false }))
+          } else if (res?.status?.toLocaleLowerCase().includes('failed')) {
+            clearInterval(progessInterval)
+            dispatch(setLoader({ loading: false }))
+            toast.error(res?.status)
+          }
+          else {
+            dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
+          }
+        })
+      }, 5000)
     }
-  
+  }
+
 
   useEffect(() => {
     if (articleData && articleData.length > 0) {
@@ -158,7 +158,7 @@ const {url}=useAppSelector(state=>state.video)
   // Handle Right Click on Image
   const handleContextMenu = (event) => {
     event.preventDefault();
-    
+
     const img = event.target.closest("img");
     if (img) {
       setContextMenu({
@@ -229,7 +229,7 @@ const {url}=useAppSelector(state=>state.video)
       </div>
 
       {/* Context Menu */}
-      {contextMenu.visible && (
+      {/* {contextMenu.visible && (
         <div
           className="absolute bg-white border border-gray-400 shadow-lg p-2 rounded-md"
           style={{ top: contextMenu.y, left: contextMenu.x, zIndex: 1000 }}
@@ -241,7 +241,7 @@ const {url}=useAppSelector(state=>state.video)
             Generate GIF
           </button>
         </div>
-      )}
+      )} */}
     </>
   );
 };

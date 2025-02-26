@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface RectangleElementState {
@@ -12,6 +13,7 @@ export interface RectangleElementState {
   cornerRadius: Array<number>;
   startTime: number;
   endTime: number;
+  rotation: number;
 }
 
 export interface BlurElementState {
@@ -46,7 +48,7 @@ export interface ArrowElementState {
   points: Array<number>;
   stroke: string;
   strokeWidth: number;
-  pointerLenght: number;
+  pointerLength: number;
   pointerWidth: number;
   rotation: number;
   startTime: number;
@@ -155,7 +157,6 @@ const elementsSlice = createSlice({
     editSpotLight(state, action) {
       const index = state.spotLights.findIndex((e) => e.id === action.payload.id);
       const spot = state.spotLights[index];
-console.log('action',action.payload)
       for (const key of Object.keys(spot)) {
         if (action.payload[key]) spot[key] = action.payload[key];
       }
@@ -177,7 +178,7 @@ console.log('action',action.payload)
       state.currentElement = null;
     },
     deleteText(state, action) {
-      state.texts = state.texts.filter((e) => e.id !== action.payload);
+      state.texts = state.texts.filter((e) => e.id !== action.payload.id);
       state.currentElementId = null;
       state.currentElement = null;
     },
