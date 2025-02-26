@@ -2,7 +2,7 @@
 import axios from "axios";
 import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
-// import AWS from "aws-sdk";
+import AWS from "aws-sdk";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://recorder.effybiz.com/api";
