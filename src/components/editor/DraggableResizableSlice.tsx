@@ -83,8 +83,6 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
     if (isResizingLeft) {
       newLeft = currentLeft + deltaX;
       newWidth = currentWidth - deltaX;
-      const maxLeft = currentLeft + currentWidth - minWidth;
-
       if (newWidth < minWidth) {
         newWidth = minWidth;
         newLeft = currentLeft + currentWidth - minWidth;

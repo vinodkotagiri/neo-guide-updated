@@ -15,17 +15,7 @@ const BlurOptions = ({ playerRef }) => {
   const [blurRadius, setBlurRadius] = useState(50);
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
-  const [selectedBlurId, setSelectedBlurId] = useState('')
-
-  const [activeStyle, setActiveStyle] = useState({});
-
-  useEffect(() => {
-    if (currentElementId === selectedBlurId) {
-      setActiveStyle({ background: "#212025" })
-    } else {
-      setActiveStyle({})
-    }
-  }, [currentElementId, selectedBlurId])
+  const [activeId, setActiveID] = useState(null)
 
   useEffect(() => {
     setStartTime(currentPlayTime)
@@ -53,7 +43,6 @@ const BlurOptions = ({ playerRef }) => {
 
   useEffect(() => {
     const currentRect = blurs.find(rect => rect.id === currentElementId)
-    console.log('currentRect')
     if (currentRect) {
       setStartTime(currentRect.startTime)
       setEndTime(currentRect.endTime)
@@ -66,56 +55,38 @@ const BlurOptions = ({ playerRef }) => {
     }
   }, [startTime, endTime])
 
+function handleClick(item){
+  dispatch(setCurrentElementId({id:item.id,type:'blur'}))
+  playerRef?.current?.seekTo(item.startTime)
+  setActiveID(item.id)
+}
 
+useEffect(()=>{
+  setActiveID(currentElementId)
+},[currentElementId])
 
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative '>
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-
-
-
         <div className='flex   text-[#fff] text-[14px]'>
-
           Blur
         </div>
-
         <div className='flex items-center gap-4' >
           <button onClick={handleAddNewBlur} className=' text-[#d9d9d9] cursor-pointer  text-[14px]'>
             <FaPlus />
-
           </button>
-          {/* <button className=' text-[#ffa6bf] cursor-pointer  text-[14px]' onClick={() => dispatch(deleteBlur({ id: currentElementId }))}>
-            <FaRegTrashAlt />
-          </button> */}
         </div>
-
       </div>
-      {/* BLUR RADIUS */}
-      {/* <div className='w-full flex flex-col gap-2 p-3 bg-slate-700 rounded-md'>
-
-       
-        <div className='flex items-center justify-between w-full'>
-          <label className='text-slate-400 text-sm'>Border Radius</label>
-          <input
-            className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
-            type='range'
-            min={5}
-            max={100}
-            value={blurRadius}
-            onChange={(e) => setBlurRadius(e.target.valueAsNumber)}
-          />
-        </div>
-      </div> */}
+    
       {/* TIMES */}
       <div className='flex flex-col justify-between'>
 
         {blurs.map((blur, index) => (
-          <div className='w-full flex  gap-2 p-3  justify-between border-b border-b-[#303032] ' style={currentElementId === blur.id ? activeStyle : {}} onClick={() => {
-            dispatch(setCurrentElement('blur'))
-            playerRef?.current?.seekTo(blur.startTime)
-            setCurrentElementId(blur.id)
-            setSelectedBlurId(blur.id)
-          }}>
+          <div className='w-full flex  gap-2 p-3  justify-between border-b border-b-[#303032] cursor-pointer hover:bg-black/35' 
+          key={blur.id}
+          style={activeId == blur.id ? { backgroundColor: '#422AD5' } : {}}
+          onClick={() => handleClick(blur)}
+          >
             <div className='flex items-center gap-3  '>
               <div className='flex items-center gap-3 '>
                 <label className='text-[#a3a3a5] text-sm text-nowrap'>{index + 1}</label>
@@ -131,8 +102,6 @@ const BlurOptions = ({ playerRef }) => {
               <label className='text-[#a3a3a5] text-sm text-nowrap'>End Time</label>
               <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(blur.endTime).toFixed(2)}</span>
             </div>
-
-
             <div className='flex items-center gap-3'>
               <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteBlur({ id: blur.id }))}> <FaRegTrashAlt /></label>
             </div>

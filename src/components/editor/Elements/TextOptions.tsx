@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { useEffect, useRef, useState } from 'react'
-import { MdChevronLeft, MdDelete, MdOutlineFormatAlignCenter, MdOutlineFormatAlignJustify, MdOutlineFormatAlignLeft, MdOutlineFormatAlignRight } from 'react-icons/md'
+import { MdOutlineFormatAlignCenter, MdOutlineFormatAlignJustify, MdOutlineFormatAlignLeft, MdOutlineFormatAlignRight } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { addText, deleteBlur, deleteText, editText, setCurrentElement, TextElementState } from '../../../redux/features/elementsSlice'
+import { addText, deleteText, editText, setCurrentElement, setCurrentElementId, TextElementState } from '../../../redux/features/elementsSlice'
 
 import { setAddingElements } from '../../../redux/features/videoSlice'
 import { CiTextAlignJustify } from 'react-icons/ci'
@@ -11,7 +11,7 @@ import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
 
 const TextOptions = ({ playerRef }) => {
   const { currentElementId, texts, currentElement } = useAppSelector(state => state.elements)
-  const { duration, currentPlayTime } = useAppSelector(state => state.video)
+  const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const [text, setText] = useState('');
   const [font, setFont] = useState('Open Sans');
@@ -22,9 +22,19 @@ const TextOptions = ({ playerRef }) => {
   const [openTextDD, setOpenTextDD] = useState(false);
 
   const colorInputRef = useRef(null);
-  const bgInputRef = useRef(null)
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
+  const [activeId, setActiveId] = useState(null)
+
+  function handleClick(item) {
+    dispatch(setCurrentElementId({ id: item.id, type: 'text' }))
+    playerRef?.current?.seekTo(item.startTime)
+    setActiveId(item.id)
+  }
+
+  useEffect(() => {
+    setActiveId(currentElementId)
+  }, [currentElementId])
 
 
 
@@ -162,48 +172,32 @@ const TextOptions = ({ playerRef }) => {
                 onChange={(e) => setFontColor(e.target.value)}
               />
             </div>
-            {/* <div className='w-10 h-10 flex items-center justify-center border-[1px] border-slate-800 cursor-pointer relative' onClick={() => bgInputRef.current?.click()}>
-          <BiColorFill size={18} className='z-10' />
-          <input
-            type="color"
-            ref={bgInputRef}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            onChange={(e) => setBackgroundColor(e.target.value)}
-          />
-        </div> */}
+
           </div>
         </div>
 
         {/* TIMES */}
-        <div className='w-full flex  gap-2 p-3  justify-between  '>
+        {texts.map((text) => (
+          <div className='w-full flex  gap-2 p-3  justify-between cursor-pointer hover:bg-black/35'
+          style={activeId == text.id ? { backgroundColor: '#422AD5' } : {}}
+          key={text.id}
+          onClick={() => handleClick(text)}
+          >
           <div className='flex items-center gap-3'>
             <label className='text-[#a3a3a5] text-sm text-nowrap'>Start Time</label>
-            {/* <input
-            className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
-            type='number'
-            min={0}
-            max={duration}
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.valueAsNumber)}
-          /> */}
+
             <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(startTime).toFixed(2)}</span>
           </div>
           <div className='flex items-center gap-3'>
             <label className='text-[#a3a3a5] text-sm text-nowrap'>End Time</label>
-            {/* <input
-            className='w-1/2 accent-[#02bc7d] outline-none cursor-pointer'
-            type='number'
-            min={startTime + 5}
-            max={duration}
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.valueAsNumber)}
-          /> */}
+
             <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(endTime).toFixed(2)}</span>
           </div>
           <div className='flex items-center gap-3'>
             <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteText({ id: currentElementId }))}> <FaRegTrashAlt /></label>
           </div>
         </div>
+        ))}
       </div>
     </div>
   )
