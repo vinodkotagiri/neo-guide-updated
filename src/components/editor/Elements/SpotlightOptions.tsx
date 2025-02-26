@@ -7,7 +7,7 @@ import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
 
 const SpotlightOptions = ({ playerRef }) => {
   const { currentElementId, spotLights, currentElement } = useAppSelector(state => state.elements)
-  const {  currentPlayTime } = useAppSelector(state => state.video)
+  const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const [strokeColor, setStrokeColor] = useState('#fff')
@@ -15,7 +15,7 @@ const SpotlightOptions = ({ playerRef }) => {
   const [cornerRadius, setCornerRadius] = useState([1, 1, 1, 1])
   const [startTime, setStartTime] = useState(0)
   const [endTime, setEndTime] = useState(0)
-const [activeId, setActiveId] = useState(null)
+  const [activeId, setActiveId] = useState(null)
 
   function handleClick(item) {
     dispatch(setCurrentElementId({ id: item.id, type: 'spotlight' }))
@@ -31,7 +31,7 @@ const [activeId, setActiveId] = useState(null)
 
   useEffect(() => {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
   }, [])
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const [activeId, setActiveId] = useState(null)
 
   function handleAddNewRectangle() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
     dispatch(setAddingElements(true))
     const rectData: SpotElementElementState = {
       id: Date.now().toString(),
@@ -137,24 +137,24 @@ const [activeId, setActiveId] = useState(null)
 
 
         {/* TIMES */}
-        {spotLights.map(spotlight=>(
-          <div className='w-full flex  gap-2 p-3   justify-between  cursor-pointer hover:bg-black/35'
-          style={activeId == spotlight.id ? { backgroundColor: '#422AD5' } : {}}
+        {spotLights.map(spotlight => (
+          <div className='w-full flex  gap-2 p-3   justify-between  cursor-pointer hover:bg-[#212025]'
+            style={activeId == spotlight.id ? { backgroundColor: '#212025' } : {}}
             key={spotlight.id}
             onClick={() => handleClick(spotlight)}
           >
-          <div className='flex items-center gap-3'>
-            <label className='text-[#a3a3a5] text-sm text-nowrap'>Start Time</label>
-            <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(spotlight.startTime).toFixed(2)}</span>
+            <div className='flex items-center gap-3'>
+              <label className='text-[#a3a3a5] text-sm text-nowrap'>Start Time</label>
+              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(spotlight.startTime).toFixed(2)}</span>
+            </div>
+            <div className='flex items-center gap-3'>
+              <label className='text-[#a3a3a5] text-sm text-nowrap'>End Time</label>
+              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(spotlight.endTime).toFixed(2)}</span>
+            </div>
+            <div className='flex items-center gap-3'>
+              <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteSpotLight({ id: spotlight.id }))}> <FaRegTrashAlt /></label>
+            </div>
           </div>
-          <div className='flex items-center gap-3'>
-            <label className='text-[#a3a3a5] text-sm text-nowrap'>End Time</label>
-         <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(spotlight.endTime).toFixed(2)}</span>
-          </div>
-          <div className='flex items-center gap-3'>
-            <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteSpotLight({ id: spotlight.id }))}> <FaRegTrashAlt /></label>
-          </div>
-        </div>
         ))}
       </div>
     </div>

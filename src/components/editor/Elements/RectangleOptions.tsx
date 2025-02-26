@@ -28,12 +28,12 @@ const RectangleOptions = ({ playerRef }) => {
 
   useEffect(() => {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
   }, [])
 
   function handleAddNewRectangle() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
     dispatch(setAddingElements(true))
     const rectData: RectangleElementState = {
       id: Date.now().toString(),
@@ -74,15 +74,15 @@ const RectangleOptions = ({ playerRef }) => {
     }
   }, [strokeColor, strokeWidth, fillColor, cornerRadius, startTime, endTime])
 
-function handleClick(item){
-  dispatch(setCurrentElementId({id:item.id,type:'rectangle'}))
-  playerRef?.current?.seekTo(item.startTime)
-  setActiveId(item.id)
-}
+  function handleClick(item) {
+    dispatch(setCurrentElementId({ id: item.id, type: 'rectangle' }))
+    playerRef?.current?.seekTo(item.startTime)
+    setActiveId(item.id)
+  }
 
-useEffect(()=>{
-  setActiveId(currentElementId)
-},[currentElementId])
+  useEffect(() => {
+    setActiveId(currentElementId)
+  }, [currentElementId])
 
 
 
@@ -99,7 +99,7 @@ useEffect(()=>{
         </div>
 
       </div>
-        <div className='border-b-[#303032] border-b    '>
+      <div className='border-b-[#303032] border-b    '>
         <div className='w-full flex flex-col gap-2 p-3 pt-0    '>
 
           {/* STROKE COLOR */}
@@ -143,10 +143,10 @@ useEffect(()=>{
         </div>
         {/* TIMES */}
 
-        {rectangles.map(rectangle=>(<div className='w-full flex  gap-2 p-3  justify-between  cursor-pointer hover:bg-black/35'
-        key={rectangle.id}
-        style={activeId == rectangle.id ? { backgroundColor: '#422AD5' } : {}}
-        onClick={()=>handleClick(rectangle)}>
+        {rectangles.map(rectangle => (<div className='w-full flex  gap-2 p-3  justify-between  cursor-pointer hover:bg-[#212025]'
+          key={rectangle.id}
+          style={activeId == rectangle.id ? { backgroundColor: '#212025' } : {}}
+          onClick={() => handleClick(rectangle)}>
           <div className='flex items-center gap-3'>
             <label className='text-[#a3a3a5] text-sm text-nowrap'>Start Time</label>
             <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(rectangle.startTime).toFixed(2)}</span>
@@ -159,9 +159,9 @@ useEffect(()=>{
           <div className='flex items-center gap-3'>
             <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteRectangle({ id: rectangle.id }))}> <FaRegTrashAlt /></label>
           </div>
-        </div>  ))}
+        </div>))}
       </div>
-    
+
     </div>
   )
 }

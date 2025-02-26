@@ -32,12 +32,12 @@ const ArrowOptions = ({ playerRef }) => {
 
   useEffect(() => {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
   }, [])
 
   function handleAddNewBlur() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
     dispatch(setAddingElements(true))
     const arrowData: ArrowElementState = {
       id: Date.now().toString(),
@@ -132,8 +132,8 @@ const ArrowOptions = ({ playerRef }) => {
         {/* TIMES */}
 
         {arrows.map(arrow => (
-          <div className='w-full flex  gap-2 p-3  justify-between  cursor-pointer hover:bg-black/35 '
-            style={activeId == arrow.id ? { backgroundColor: '#422AD5' } : {}}
+          <div className='w-full flex  gap-2 p-3  justify-between  cursor-pointer hover:bg-[#212025] '
+            style={activeId == arrow.id ? { backgroundColor: '#212025' } : {}}
             key={arrow.id}
             onClick={() => handleClick(arrow)}
           >

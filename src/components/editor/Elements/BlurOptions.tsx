@@ -19,12 +19,12 @@ const BlurOptions = ({ playerRef }) => {
 
   useEffect(() => {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
   }, [])
 
   function handleAddNewBlur() {
     setStartTime(currentPlayTime)
-    setEndTime(currentPlayTime + 15)
+    setEndTime(currentPlayTime + 5)
     dispatch(setAddingElements(true))
     const blurData: BlurElementState = {
       id: Date.now().toString(),
@@ -55,15 +55,15 @@ const BlurOptions = ({ playerRef }) => {
     }
   }, [startTime, endTime])
 
-function handleClick(item){
-  dispatch(setCurrentElementId({id:item.id,type:'blur'}))
-  playerRef?.current?.seekTo(item.startTime)
-  setActiveID(item.id)
-}
+  function handleClick(item) {
+    dispatch(setCurrentElementId({ id: item.id, type: 'blur' }))
+    playerRef?.current?.seekTo(item.startTime)
+    setActiveID(item.id)
+  }
 
-useEffect(()=>{
-  setActiveID(currentElementId)
-},[currentElementId])
+  useEffect(() => {
+    setActiveID(currentElementId)
+  }, [currentElementId])
 
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative '>
@@ -77,15 +77,15 @@ useEffect(()=>{
           </button>
         </div>
       </div>
-    
+
       {/* TIMES */}
       <div className='flex flex-col justify-between'>
 
         {blurs.map((blur, index) => (
-          <div className='w-full flex  gap-2 p-3  justify-between border-b border-b-[#303032] cursor-pointer hover:bg-black/35' 
-          key={blur.id}
-          style={activeId == blur.id ? { backgroundColor: '#422AD5' } : {}}
-          onClick={() => handleClick(blur)}
+          <div className='w-full flex  gap-2 p-3  justify-between border-b border-b-[#303032] cursor-pointer hover:bg-[#212025]'
+            key={blur.id}
+            style={activeId == blur.id ? { backgroundColor: '#212025' } : {}}
+            onClick={() => handleClick(blur)}
           >
             <div className='flex items-center gap-3  '>
               <div className='flex items-center gap-3 '>
