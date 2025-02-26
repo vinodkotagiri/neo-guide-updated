@@ -4,7 +4,7 @@ import TimelineArea from "./TimelineArea";
 import SubtitlesOverlay from "./SubtitlesOverlay";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious, md } from "react-icons/md";
+import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious} from "react-icons/md";
 import { setMuted, setVideoPlaying } from "../../redux/features/videoSlice";
 import { formatTime } from "../../helpers";
 import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
