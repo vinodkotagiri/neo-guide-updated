@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { TimelineRow } from "@xzdarcy/react-timeline-editor";
 import { createSlice } from "@reduxjs/toolkit";
-const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
+// const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
 interface SubtitlesState {
   data: [{ text: string; start_time: number; end_time: number }];
   color: string;
@@ -56,7 +56,7 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url:url_test ,
+  url:'' ,
   duration: 0,
   language: "",
   playing: false,
