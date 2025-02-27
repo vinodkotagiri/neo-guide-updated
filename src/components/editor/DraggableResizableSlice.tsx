@@ -143,7 +143,7 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
       onMouseDown={handleMouseDown}
       onClick={onShapeClick}
     >
-      <p className='font-semibold text-white'>{label}&nbsp;<span >{Number(sliceStyle.width / 8).toFixed(2)}s</span></p>
+      {sliceStyle.width>120&&<p className='font-semibold text-white'>{label}&nbsp;<span >{Number(sliceStyle.width / 8).toFixed(2)}s</span></p>}
       <div className='resize-handle left' style={{
         position: 'absolute',
         left: 0,
