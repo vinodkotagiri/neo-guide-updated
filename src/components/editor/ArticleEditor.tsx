@@ -37,15 +37,14 @@ const ArticleEditor = ({ articleData, onSave }) => {
   ];
 
   function handleGenerateGIF(imageURL) {
-    generateGIF({ reference_image_path: imageURL, video_path: url, gif_duration: 15 }).then(res => {
-      console.log('res:::', res)
+    generateGIF({ reference_image_path: imageURL, video_path: url, gif_duration: 5 }).then(res => {
       if (res?.request_id) {
         setRequestId(res?.request_id)
       }
     })
   }
 
-  const downloadImage = (imageUrl: string, fileName: string = "downloaded-image.jpg") => {
+  const downloadImage = (imageUrl: string, fileName: string = "downloaded-image.gif") => {
     fetch(imageUrl)
       .then(response => response.blob())
       .then(blob => {
@@ -229,7 +228,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
       </div>
 
       {/* Context Menu */}
-      {/* {contextMenu.visible && (
+      {contextMenu.visible && (
         <div
           className="absolute bg-white border border-gray-400 shadow-lg p-2 rounded-md"
           style={{ top: contextMenu.y, left: contextMenu.x, zIndex: 1000 }}
@@ -241,7 +240,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
             Generate GIF
           </button>
         </div>
-      )} */}
+      )}
     </>
   );
 };
