@@ -32,7 +32,7 @@ const EditorSider = ({ playerRef }) => {
         cornerRadius: [1, 1, 1, 1],
         fillColor: 'transparent',
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 5
       }
       dispatch(addRectangle(rectData))
       dispatch(setCurrentElement('rectangle'))
@@ -47,7 +47,7 @@ const EditorSider = ({ playerRef }) => {
         height: 100,
         blurRadius: 50,
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 5
       }
       dispatch(addBlur(blurData))
       dispatch(setCurrentElement('blur'))
@@ -65,7 +65,7 @@ const EditorSider = ({ playerRef }) => {
         justify: 'left',
         fontColor: 'red',
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 5
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))
@@ -83,7 +83,7 @@ const EditorSider = ({ playerRef }) => {
         rotation: 0,
         pointerWidth: 20,
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 5
       }
       dispatch(addArrow(arrowData))
       dispatch(setCurrentElement('arrow'))
@@ -101,7 +101,7 @@ const EditorSider = ({ playerRef }) => {
         glowRadius: 50,
         cornerRadius: [20, 20, 20, 20],
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 5
       };
 
       dispatch(addSpotLight(spotlightData));
