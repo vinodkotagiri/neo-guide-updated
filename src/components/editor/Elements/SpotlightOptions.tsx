@@ -105,14 +105,10 @@ const SpotlightOptions = ({ playerRef }) => {
         </div>
         <button onClick={handleAddNewRectangle} className=' text-[#d9d9d9] cursor-pointer  text-[14px]'>
           <FaPlus />
-
         </button>
-        {/* <button className='cursor-pointer' onClick={() => dispatch(deleteSpotLight({ id: currentElementId }))}>
-          <MdDelete size={20} color='red' />
-        </button> */}
       </div>
 
-      <div className='border-b-[#303032] border-b    w-full flex flex-col gap-2 p-3 pt-0'>
+      <div className='border-b-[#303032] border-b    w-full flex flex-col gap-2 p-3 pt-0' style={spotLights.length == 0 ? { display: 'none' } : { }}>
         {/* STROKE WIDTH */}
         <div className='flex items-center justify-between w-full'>
           <label className='text-[#a3a3a5] text-sm text-nowrap'>Shadow Spread</label>

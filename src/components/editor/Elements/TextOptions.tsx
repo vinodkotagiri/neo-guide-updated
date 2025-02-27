@@ -105,7 +105,8 @@ const TextOptions = ({ playerRef }) => {
 
         </div>
       </div>
-      <div className='border-b-[#303032] border-b flex flex-col gap-3 '>
+
+      <div className='border-b-[#303032] border-b flex flex-col gap-3 ' style={texts.length == 0 ? { display: 'none' } : { }}>
         <div className='px-3 flex flex-col gap-3'>
           <div className='w-full'>
             <input className='input   bg-transparent border-[#303032] w-full  text-[#a3a3a5]  shadow-none ' value={text} onChange={(e) => setText(e.target.value)} />
