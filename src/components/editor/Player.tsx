@@ -11,7 +11,7 @@ function Player({ playerRef }) {
       dispatch(setCurrentPlayTime(playerRef?.current?.getCurrentTime()))
     }
   }, [playerRef?.current?.getCurrentTime()])
-  return (<>
+  return (<div className="absolute w-full top-0">
     <ReactPlayer
       ref={playerRef}
       width='100%'
@@ -25,7 +25,7 @@ function Player({ playerRef }) {
       onSeek={(time) => dispatch(setVideoPlayed(time))}
     />
 
-  </>
+  </div>
 
   )
 }
