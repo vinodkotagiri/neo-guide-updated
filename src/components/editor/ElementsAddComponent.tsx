@@ -61,7 +61,7 @@ function ElementTypeComponent({ icon, label }) {
         y: 0,
         width: 100,
         height: 100,
-        strokeColor: '#fff',
+        strokeColor: '#000',
         strokeWidth: 4,
         cornerRadius: [1, 1, 1, 1],
         fillColor: 'transparent',
