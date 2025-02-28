@@ -12,6 +12,7 @@ Konva.Filters.RadialBlur = function (imageData) {
   const centerX = width / 2;
   const centerY = height / 2;
 
+ 
   // Create a temporary buffer
   const tempData = new Uint8ClampedArray(data);
 
@@ -61,8 +62,16 @@ function ElementsOverlay() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-  const { rectangles, blurs, texts, arrows, spotLights } = useAppSelector((state) => state.elements);
+  const { rectangles, blurs, texts, arrows, spotLights, currentElementId } = useAppSelector((state) => state.elements);
   const { played, currentPlayTime } = useAppSelector(state => state.video)
+
+  const checkDeselect = (e) => {
+    if (e.target === stageRef.current) {
+      dispatch(setCurrentElementId({id:null, type: null}));
+      setSelectedId(null);
+    }
+  };
+
 
   useEffect(() => {
     const updateStageSize = () => {
@@ -86,6 +95,7 @@ function ElementsOverlay() {
         transformer.getLayer().batchDraw();
       } else {
         transformer.nodes([]);
+        transformer.getLayer().batchDraw();
       }
     }
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played]);
@@ -96,10 +106,10 @@ function ElementsOverlay() {
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
       {blurs.map((rect) => (
-        <BlurOverlay key={rect.id} rect={rect} played={played}/>
+        <BlurOverlay key={rect.id} rect={rect} played={played} />
       ))}
 
-      <Stage ref={stageRef} width={stageSize.width} height={stageSize.height}>
+      <Stage ref={stageRef} width={stageSize.width} height={stageSize.height} onMouseDown={checkDeselect}>
         <Layer>
           {rectangles.map((rect) => (
             <Rect
@@ -113,6 +123,7 @@ function ElementsOverlay() {
               stroke={rect.strokeColor}
               strokeWidth={rect.strokeWidth}
               cornerRadius={rect.cornerRadius}
+              dash={[4, 3]}
               draggable
               visible={rect.startTime <= currentPlayTime && rect.endTime >= currentPlayTime}
               onClick={() => {
@@ -148,11 +159,12 @@ function ElementsOverlay() {
               x={rect.x}
               y={rect.y}
               fill={'transparent'}
+              stroke={"#000"}
               width={rect.width}
               height={rect.height}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
-             
+
               onClick={() => {
                 setSelectedId(rect.id);
                 dispatch(setCurrentElementId({ type: 'blur', id: rect.id }));
@@ -214,8 +226,8 @@ function ElementsOverlay() {
             <Arrow
               key={arrow.id}
               id={arrow.id}
-              x={0}
-              y={0}
+              x={100}
+              y={100}
               points={[0, 0, 100, 100]}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
@@ -313,7 +325,8 @@ function ElementsOverlay() {
             </Group>
           ))}
 
-          <Transformer ref={transformerRef} rotateEnabled={true} />
+          <Transformer ref={transformerRef} rotateEnabled={false}
+            enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']} />
         </Layer>
       </Stage>
     </div>
@@ -322,8 +335,8 @@ function ElementsOverlay() {
 
 export default ElementsOverlay;
 
-const BlurOverlay = ({ rect,played }) => {
-  if(rect.startTime <= played && rect.endTime >= played){
+const BlurOverlay = ({ rect, played }) => {
+  if (rect.startTime <= played && rect.endTime >= played) {
     return (
       <div
         className="blur-overlay"
@@ -339,6 +352,6 @@ const BlurOverlay = ({ rect,played }) => {
       ></div>
     );
   }
-  
+
 };
 

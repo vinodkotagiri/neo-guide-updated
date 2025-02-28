@@ -37,11 +37,11 @@ const RectangleOptions = ({ playerRef }) => {
     dispatch(setAddingElements(true))
     const rectData: RectangleElementState = {
       id: Date.now().toString(),
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
       width: 100,
       height: 100,
-      strokeColor: '#fff',
+      strokeColor: '#000',
       strokeWidth: 3,
       cornerRadius: [1, 1, 1, 1],
       fillColor: 'transparent',

@@ -9,7 +9,7 @@ const ArrowOptions = ({ playerRef }) => {
   const { currentElementId, arrows, currentElement } = useAppSelector(state => state.elements)
   const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-  const [stroke, setStroke] = useState('#fff');
+  const [stroke, setStroke] = useState('#000');
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [pointerLength, setpointerLength] = useState(20);
   const [pointerWidth, setPointerWidth] = useState(20);
@@ -41,8 +41,8 @@ const ArrowOptions = ({ playerRef }) => {
     dispatch(setAddingElements(true))
     const arrowData: ArrowElementState = {
       id: Date.now().toString(),
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
       points: [0, 0, 100, 100],
       strokeWidth: strokeWidth,
       stroke: stroke,
