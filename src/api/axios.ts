@@ -251,8 +251,8 @@ export async function rephraseArticle(payload: {
 }
 
 export async function generateGIF(payload: {
-  reference_image_path: string;
-  video_path: string;
+  reference_image_url: string;
+  video_url: string;
   gif_duration: number;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
