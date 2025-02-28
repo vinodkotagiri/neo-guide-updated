@@ -50,7 +50,7 @@ const EditorSider = ({ playerRef }) => {
         endTime: currentPlayTime + 5
       }
       dispatch(addBlur(blurData))
-      dispatch(setCurrentElement('blur'))
+    dispatch(setCurrentElement({id: blurData.id,type:'blur'}))
     }
     if (shape == 'text') {
       dispatch(setAddingElements(true))

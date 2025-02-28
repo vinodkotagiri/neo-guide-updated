@@ -72,6 +72,7 @@ function ElementsOverlay() {
     }
   };
 
+  useEffect(()=>{setSelectedId(currentElementId)},[currentElementId])
 
   useEffect(() => {
     const updateStageSize = () => {
@@ -159,12 +160,11 @@ function ElementsOverlay() {
               x={rect.x}
               y={rect.y}
               fill={'transparent'}
-              stroke={"#000"}
+              // stroke={"#000"}
               width={rect.width}
               height={rect.height}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
-
               onClick={() => {
                 setSelectedId(rect.id);
                 dispatch(setCurrentElementId({ type: 'blur', id: rect.id }));
@@ -187,6 +187,7 @@ function ElementsOverlay() {
 
                 // Update rectangle size in Redux store
                 dispatch(editBlur({ id: rect.id, width: newWidth, height: newHeight }));
+                
               }}
             />
           ))}
@@ -325,8 +326,17 @@ function ElementsOverlay() {
             </Group>
           ))}
 
-          <Transformer ref={transformerRef} rotateEnabled={false}
-            enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']} />
+          <Transformer ref={transformerRef} 
+          rotateEnabled={false}
+          flipEnabled={false}
+          boundBoxFunc={(oldBox, newBox) => {
+            // limit resize
+            if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
+              return oldBox;
+            }
+            return newBox;
+          }} 
+          />
         </Layer>
       </Stage>
     </div>

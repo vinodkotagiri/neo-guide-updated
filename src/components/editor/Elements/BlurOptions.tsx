@@ -28,8 +28,8 @@ const BlurOptions = ({ playerRef }) => {
     dispatch(setAddingElements(true))
     const blurData: BlurElementState = {
       id: Date.now().toString(),
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
       width: 100,
       height: 100,
       blurRadius: blurRadius,
@@ -37,7 +37,7 @@ const BlurOptions = ({ playerRef }) => {
       endTime: endTime
     }
     dispatch(addBlur(blurData))
-    dispatch(setCurrentElement('blur'))
+    dispatch(setCurrentElement({id: blurData.id,type:'blur'}))
   }
 
 
