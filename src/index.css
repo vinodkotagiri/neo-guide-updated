@@ -239,22 +239,27 @@
 .timeline-editor-action {
   background-color: #097969 !important;
 }
+
 .ql-editor {
   overflow: hidden !important;
   border-radius: 16px !important;
-  padding: 32px  !important;
-  background-color: #fff!important;
-  font-size: 20px !important; 
-  line-height: 28px !important; 
+  padding: 32px !important;
+  background-color: #fff !important;
+  font-size: 20px !important;
+  line-height: 28px !important;
 }
 
 .ql-editor img {
-  padding: 16px 0px !important;
+  /* padding: 16px 0px !important;*/
   border-radius: 16px !important;
-  margin-top: 32px !important; /* Space below images added via toolbar */
+  margin-top: 32px !important;
+  /* Space below images added via toolbar */
   margin-bottom: 32px !important;
 }
+
 .ql-editor p {
-  margin-top:16px !important; /* Space above paragraphs following images */
-  margin-bottom: 16px !important; /* Space below paragraphs */
+  margin-top: 16px !important;
+  /* Space above paragraphs following images */
+  margin-bottom: 16px !important;
+  /* Space below paragraphs */
 }

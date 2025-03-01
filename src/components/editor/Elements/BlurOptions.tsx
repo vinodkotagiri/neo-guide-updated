@@ -37,7 +37,7 @@ const BlurOptions = ({ playerRef }) => {
       endTime: endTime
     }
     dispatch(addBlur(blurData))
-    dispatch(setCurrentElement({id: blurData.id,type:'blur'}))
+    dispatch(setCurrentElement({ id: blurData.id, type: 'blur' }))
   }
 
 
@@ -76,12 +76,12 @@ const BlurOptions = ({ playerRef }) => {
             <FaPlus />
           </button>
         </div>
-        
+
       </div>
-      <div className='bg-[#303032] w-full h-[1px]'style={blurs.length ==0 ? {  } : {display: 'none' }}>
-        WELCOMEEEE
+      <div className=' w-full flex' style={blurs.length == 0 ? {} : { display: 'none' }}>
+        <button className='cursor-pointer bg-[#422ad5]  rounded-lg text-white mx-auto px-3 py-2 mt-4 flex items-center gap-2' onClick={handleAddNewBlur} ><FaPlus /> Add New Blur</button>
       </div>
-     
+
       {/* TIMES */}
       <div className='flex flex-col justify-between'>
 
