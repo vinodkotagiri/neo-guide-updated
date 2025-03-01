@@ -4,19 +4,13 @@ import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 
-const BASE_URL1 =
-  import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://recorder.effybiz.com/api/flsk";
+const BASE_URL =
+  import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://recorder.effybiz.com/api";
 
-const BASE_URL2=
-  import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3004" : "https://recorder.effybiz.com/api/gz";
-
-const api1 = axios.create({
-  baseURL: BASE_URL1,
+  const api = axios.create({
+  baseURL: BASE_URL,
 });
 
-const api2 = axios.create({
-  baseURL: BASE_URL2,
-});
 export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVideoResponse | null> {
   try {
     AWS.config.update({
@@ -39,7 +33,7 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       const formData = new FormData();
       formData.append('file', file);
       const {file}=payload
-      response= await api1.post('/upload',formData,{headers:{'Content-Type': 'multipart/form-data'}})
+      response= await api.post('/upload',formData,{headers:{'Content-Type': 'multipart/form-data'}})
     }
     if (!response?.Location) return null;
     return { file_url: response.Location };
@@ -53,7 +47,7 @@ export async function getProgress(
   requestId: string
 ): Promise<{ progress: number; status: string; details?: string; result?: unknown } | null> {
   return new Promise((resolve) => {
-    api1
+    api
       .get(`/progress/${requestId}`)
       .then((res) => {
         resolve(res.data);
@@ -67,9 +61,8 @@ export async function getProgress(
 
 export async function applyZoom(payload: ApplyZoomPayload) {
   return new Promise((resolve) => {
-    console.log("payload::", payload);
-    api1
-      .post("/apply-zoom", payload)
+    api
+      .post("/zoom/apply-zoom", payload)
       .then((res) => {
         resolve(res.data?.message?.split(" ")[0]);
       })
@@ -86,7 +79,7 @@ export async function translateAndDub(payload: {
   voice: string;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/dubbing", payload)
       .then((res) => {
         resolve(res.data);
@@ -131,7 +124,7 @@ export async function getSubtitles(payload: {
   video_path: string;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/subtitle", payload)
       .then((res) => {
         resolve(res.data);
@@ -146,7 +139,7 @@ export async function getSubtitles(payload: {
 // ARTICLE
 export async function createArticle(payload: { video_url: string }) {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_formate", payload)
       .then((res) => {
         resolve(res.data);
@@ -162,7 +155,7 @@ export async function enhanceAIArticle(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/enhance_ai", payload)
       .then((res) => {
         resolve(res.data);
@@ -178,7 +171,7 @@ export async function articleCreation(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_creation", payload)
       .then((res) => {
         resolve(res.data);
@@ -195,7 +188,7 @@ export async function articleLanguage(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_lang", payload)
       .then((res) => {
         resolve(res.data);
@@ -211,7 +204,7 @@ export async function conciseArticle(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_concise", payload)
       .then((res) => {
         resolve(res.data);
@@ -227,7 +220,7 @@ export async function articleStep(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_step", payload)
       .then((res) => {
         console.log('res',res)
@@ -244,7 +237,7 @@ export async function rephraseArticle(payload: {
   json_content: Array<{ text?: string; image_url?: string }>;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
+    api
       .post("/article_rephrase", payload)
       .then((res) => {
         resolve(res.data);
@@ -262,8 +255,8 @@ export async function generateGIF(payload: {
   gif_duration: number;
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
-    api1
-      .post("/generate-gif", payload,{headers:{'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'}})
+    api
+      .post("/gif/generate-gif", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -274,4 +267,4 @@ export async function generateGIF(payload: {
   });
 }
 
-export default api1;
+export default api;
