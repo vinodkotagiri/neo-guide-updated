@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
 
 
@@ -13,19 +13,22 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
   const scrollSpeed = 5;
   const minWidth = 20;
   const edgeThreshold = 50;
+const {pixelFactor}=useAppSelector(state=>state.video)
 
   useEffect(() => {
     if (shape.startTime != undefined && shape.endTime != undefined) {
       const startTime = shape.startTime, endTime = shape.endTime
-      const width = ((endTime - startTime)) * 8;
-      const left = (startTime) * 8;
+      const width = (endTime-startTime) ;
+      const left = (startTime) ;
       setSliceStyle({ left, width })
     }
   }, [shape])
 
 
+
+
   useEffect(() => {
-    const startTime = sliceStyle.left / 8, endTime = (sliceStyle.left + sliceStyle.width) / 8
+    const startTime = sliceStyle.left , endTime = (sliceStyle.left + sliceStyle.width) 
     if (shapeType == 'rectangle') {
       dispatch(editRectangle({ id: shape.id, startTime, endTime }))
     }
@@ -41,7 +44,7 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
     else if (shapeType == 'arrow') {
       dispatch(editArrow({ id: shape.id, startTime, endTime }))
     }
-  }, [sliceStyle])
+  }, [sliceStyle.left, sliceStyle.width, pixelFactor, shapeType, shape.id, dispatch])
 
 
   const onShapeClick = () => {
@@ -131,7 +134,7 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isMouseDown, isResizingLeft, isResizingRight, lastX]);
+  }, [isMouseDown, isResizingLeft, isResizingRight, lastX,sliceStyle]);
 
 
 
@@ -139,11 +142,11 @@ const DraggableResizableSlice = ({ playerRef, wrapperRef, layerRef, sliceRef, la
     <div
       className="h-full absolute cursor-grab user-select-none flex items-center justify-center capitalize text-xs rounded-lg"
       ref={sliceRef}
-      style={{ left: sliceStyle.left, width: sliceStyle.width, backgroundColor: color }}
+      style={{ left: sliceStyle.left*pixelFactor, width: sliceStyle.width*pixelFactor, backgroundColor: color }}
       onMouseDown={handleMouseDown}
       onClick={onShapeClick}
     >
-      {sliceStyle.width>120&&<p className='font-semibold text-white'>{label}&nbsp;<span >{Number(sliceStyle.width / 8).toFixed(2)}s</span></p>}
+      {sliceStyle.width>120&&<p className='font-semibold text-white'>{label}&nbsp;<span >{Number(sliceStyle.width / pixelFactor).toFixed(2)}s</span></p>}
       <div className='resize-handle left' style={{
         position: 'absolute',
         left: 0,

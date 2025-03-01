@@ -13,14 +13,14 @@ function TimelineArea({ playerRef }) {
   const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
   const lastMouseX = useRef(0); // Track last mouse position for deltaX
-  const { duration } = useAppSelector(state => state.video);
+  const { duration,pixelFactor } = useAppSelector(state => state.video);
 
   useEffect(() => {
     const cleanup = () => {
       if (playerRef?.current?.getCurrentTime) {
         const intervalId = setInterval(() => {
           if (!isDraggingRef.current) {
-            const newCursorPosition = playerRef.current.getCurrentTime() * 8;
+            const newCursorPosition = playerRef.current.getCurrentTime() * pixelFactor;
             setCursorPosition(newCursorPosition);
             autoScroll(newCursorPosition);
           }
@@ -32,7 +32,7 @@ function TimelineArea({ playerRef }) {
     if (playerRef?.current) {
       return cleanup();
     }
-  }, [playerRef]);
+  }, [playerRef,pixelFactor]);
 
   useEffect(() => {
     const initMarkers = async () => {
@@ -86,13 +86,13 @@ function TimelineArea({ playerRef }) {
 
       setCursorPosition(prev => {
         const newPosition = prev + deltaX;
-        const maxPosition = duration ? (duration - 1) * 8 : 0;
+        const maxPosition = duration ? (duration - 1) * pixelFactor : 0;
         const boundedPosition = Math.max(0, Math.min(newPosition, maxPosition));
 
         autoScroll(boundedPosition);
 
         if (playerRef.current?.seekTo) {
-          playerRef.current.seekTo(boundedPosition / 8);
+          playerRef.current.seekTo(boundedPosition / pixelFactor);
         }
 
         return boundedPosition;
@@ -183,7 +183,7 @@ function TimelineArea({ playerRef }) {
             key={index}
             className='absolute top-0 cursor-pointer z-10 bg-slate-400'
             style={{
-              left: `${item * 8}px`,
+              left: `${item * pixelFactor}px`,
               height: item % 10 === 0 ? '8px' : '4px',
               ...neonGlow
             }}
@@ -198,12 +198,12 @@ function TimelineArea({ playerRef }) {
         ))}
         <AnimatePresence>
           {markers.map((item, index) => (
-            item % 10 === 0 && (
+           ( item % 10 === 0 || pixelFactor>15) && (
               <motion.div
                 key={index}
                 className='absolute top-3 left-4 cursor-pointer z-10 text-xs'
                 style={{
-                  left: `${item * 8}px`,
+                  left: `${item * pixelFactor}px`,
                   color: '#cbd5e0'
                 }}
                 variants={{
@@ -221,7 +221,7 @@ function TimelineArea({ playerRef }) {
         </AnimatePresence>
         <div
           className='absolute h-[calc(100%-36px)] top-[36px]'
-          style={{ width: markers.length > 0 ? markers[markers.length - 1] * 8 : 0 }}
+          style={{ width: markers.length > 0 ? markers[markers.length - 1] * pixelFactor : 0 }}
         >
           <div className='absolute h-[48px] w-full bg-black opacity-10 -top-[36px] -z-10' />
         </div>
@@ -246,7 +246,7 @@ function TimelineArea({ playerRef }) {
         {playerRef.current && <ShapesLayer wrapperRef={scrollRef}
           playerRef={playerRef}
           numSegments={Math.ceil(duration / 5)}
-          thumbnailHeight={36} width={markers[markers.length - 1] * 8} />}
+          thumbnailHeight={36} width={markers[markers.length - 1] * pixelFactor} />}
       </div>
     </div>
   );

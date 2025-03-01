@@ -12,6 +12,7 @@ interface SubtitlesState {
 }
 interface VideoState {
   url: string;
+  pixelFactor:number;
   muted:boolean;
   duration: number;
   language: string;
@@ -63,6 +64,7 @@ const initialState: VideoState = {
   language: "",
   playing: false,
   currentPlayTime:0,
+  pixelFactor:8,
   played: 0,
   seeked: 0,
   locked:false,
@@ -117,6 +119,12 @@ const videoSlice = createSlice({
   reducers: {
     setMuted:(state,action)=>{
       state.muted=action.payload
+    },
+    setPixelFactor:(state,action)=>{
+      if(action.payload<8) return
+      // if(state.pixelFactor<=0||state.pixelFactor>=12) return
+
+      state.pixelFactor=action.payload
     },
     setLocked:(state,action)=>{
       state.locked=action.payload
@@ -177,6 +185,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setPixelFactor,
   setMuted,
   setCurrentPlayTime,
   setLocked,

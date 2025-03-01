@@ -24,7 +24,7 @@ function DubHeader() {
   function handleVoiceChange(e) {
     setSelectedVoice(e.target.value)
   }
-  console.log('selectedVOice', selectedVoice)
+
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>

@@ -197,7 +197,6 @@ const articleSlice = createSlice({
   initialState,
   reducers: {
     setArticleData: (state, action) => {
-      console.log('articleee',action.payload)
       state.articleData = action.payload;
       window.localStorage.setItem('articleData',JSON.stringify(action.payload))
     }

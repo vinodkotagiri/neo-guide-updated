@@ -128,7 +128,6 @@ const EditorSider = ({ playerRef }) => {
   }, [rightActiveArea])
 
   useEffect(() => {
-    console.log('eleeeee', currentElement, currentElementId)
     if (currentElementId) {
       if (currentElement == 'rectangle' && rightActiveArea != 5) {
         setRightActiveArea(5)
