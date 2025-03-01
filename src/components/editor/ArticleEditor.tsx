@@ -188,7 +188,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
 
   return (
     <>
-      <div className="flex bg-black rounded-md justify-between items-center">
+      <div className="flex bg-black rounded-md justify-between items-center ">
         <div id="custom-toolbar">
           <button className="ql-bold" />
           <button className="ql-italic" />
@@ -223,7 +223,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
         <ArticleMenu />
       </div>
 
-      <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
+      <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative ">
         <ReactQuill ref={quillRef} theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules} />
       </div>
 
