@@ -37,9 +37,9 @@ const ArticleEditor = ({ articleData, onSave }) => {
   ];
 
   function handleGenerateGIF(imageURL) {
-    generateGIF({ reference_image_path: imageURL, video_path: url, gif_duration: 5 }).then(res => {
-      if (res?.request_id) {
-        setRequestId(res?.request_id)
+    generateGIF({ reference_image_url: imageURL, video_url: url, gif_duration: 5 }).then(res => {
+      if (res?.gif_url) {
+        downloadImage(res?.gif_url, "article.gif")
       }
     })
   }
