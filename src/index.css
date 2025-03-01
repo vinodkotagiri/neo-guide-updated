@@ -241,8 +241,8 @@
 }
 .ql-editor {
   background-color: #fff!important;
-  /* font-size: 20px; 
-  line-height: 28px;  */
+  font-size: 20px; 
+  line-height: 28px; 
 }
 .ql-editor img {
   margin-top: 32px; /* Space below images added via toolbar */
