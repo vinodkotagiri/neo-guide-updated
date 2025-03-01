@@ -12,21 +12,22 @@ interface SubtitlesState {
 }
 interface VideoState {
   url: string;
-  pixelFactor:number;
-  muted:boolean;
+  videoName: string;
+  pixelFactor: number;
+  muted: boolean;
   duration: number;
   language: string;
   playing: boolean;
-  currentPlayTime:number;
+  currentPlayTime: number;
   played: number;
   seeked: number;
   isArticle: boolean;
-  retries:0;
+  retries: 0;
   subtitles: SubtitlesState;
   currentSubtitle: { text: string; start_time: number; end_time: number };
   tracks: TimelineRow[];
-  addingElements:boolean;
-  locked:boolean;
+  addingElements: boolean;
+  locked: boolean;
 }
 const initialSubtitleState: SubtitlesState = {
   data: [
@@ -48,7 +49,6 @@ const initialSubtitleState: SubtitlesState = {
     // { start_time: "00:01:24", end_time: "00:01:28", text: "This forest has existed for millions of years." },
     // { start_time: "00:01:30", end_time: "00:01:35", text: "Its survival depends on our efforts to protect it." },
     // { start_time: "00:01:37", end_time: "00:01:41", text: "Thank you for joining us on this journey." }
-
   ],
   color: "#fff",
   background: "#000",
@@ -58,20 +58,21 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url:'' ,
+  url: "",
+  videoName: "",
   duration: 0,
-  muted:true,
+  muted: true,
   language: "",
   playing: false,
-  currentPlayTime:0,
-  pixelFactor:8,
+  currentPlayTime: 0,
+  pixelFactor: 8,
   played: 0,
   seeked: 0,
-  locked:false,
+  locked: false,
   isArticle: false,
-  retries:0,
+  retries: 0,
   subtitles: initialSubtitleState,
-  addingElements:false,
+  addingElements: false,
   currentSubtitle: { text: "", start: 0, end: 0 },
   tracks: [
     {
@@ -80,19 +81,20 @@ const initialState: VideoState = {
         {
           id: "action00",
           start: 0,
-          end:  2,
+          end: 2,
           disable: true,
           movable: false,
           flexible: false,
-          effectId:'0'
-        },{
+          effectId: "0"
+        },
+        {
           id: "action00",
           start: 3,
-          end:  6,
+          end: 6,
           disable: true,
           movable: false,
           flexible: false,
-          effectId:'0'
+          effectId: "0"
         }
       ]
     },
@@ -102,11 +104,11 @@ const initialState: VideoState = {
         {
           id: "action00",
           start: 0,
-          end:  2,
+          end: 2,
           disable: false,
           movable: true,
           flexible: true,
-          effectId:'0',
+          effectId: "0"
         }
       ]
     }
@@ -117,26 +119,34 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
-    setMuted:(state,action)=>{
-      state.muted=action.payload
+    setMuted: (state, action) => {
+      state.muted = action.payload;
     },
-    setPixelFactor:(state,action)=>{
-      if(action.payload<8) return
+    setPixelFactor: (state, action) => {
+      if (action.payload < 8) return;
       // if(state.pixelFactor<=0||state.pixelFactor>=12) return
 
-      state.pixelFactor=action.payload
+      state.pixelFactor = action.payload;
     },
-    setLocked:(state,action)=>{
-      state.locked=action.payload
+    setLocked: (state, action) => {
+      state.locked = action.payload;
     },
-    setCurrentPlayTime:(state,action)=>{
-      state.currentPlayTime=action.payload
+    setCurrentPlayTime: (state, action) => {
+      state.currentPlayTime = action.payload;
     },
-    setAddingElements:(state,action)=>{
-      state.addingElements=action.payload
+    setAddingElements: (state, action) => {
+      state.addingElements = action.payload;
+    },
+    setVideoName: (state, action) => {
+      state.videoName = action.payload;
     },
     setVideoUrl: (state, action) => {
       state.url = action.payload;
+      const videoName = action.payload.split("/").pop(); // Get filename from path
+      const extension = videoName.split(".").pop(); // Get file extension
+      state.videoName = videoName.split(".").slice(0, -1).join("."); // Remove extension
+      state.videoName = state.videoName.replace(/[^A-Za-z0-9_ -]/g, "_");
+      state.videoName = `${state.videoName}.${extension}`; // Rebuild with extension
       window.localStorage.setItem("url", action.payload);
     },
     setVideoDuration: (state, action) => {
@@ -157,7 +167,7 @@ const videoSlice = createSlice({
     },
     updateSubtitleData: (state, action) => {
       state.subtitles.data = action.payload;
-      window.localStorage.setItem('subtitles',JSON.stringify(action.payload))
+      window.localStorage.setItem("subtitles", JSON.stringify(action.payload));
     },
     updateSubtitleColor: (state, action) => {
       state.subtitles.color = action.payload;
@@ -177,8 +187,8 @@ const videoSlice = createSlice({
     setCurrentSubtitle: (state, action) => {
       state.currentSubtitle = action.payload;
     },
-    updateRetries:(state)=>{
-      state.retries=state.retries+1
+    updateRetries: (state) => {
+      state.retries = state.retries + 1;
     }
   }
 });
@@ -186,6 +196,7 @@ const videoSlice = createSlice({
 export default videoSlice.reducer;
 export const {
   setPixelFactor,
+  setVideoName,
   setMuted,
   setCurrentPlayTime,
   setLocked,

@@ -99,6 +99,9 @@ const RectangleOptions = ({ playerRef }) => {
         </div>
       </div>
 
+      <div className='bg-[#303032]'style={rectangles.length ==0 ? {  } : {display: 'none' }}>
+        WELCOMEEEE
+      </div>
       <div className='border-b-[#303032] border-b' style={rectangles.length == 0 ? { display: 'none' } : {}}>
         <div className='w-full flex flex-col gap-2 p-3 pt-0    '>
           {/* STROKE COLOR */}

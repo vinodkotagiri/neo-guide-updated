@@ -106,6 +106,9 @@ const TextOptions = ({ playerRef }) => {
         </div>
       </div>
 
+      <div className='bg-[#303032]'style={texts.length ==0 ? {  } : {display: 'none' }}>
+        WELCOMEEEE
+      </div>
       <div className='border-b-[#303032] border-b flex flex-col gap-3 ' style={texts.length == 0 ? { display: 'none' } : { }}>
         <div className='px-3 flex flex-col gap-3'>
           <div className='w-full'>

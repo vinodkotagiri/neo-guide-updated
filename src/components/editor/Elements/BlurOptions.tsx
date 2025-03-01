@@ -76,8 +76,12 @@ const BlurOptions = ({ playerRef }) => {
             <FaPlus />
           </button>
         </div>
+        
       </div>
-
+      <div className='bg-[#303032] w-full h-[1px]'style={blurs.length ==0 ? {  } : {display: 'none' }}>
+        WELCOMEEEE
+      </div>
+     
       {/* TIMES */}
       <div className='flex flex-col justify-between'>
 

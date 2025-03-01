@@ -107,7 +107,9 @@ const SpotlightOptions = ({ playerRef }) => {
           <FaPlus />
         </button>
       </div>
-
+      <div className='bg-[#303032]'style={spotLights.length ==0 ? {  } : {display: 'none' }}>
+        WELCOMEEEE
+      </div>
       <div className='border-b-[#303032] border-b    w-full flex flex-col gap-2 p-3 pt-0' style={spotLights.length == 0 ? { display: 'none' } : { }}>
         {/* STROKE WIDTH */}
         <div className='flex items-center justify-between w-full'>
