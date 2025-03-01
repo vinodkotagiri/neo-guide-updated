@@ -240,8 +240,9 @@
   background-color: #097969 !important;
 }
 .ql-editor {
-  font-size: 28px; /* Default font size for new text */
-  line-height: 32px; /* Default line height for new text */
+  background-color: #fff!important;
+  /* font-size: 20px; 
+  line-height: 28px;  */
 }
 .ql-editor img {
   margin-top: 32px; /* Space below images added via toolbar */
