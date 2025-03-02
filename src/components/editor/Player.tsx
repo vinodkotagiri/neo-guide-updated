@@ -7,7 +7,7 @@ import {
   setVideoPlayed,
 } from "../../redux/features/videoSlice";
 import { motion } from "framer-motion";
-import { zoomPayload } from "../../redux/features/zoomSlice";
+import { ZoomElementState } from "../../redux/features/elementsSlice";
 
 function Player({ playerRef }) {
   const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ function Player({ playerRef }) {
   const { url, playing, muted, currentPlayTime } = useAppSelector(
     (state) => state.video
   );
-  const { zooms } = useAppSelector((state) => state.zoom);
+  const { zooms } = useAppSelector((state) => state.elements);
 
   // State to hold animation properties
   const [animationProps, setAnimationProps] = useState({
@@ -42,8 +42,8 @@ function Player({ playerRef }) {
   // Update animation properties
   useEffect(() => {
     const calculateAnimationProps = () => {
-      const activeZoom: zoomPayload = zooms.find(
-        (zoom: zoomPayload) =>
+      const activeZoom: ZoomElementState = zooms.find(
+        (zoom: ZoomElementState) =>
           currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
       );
 
@@ -88,7 +88,7 @@ function Player({ playerRef }) {
     console.log({
       currentPlayTime,
       activeZoom: zooms.find(
-        (zoom: zoomPayload) =>
+        (zoom: ZoomElementState) =>
           currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
       ),
       animationProps: newProps,
