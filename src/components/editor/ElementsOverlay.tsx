@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { editArrow, editBlur, editRectangle, editSpotLight, editText, setCurrentElementId } from '../../redux/features/elementsSlice';
+import { editArrow, editBlur, editRectangle, editSpotLight, editText, editZoom, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
 Konva.Filters.RadialBlur = function (imageData) {
   const data = imageData.data;
@@ -62,7 +62,7 @@ function ElementsOverlay() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
-  const { rectangles, blurs, texts, arrows, spotLights, currentElementId } = useAppSelector((state) => state.elements);
+  const { rectangles, blurs, texts, arrows, spotLights, currentElementId,zooms } = useAppSelector((state) => state.elements);
   const { played, currentPlayTime } = useAppSelector(state => state.video)
 
   const checkDeselect = (e) => {
@@ -99,7 +99,7 @@ function ElementsOverlay() {
         transformer.getLayer().batchDraw();
       }
     }
-  }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played]);
+  }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played,zooms]);
 
 
 
@@ -325,12 +325,44 @@ function ElementsOverlay() {
               />
             </Group>
           ))}
+          {zooms.map((zoom) => (
+            <Rect
+              key={zoom.id}
+              id={zoom.id}
+              x={zoom.roi.x}
+              y={zoom.roi.y}
+              width={zoom.roi.width}
+              height={zoom.roi.height}
+              stroke={'#000'}
+              strokeWidth={2}
+              dash={[4, 3]}
+              draggable
+              visible={zoom.start_time <= currentPlayTime && zoom.end_time >= currentPlayTime}
+              onClick={() => {
+                setSelectedId(zoom.id);
+                dispatch(setCurrentElementId({ type: 'zoom', id: zoom.id }));
+              }}
+              onDragEnd={(e) => {
+                const { x, y } = e.target.position();
+                dispatch(editZoom({ id: zoom.id,roi:{...zoom.roi, x, y} }));
+              }}
+              onTransformEnd={(e) => {
+                const node = e.target;
+                const scaleX = node.scaleX();
+                const scaleY = node.scaleY();
+                node.scaleX(1);
+                node.scaleY(1);
+                const newWidth = node.width() * scaleX;
+                const newHeight = node.height() * scaleY;
+                dispatch(editZoom({ id: zoom.id, roi: {...zoom.roi, width: newWidth,height: newHeight} }));
+              }}
+            />
+          ))}
 
           <Transformer ref={transformerRef} 
           rotateEnabled={false}
           flipEnabled={false}
           boundBoxFunc={(oldBox, newBox) => {
-            // limit resize
             if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
               return oldBox;
             }

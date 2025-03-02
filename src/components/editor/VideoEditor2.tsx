@@ -88,7 +88,6 @@ const VideoEditor = () => {
           : clip
       )
     );
-    console.log(`Applying effect: ${effect} to clip ${id}`);
   };
 
   return (

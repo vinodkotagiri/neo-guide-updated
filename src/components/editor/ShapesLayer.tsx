@@ -9,7 +9,7 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef, playerRe
   const [segments, setSegments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const rectLayerRef = useRef(null);
-  const { rectangles, blurs, spotLights, texts, arrows } = useAppSelector(state => state.elements)
+  const { rectangles, blurs, spotLights, texts, arrows,zooms } = useAppSelector(state => state.elements)
   const sliceRef = useRef(null)
   // Generate thumbnail using canvas
   const generateThumbnail = (video, time) => {
@@ -163,6 +163,13 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef, playerRe
         {spotLights.map((spotlight) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'spotlight'} key={spotlight.id} shapeType={'spotlight'} shape={spotlight} color='#fe4728' />
+          )
+        })}
+      </div>
+      <div className='h-[28px] w-full border-b-[1px] border-[#303032] relative' ref={rectLayerRef}>
+        {zooms.map((zoom) => {
+          return (
+            <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'zoom'} key={zoom.id} shapeType={'zoom'} shape={zoom} color='#fef728' />
           )
         })}
       </div>

@@ -11,12 +11,13 @@ import ArrowOptions from './Elements/ArrowOptions'
 import SpotlightOptions from './Elements/SpotlightOptions'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { addArrow, addBlur, addRectangle, addSpotLight, addText, setCurrentElement } from '../../redux/features/elementsSlice'
+import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, setCurrentElement, ZoomElementState } from '../../redux/features/elementsSlice'
+import ZoomOptions from './Elements/ZoomOptions'
 
 const EditorSider = ({ playerRef }) => {
   const [rightActiveArea, setRightActiveArea] = useState(1)
   const { currentPlayTime } = useAppSelector(state => state.video)
-  const { rectangles, blurs, texts, arrows, spotLights, currentElement, currentElementId } = useAppSelector(state => state.elements)
+  const { rectangles, blurs, texts, arrows, spotLights,zooms, currentElement, currentElementId } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   function handleAddShape(shape: string) {
     if (shape == 'rectangle') {
@@ -107,6 +108,19 @@ const EditorSider = ({ playerRef }) => {
       dispatch(addSpotLight(spotlightData));
       dispatch(setCurrentElement('spotlight'));
     }
+    if (shape == 'zoom') {
+      dispatch(setAddingElements(true))
+      const zoomData: ZoomElementState = {
+        id: Date.now().toString(),
+        zoom_factor: 1.5,
+        easing_factor: 0.2,
+        start_time: currentPlayTime,
+        end_time: currentPlayTime + 5,
+        roi:{x:100, y:100, width:100, height:100}
+      }
+      dispatch(addZoom(zoomData))
+      dispatch(setCurrentElement('zoom'))
+    }
   }
 
   useEffect(() => {
@@ -124,6 +138,9 @@ const EditorSider = ({ playerRef }) => {
     }
     else if (rightActiveArea == 8 && spotLights.length == 0) {
       handleAddShape('spotlight')
+    }
+    else if (rightActiveArea == 9 && zooms.length == 0) {
+      handleAddShape('zoom')
     }
   }, [rightActiveArea])
 
@@ -144,6 +161,9 @@ const EditorSider = ({ playerRef }) => {
       if (currentElement == 'spotlight' && rightActiveArea != 8) {
         setRightActiveArea(8)
       }
+      if (currentElement == 'zoom' && rightActiveArea != 8) {
+        setRightActiveArea(9)
+      }
     }
   }, [currentElement, currentElementId])
 
@@ -155,12 +175,12 @@ const EditorSider = ({ playerRef }) => {
       <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
         {rightActiveArea == 1 && <DubAreaComponent />}
         {rightActiveArea == 2 && <SubtitleAreaComponent />}
-        {/* {rightActiveArea == 3 && <ElementsAddComponent />} */}
         {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
         {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
         {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
         {rightActiveArea == 7 && <ArrowOptions playerRef={playerRef} />}
         {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
+        {rightActiveArea == 9 && <ZoomOptions playerRef={playerRef} />}
       </div>
       <div className='w-[56px] h-full border-[#303032] border-l'>
         <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />

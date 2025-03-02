@@ -68,14 +68,24 @@ export interface SpotElementElementState {
   endTime: number;
 }
 
+export interface ZoomElementState {
+  id: string;
+  zoom_factor: number;
+  roi: {x:number;y:number;width:number;height:number};
+  start_time: number;
+  end_time: number;
+  easing_factor: number;
+}
+
 interface ElementsState {
   currentElementId: string | null;
-  currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "pop-over" | null;
+  currentElement: "rectangle" | "arrow" | "blur" | "text" | "spotlight" | "zoom" | null;
   rectangles: RectangleElementState[];
   arrows: ArrowElementState[];
   blurs: BlurElementState[];
   texts: TextElementState[];
   spotLights: SpotElementElementState[];
+  zooms: ZoomElementState[]
 }
 
 const INITIAL_STATE: ElementsState = {
@@ -85,7 +95,8 @@ const INITIAL_STATE: ElementsState = {
   arrows: [],
   blurs: [],
   texts: [],
-  spotLights: []
+  spotLights: [],
+  zooms:[]
 };
 
 const elementsSlice = createSlice({
@@ -102,6 +113,10 @@ const elementsSlice = createSlice({
     },
     addRectangle(state, action) {
       state.rectangles.push(action.payload);
+      state.currentElementId = action.payload.id;
+    },
+    addZoom(state, action) {
+      state.zooms.push(action.payload);
       state.currentElementId = action.payload.id;
     },
     addArrow(state, action) {
@@ -129,6 +144,15 @@ const elementsSlice = createSlice({
         if (action.payload[key]) rect[key] = action.payload[key];
       }
       state.rectangles[index] = rect;
+    },
+    editZoom(state, action) {
+      const index = state.zooms.findIndex((e) => e.id === action.payload.id);
+      const rect = state.zooms[index];
+
+      for (const key of Object.keys(rect)) {
+        if (action.payload[key]) rect[key] = action.payload[key];
+      }
+      state.zooms[index] = rect;
     },
     editArrow(state, action) {
       const index = state.arrows.findIndex((e) => e.id === action.payload.id);
@@ -167,6 +191,11 @@ const elementsSlice = createSlice({
       state.currentElementId = null;
       state.currentElement = null;
     },
+    deleteZoom(state, action) {
+      state.zooms = state.zooms.filter((e) => e.id !== action.payload.id);
+      state.currentElementId = null;
+      state.currentElement = null;
+    },
     deleteArrow(state, action) {
       state.arrows = state.arrows.filter((e) => e.id !== action.payload.id);
       state.currentElementId = null;
@@ -177,6 +206,7 @@ const elementsSlice = createSlice({
       state.currentElementId = null;
       state.currentElement = null;
     },
+
     deleteText(state, action) {
       state.texts = state.texts.filter((e) => e.id !== action.payload.id);
       state.currentElementId = null;
@@ -192,6 +222,9 @@ export default elementsSlice.reducer;
 export const {
   setCurrentElementId,
   addRectangle,
+  addZoom,
+  editZoom,
+  deleteZoom,
   addArrow,
   addBlur,
   addText,
