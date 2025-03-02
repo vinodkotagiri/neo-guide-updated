@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef, useState } from 'react';
 import { Range } from 'react-range';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import ZoomSliceIndicator from './ZoomSliceIndicator';
+import {  useAppSelector } from '../../redux/hooks';
 
 const Controls = ({ playerRef }) => {
   const [values, setValues] = useState([0]); // Slider values
   const [secondsWidth, setSecondsWidth] = useState(0); // Marker width
   const { played, duration } = useAppSelector((state) => state.video); // Video states
   const timelineWrapperRef = useRef<HTMLDivElement | null>(null);
-  const {savedZooms}=useAppSelector(state=>state.zoom)
-  
-  const dispatch = useAppDispatch()
+
   // Dynamically calculate marker width based on zoom factor and duration
   useEffect(() => {
     if (duration) {
@@ -94,9 +91,6 @@ const Controls = ({ playerRef }) => {
         )}
       />
 
-      <div className='w-full h-10 mt-3'>
-        {savedZooms?.map((data,index)=><ZoomSliceIndicator zoom_factor={(data.zoom_factor).toFixed(1)} index={index} start_time={data.start_time} end_time={data.end_time} timeLineWidth={timelineWrapperRef.current?.offsetWidth || 0} duration={duration}  key={index} />)}
-      </div>
     </div>
   );
 };

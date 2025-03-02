@@ -90,8 +90,6 @@ function EditorLeftTopBar({ setDub }) {
                 const data = res?.result;
                 const s3Url = data.split(': ')[1]
                 dispatch(setVideoUrl(s3Url))
-                // console.log('data:::', data)
-                // dispatch(setArticleData(data))
                 setDub(false)
               } else if (res?.status?.toLowerCase().includes('error')) {
                 clearInterval(progessInterval)
@@ -152,7 +150,6 @@ function EditorLeftTopBar({ setDub }) {
                 {operation == 1 && <div className='flex   items-center bg-slate-900 rounded-md px-2'>
                   <MdSettingsVoice size={32} color='#9810FA' />
                   <select className="text-white select select-sm outline-none cursor-pointer shadow-none border-none bg-slate-900  focus:ring-0 focus:outline-none" defaultValue={'voices'} onChange={(e) => {
-                    console.log('e.target.value', e.target.value)
                     setVoice(e.target.value)
                   }}>
                     <option value={'voices'} disabled>Voice</option>
@@ -182,35 +179,6 @@ function EditorLeftTopBar({ setDub }) {
         </div>
         <ArticleMenu languageIcon={false} />
       </div>
-      {/* <div className='w-full h-[72px]   flex items-center px-4 p-2 gap-2  '>
-        <div className='flex   items-center bg-slate-900 rounded-md px-2'>
-          <BsTranslate size={32} color='#9810FA' />
-          <select className="text-white select select-sm outline-none cursor-pointer shadow-none border-none bg-slate-900  focus:ring-0 focus:outline-none" defaultValue={1} value={operation} onChange={(e) => setOperation(parseInt(e.target.value))}>
-            <option value={1}>Translate & Dub</option>
-            <option value={2}>Sub-titles</option>
-          </select>
-        </div>
-
-        <div className='flex  items-center bg-slate-900 rounded-md px-2'>
-          <GrLanguage size={32} color='#9810FA' />
-          <select className="text-white select select-sm outline-none cursor-pointer shadow-none border-none bg-slate-900  focus:ring-0 focus:outline-none" defaultValue={'languages'} onChange={(e) => setLang(e.target.value)}>
-            <option value={'languages'} disabled>Language</option>
-            {availableLanguages.map((lang, index) => <option key={index} value={lang.language}>{lang.language}</option>)}
-          </select>
-        </div>
-
-        {operation == 1 && <div className='flex   items-center bg-slate-900 rounded-md px-2'>
-          <MdSettingsVoice size={32} color='#9810FA' />
-          <select className="text-white select select-sm outline-none cursor-pointer shadow-none border-none bg-slate-900  focus:ring-0 focus:outline-none" defaultValue={'voices'} onChange={(e) => {
-            console.log('e.target.value', e.target.value)
-            setVoice(e.target.value)
-          }}>
-            <option value={'voices'} disabled>Voice</option>
-            {availableVoices.map((voice, index) => <option key={index} value={voice}>{voice}</option>)}
-          </select>
-        </div>}
-        <button className='  text-white shadow-none border-none   p-0 ' onClick={handleTranslataAndDub}>GO</button>
-      </div> */}
     </>
   )
 }

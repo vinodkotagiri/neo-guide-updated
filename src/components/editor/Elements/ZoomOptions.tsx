@@ -42,7 +42,6 @@ const ZoomOptions = ({ playerRef }) => {
   useEffect(() => {
     if (currentElementId) {
       const zoomData = zooms.find(rect => rect.id === currentElementId)
-      console.log(zooms)
       if (zoomData) {
         setZoomFactor(zoomData.zoom_factor)
         setEasingFactor(zoomData.easing_factor)

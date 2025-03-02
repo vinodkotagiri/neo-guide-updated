@@ -15,7 +15,7 @@ function DubContent() {
             <>
               {item.image_url && <img src={item.image_url} alt='img' />}
               {
-                item.text && <div key={index} className='w-full h-auto  p-2 py-4 text-[#ccc]'>{item.text}</div>
+                item.text && <div key={index} className='w-full h-auto  p-2 py-4 text-[#ccc]' contentEditable>{item.text}</div>
               }
             </>
           )}

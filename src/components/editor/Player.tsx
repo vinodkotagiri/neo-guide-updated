@@ -113,11 +113,6 @@ function Player({ playerRef }) {
       JSON.stringify(prev) !== JSON.stringify(newProps) ? newProps : prev
     );
 
-    // Debug logging
-    console.log({
-      currentPlayTime,
-      animationProps: newProps,
-    });
   }, [currentPlayTime, zooms, videoDimensions]);
 
   return (

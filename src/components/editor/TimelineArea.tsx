@@ -67,7 +67,6 @@ function TimelineArea({ playerRef }) {
   const handleMouseDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Mouse down:', { x: e.clientX, cursorPosition });
     isDraggingRef.current = true;
     setIsDragging(true);
     lastMouseX.current = e.clientX; // Initialize last mouse position
@@ -78,11 +77,6 @@ function TimelineArea({ playerRef }) {
   const handleMouseMove = (e) => {
     if (isDraggingRef.current) {
       const deltaX = e.clientX - lastMouseX.current;
-      console.log('Dragging:', {
-        clientX: e.clientX,
-        deltaX,
-        currentPosition: cursorPosition
-      });
 
       setCursorPosition(prev => {
         const newPosition = prev + deltaX;
@@ -103,7 +97,6 @@ function TimelineArea({ playerRef }) {
   };
 
   const handleMouseUp = (e) => {
-    console.log('Mouse up');
     isDraggingRef.current = false;
     setIsDragging(false);
     document.body.removeEventListener('mousemove', handleMouseMove);

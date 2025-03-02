@@ -15,7 +15,6 @@ const ArticleMenu = ({ languageIcon }) => {
   async function handleClick(event) {
     dispatch(setLoader({loading:true}));
     let response;
-    console.log('response',response)
     if(event=='enhance'){
       response=await enhanceAIArticle({ json_content: articleData })
     }
@@ -57,10 +56,9 @@ const ArticleMenu = ({ languageIcon }) => {
           } else {
             dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
           }
-        }).catch(err=>{
+        }).catch(()=>{
           dispatch(setLoader({loading:false}))
           toast.error('Error Enhancing Article')
-          console.log('error',err)
         })
       }, 5000)
     }
