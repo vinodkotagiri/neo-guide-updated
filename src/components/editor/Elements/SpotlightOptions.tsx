@@ -107,10 +107,10 @@ const SpotlightOptions = ({ playerRef }) => {
           <FaPlus />
         </button>
       </div>
-      <div className='bg-[#303032]'style={spotLights.length ==0 ? {  } : {display: 'none' }}>
-        WELCOMEEEE
+      <div className='w-full flex' style={spotLights.length == 0 ? {} : { display: 'none' }}>
+        <button className='cursor-pointer bg-[#422ad5]  rounded-lg text-white mx-auto px-3 py-2 mt-4 flex items-center gap-2' onClick={handleAddNewRectangle} ><FaPlus /> Add New Text</button>
       </div>
-      <div className='border-b-[#303032] border-b    w-full flex flex-col gap-2 p-3 pt-0' style={spotLights.length == 0 ? { display: 'none' } : { }}>
+      <div className='border-b-[#303032] border-b    w-full flex flex-col gap-2 p-3 pt-0' style={spotLights.length == 0 ? { display: 'none' } : {}}>
         {/* STROKE WIDTH */}
         <div className='flex items-center justify-between w-full'>
           <label className='text-[#a3a3a5] text-sm text-nowrap'>Shadow Spread</label>
