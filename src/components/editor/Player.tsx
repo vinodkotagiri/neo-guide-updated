@@ -12,34 +12,40 @@ import { ZoomElementState } from "../../redux/features/elementsSlice";
 function Player({ playerRef }) {
   const dispatch = useAppDispatch();
   const videoContainerRef = useRef(null);
+  const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
 
-  // Get video state and zooms from Redux
   const { url, playing, muted, currentPlayTime } = useAppSelector(
     (state) => state.video
   );
   const { zooms } = useAppSelector((state) => state.elements);
 
-  // State to hold animation properties
   const [animationProps, setAnimationProps] = useState({
     scale: 1,
-    originX: 0.5,
-    originY: 0.5,
+    x: 0,
+    y: 0,
     transition: { duration: 0.1, ease: "easeInOut" },
   });
 
-  // Update current play time more reliably
+  const handleReady = (player) => {
+    const videoElement = player.getInternalPlayer();
+    if (videoElement) {
+      setVideoDimensions({
+        width: videoElement.videoWidth || 0,
+        height: videoElement.videoHeight || 0,
+      });
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       const currentTime = playerRef?.current?.getCurrentTime();
       if (currentTime !== undefined && currentTime !== currentPlayTime) {
         dispatch(setCurrentPlayTime(currentTime));
       }
-    }, 100); // Check every 100ms
-
+    }, 100);
     return () => clearInterval(interval);
   }, [playerRef, dispatch, currentPlayTime]);
 
-  // Update animation properties
   useEffect(() => {
     const calculateAnimationProps = () => {
       const activeZoom: ZoomElementState = zooms.find(
@@ -47,19 +53,43 @@ function Player({ playerRef }) {
           currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
       );
 
-      if (activeZoom) {
+      const containerWidth = videoContainerRef.current?.offsetWidth || 0;
+      const containerHeight = videoContainerRef.current?.offsetHeight || 0;
+
+      if (activeZoom && containerWidth && containerHeight) {
         const zoomDuration = activeZoom.end_time - activeZoom.start_time;
         const timeInZoom = currentPlayTime - activeZoom.start_time;
         const progress = Math.min(1, Math.max(0, timeInZoom / zoomDuration));
-        
         const easedProgress = Math.sin(progress * Math.PI);
         const zoomRange = activeZoom.zoom_factor - 1;
         const currentZoom = 1 + zoomRange * easedProgress;
 
+        // ROI coordinates (normalized 0-1)
+        const roiX = (activeZoom.roi?.x || 50) / 100; // Default to center if undefined
+        const roiY = (activeZoom.roi?.y || 50) / 100;
+
+        // Calculate scaled dimensions
+        const scaledWidth = containerWidth * currentZoom;
+        const scaledHeight = containerHeight * currentZoom;
+
+        // Calculate the position of the ROI in scaled coordinates
+        const roiScaledX = roiX * scaledWidth;
+        const roiScaledY = roiY * scaledHeight;
+
+        // Calculate offsets to center the ROI
+        const xOffset = (containerWidth / 2) - roiScaledX;
+        const yOffset = (containerHeight / 2) - roiScaledY;
+
+        // Clamp offsets to prevent the video from moving completely out of view
+        const maxXOffset = (scaledWidth - containerWidth) / 2;
+        const maxYOffset = (scaledHeight - containerHeight) / 2;
+        const clampedX = Math.max(-maxXOffset, Math.min(maxXOffset, xOffset));
+        const clampedY = Math.max(-maxYOffset, Math.min(maxYOffset, yOffset));
+
         return {
           scale: currentZoom,
-          originX: activeZoom.roi?.x ? activeZoom.roi.x / 100 : 0.5,
-          originY: activeZoom.roi?.y ? activeZoom.roi.y / 100 : 0.5,
+          x: clampedX,
+          y: clampedY,
           transition: {
             duration: 0.1,
             ease: "easeInOut",
@@ -69,8 +99,8 @@ function Player({ playerRef }) {
 
       return {
         scale: 1,
-        originX: 0.5,
-        originY: 0.5,
+        x: 0,
+        y: 0,
         transition: {
           duration: 0.1,
           ease: "easeInOut",
@@ -79,21 +109,16 @@ function Player({ playerRef }) {
     };
 
     const newProps = calculateAnimationProps();
-    // Only update if props actually changed to prevent unnecessary renders
-    setAnimationProps((prev) => 
+    setAnimationProps((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newProps) ? newProps : prev
     );
 
     // Debug logging
     console.log({
       currentPlayTime,
-      activeZoom: zooms.find(
-        (zoom: ZoomElementState) =>
-          currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
-      ),
       animationProps: newProps,
     });
-  }, [currentPlayTime, zooms]);
+  }, [currentPlayTime, zooms, videoDimensions]);
 
   return (
     <div
@@ -110,7 +135,7 @@ function Player({ playerRef }) {
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          transformOrigin: "center center",
         }}
       >
         <ReactPlayer
@@ -121,6 +146,7 @@ function Player({ playerRef }) {
           url={url}
           muted={muted}
           playing={playing}
+          onReady={handleReady}
           onDuration={(duration) => dispatch(setVideoDuration(duration))}
           onProgress={(progress) => {
             dispatch(setVideoPlayed(progress.playedSeconds));
