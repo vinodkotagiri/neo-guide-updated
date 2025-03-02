@@ -20,10 +20,12 @@ const Editor = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const playerRef = useRef(null);
-  // // useEffect(() => {
-  //   if (!url) navigate('/')
-  //   else
-  // }, [url])
+
+  useEffect(() => {
+    if (!url) {
+      navigate('/')
+    }
+  }, [url])
 
   useEffect(() => {
     if (!articleData.length) {
