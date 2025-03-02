@@ -1,16 +1,14 @@
 //@ts-nocheck
 import { useEffect, useRef, useState } from 'react'
-import { MdChevronLeft, MdDelete } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { addRectangle, deleteRectangle, editRectangle, RectangleElementState, setCurrentElement, setCurrentElementId } from '../../../redux/features/elementsSlice'
-import { IoMdColorPalette } from 'react-icons/io'
 import { BsTransparency } from 'react-icons/bs'
 import { setAddingElements } from '../../../redux/features/videoSlice'
 import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
 
 const RectangleOptions = ({ playerRef }) => {
   const { currentElementId, rectangles, currentElement } = useAppSelector(state => state.elements)
-  const { duration, currentPlayTime } = useAppSelector(state => state.video)
+  const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const fillColorRef = useRef<HTMLInputElement>(null)

@@ -1,8 +1,8 @@
 //@ts-nocheck
 import { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import {  addZoom, deleteRectangle, editZoom, setCurrentElement, setCurrentElementId, ZoomElementState } from '../../../redux/features/elementsSlice'
-import { setAddingElements } from '../../../redux/features/videoSlice'
+import {  addZoom, deleteZoom, editZoom, setCurrentElement, setCurrentElementId, ZoomElementState } from '../../../redux/features/elementsSlice'
+import { setAddingElements, setCurrentPlayTime } from '../../../redux/features/videoSlice'
 import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
 
 const ZoomOptions = ({ playerRef }) => {
@@ -30,8 +30,8 @@ const ZoomOptions = ({ playerRef }) => {
       id: Date.now().toString(),
       zoom_factor: zoomFactor,
       easing_factor: easingFactor,
-      start_time: startTime,
-      end_time: endTime,
+      start_time: currentPlayTime,
+      end_time: currentPlayTime+5,
       roi:{x:100, y:100, width:100, height:100}
     }
     dispatch(addZoom(zoomData))
@@ -119,7 +119,7 @@ const ZoomOptions = ({ playerRef }) => {
 
           </div>
           <div className='flex items-center gap-3'>
-            <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteRectangle({ id: rectangle.id }))}> <FaRegTrashAlt /></label>
+            <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteZoom({ id: rectangle.id }))}> <FaRegTrashAlt /></label>
           </div>
         </div>))}
       </div>
