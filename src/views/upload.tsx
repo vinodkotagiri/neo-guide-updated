@@ -16,6 +16,7 @@ function UploadView() {
     if (file) {
       const response: UploadVideoResponse | null = await uploadFile({ user_id: '1', file });
       if (response) {
+        window.localStorage.clear();
         dispatch(setVideoUrl(response.file_url));
         navigate(`/editor`);
         dispatch(setLoader({loading:false}))
