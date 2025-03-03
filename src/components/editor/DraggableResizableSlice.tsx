@@ -42,7 +42,7 @@ const DraggableResizableSlice = ({
   const { pixelFactor } = useAppSelector(state => state.video);
   
   const scrollSpeed = 5;
-  const minWidth = 20;
+  const minWidth = 5;
   const edgeThreshold = 50;
 
   // Initialize slice position
