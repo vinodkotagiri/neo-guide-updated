@@ -4,6 +4,7 @@ import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'rea
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { editArrow, editBlur, editRectangle, editSpotLight, editText, editZoom, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
+import ArrowOptions from './Elements/ArrowOptions';
 Konva.Filters.RadialBlur = function (imageData) {
   const data = imageData.data;
   const width = imageData.width;
@@ -229,7 +230,7 @@ function ElementsOverlay() {
               id={arrow.id}
               x={100}
               y={100}
-              points={[0, 0, 100, 100]}
+              points={arrow.points}
               stroke={arrow.stroke}
               strokeWidth={arrow.strokeWidth}
               pointerLength={arrow.pointerLength}
