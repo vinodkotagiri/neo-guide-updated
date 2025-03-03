@@ -1,22 +1,26 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { uploadFile } from '../api/axios';
 import { UploadVideoResponse } from '../api/responses/responses';
 import { useAppDispatch } from '../redux/hooks';
 import {useNavigate} from 'react-router-dom'
 import {setLoader} from '../redux/features/loaderSlice'
-import { setVideoUrl } from '../redux/features/videoSlice';
+import { setVideoUrl, updateSubtitleData } from '../redux/features/videoSlice';
 import toast from 'react-hot-toast';
+import { setArticleData } from '../redux/features/articleSlice';
 function UploadView() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
+    window.localStorage.clear();
+    dispatch(setArticleData([]));
+    dispatch(setVideoUrl(''));
+    dispatch(updateSubtitleData([]));
     const file = e.target.files?.[0];
     dispatch(setLoader({loading:true,status:'please wait while we upload the file'}));
     if (file) {
       const response: UploadVideoResponse | null = await uploadFile({ user_id: '1', file });
       if (response) {
-        window.localStorage.clear();
         dispatch(setVideoUrl(response.file_url));
         navigate(`/editor`);
         dispatch(setLoader({loading:false}))
@@ -27,6 +31,7 @@ function UploadView() {
 
     }
   }
+
 
   async function handleInitiateRecording() {
     dispatch(setLoader({loading:true}));

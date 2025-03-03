@@ -26,7 +26,7 @@ function SubtitleHeader() {
       const request_id = res?.request_id;
       if (request_id) {
         setReqId(request_id);
-        toast.success('Video uploaded successfully');
+        // toast.success('Video uploaded successfully');
       } else {
         // toast.error('Forbidden');
       }
@@ -62,7 +62,7 @@ function SubtitleHeader() {
       const request_id = res?.request_id;
       if (request_id) {
         setReqId(request_id);
-        toast.success('Video uploaded successfully');
+        // toast.success('Video uploaded successfully');
       } else {
         // toast.error('Forbidden');
       }

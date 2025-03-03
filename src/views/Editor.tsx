@@ -36,7 +36,7 @@ const Editor = () => {
           const request_id = res?.request_id;
           if (request_id) {
             setRequestId(request_id);
-            toast.success('Video uploaded successfully');
+            // toast.success('Video uploaded successfully');
           } else {
             // toast.error('Forbidden');
           }

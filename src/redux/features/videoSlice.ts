@@ -147,7 +147,7 @@ const videoSlice = createSlice({
       state.videoName = videoName.split(".").slice(0, -1).join("."); // Remove extension
       state.videoName = state.videoName.replace(/[^A-Za-z0-9_ -]/g, "_");
       state.videoName = `${state.videoName}.${extension}`; // Rebuild with extension
-      window.localStorage.setItem("url", action.payload);
+      // window.localStorage.setItem("url", action.payload);
     },
     setVideoDuration: (state, action) => {
       state.duration = action.payload;
@@ -167,7 +167,7 @@ const videoSlice = createSlice({
     },
     updateSubtitleData: (state, action) => {
       state.subtitles.data = action.payload;
-      window.localStorage.setItem("subtitles", JSON.stringify(action.payload));
+      // window.localStorage.setItem("subtitles", JSON.stringify(action.payload));
     },
     updateSubtitleColor: (state, action) => {
       state.subtitles.color = action.payload;
