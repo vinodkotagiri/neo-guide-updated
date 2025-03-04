@@ -5,6 +5,7 @@ import { IoIosMic } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
+import { setVideoUrl } from '../../redux/features/videoSlice';
 
 function DubHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState({})
@@ -58,11 +59,13 @@ function DubHeader() {
         getProgress(request_id).then(res => {
           if (res?.status?.toLowerCase() == 'completed') {
             clearInterval(progessInterval)
-            console.log('res:',res)
-
-            // if (data) {
-
-            // }
+            const data=res?.result
+            if (data) {
+              const url=data?.dubbed_video_url;
+              if (url) {
+                dispatch(setVideoUrl(url));
+              }
+            }
             dispatch(setLoader({ loading: false }))
           } else if (res?.status?.toLocaleLowerCase().includes('failed')) {
             clearInterval(progessInterval)
