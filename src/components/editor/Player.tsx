@@ -26,6 +26,8 @@ function Player({ playerRef }) {
     transition: { duration: 0.1, ease: "easeInOut" },
   });
 
+  const [transformOrigin, setTransformOrigin] = useState("center center");
+
   const handleReady = (player) => {
     const videoElement = player.getInternalPlayer();
     if (videoElement) {
@@ -48,13 +50,13 @@ function Player({ playerRef }) {
 
   useEffect(() => {
     const calculateAnimationProps = () => {
+      const containerWidth = videoContainerRef.current?.offsetWidth || 0;
+      const containerHeight = videoContainerRef.current?.offsetHeight || 0;
+
       const activeZoom: ZoomElementState = zooms.find(
         (zoom: ZoomElementState) =>
           currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
       );
-
-      const containerWidth = videoContainerRef.current?.offsetWidth || 0;
-      const containerHeight = videoContainerRef.current?.offsetHeight || 0;
 
       if (activeZoom && containerWidth && containerHeight) {
         const zoomDuration = activeZoom.end_time - activeZoom.start_time;
@@ -64,47 +66,114 @@ function Player({ playerRef }) {
         const zoomRange = activeZoom.zoom_factor - 1;
         const currentZoom = 1 + zoomRange * easedProgress;
 
-        // ROI coordinates (normalized 0-1)
-        const roiX = (activeZoom.roi?.x || 50) / 100; // Default to center if undefined
-        const roiY = (activeZoom.roi?.y || 50) / 100;
+        // Normalize ROI coordinates and size (assume input might be in pixels or percentage)
+        let roiX = activeZoom.roi?.x || 50;
+        let roiY = activeZoom.roi?.y || 50;
+        let roiWidth = activeZoom.roi?.width || 20; // Default to pixels
+        let roiHeight = activeZoom.roi?.height || 20;
+
+        // Normalize ROI coordinates and size
+        roiX = roiX > 1 ? roiX / containerWidth : roiX / 100;
+        roiY = roiY > 1 ? roiY / containerHeight : roiY / 100;
+        roiWidth = roiWidth > 1 ? roiWidth : roiWidth * containerWidth;
+        roiHeight = roiHeight > 1 ? roiHeight : roiHeight * containerHeight;
+
+        // Clamp ROI coordinates to valid range (0-1)
+        roiX = Math.max(0, Math.min(1, roiX));
+        roiY = Math.max(0, Math.min(1, roiY));
+
+        // Calculate ROI boundaries in pixels (unscaled)
+        const roiPixelWidth = Math.min(roiWidth, containerWidth);
+        const roiPixelHeight = Math.min(roiHeight, containerHeight);
+        const roiLeft = roiX * containerWidth - roiPixelWidth / 2;
+        const roiTop = roiY * containerHeight - roiPixelHeight / 2;
+        const roiRight = roiLeft + roiPixelWidth;
+        const roiBottom = roiTop + roiPixelHeight;
+
+        // Set transform origin to ROI center in percentage
+        const roiXPercent = roiX * 100;
+        const roiYPercent = roiY * 100;
+        setTransformOrigin(`${roiXPercent}% ${roiYPercent}%`);
 
         // Calculate scaled dimensions
         const scaledWidth = containerWidth * currentZoom;
         const scaledHeight = containerHeight * currentZoom;
 
-        // Calculate the position of the ROI in scaled coordinates
-        const roiScaledX = roiX * scaledWidth;
-        const roiScaledY = roiY * scaledHeight;
+        // Calculate scaled ROI boundaries
+        const scaledRoiLeft = roiLeft * currentZoom;
+        const scaledRoiTop = roiTop * currentZoom;
+        const scaledRoiRight = roiRight * currentZoom;
+        const scaledRoiBottom = roiBottom * currentZoom;
 
-        // Calculate offsets to center the ROI
-        const xOffset = (containerWidth / 2) - roiScaledX;
-        const yOffset = (containerHeight / 2) - roiScaledY;
+        // Offsets to keep ROI fully in frame
+        let xOffset = 0;
+        let yOffset = 0;
 
-        // Clamp offsets to prevent the video from moving completely out of view
+        // Adjust xOffset to keep ROI left and right edges in view
+        if (scaledRoiLeft < 0) {
+          xOffset = -scaledRoiLeft; // Move right if left edge is out
+        } else if (scaledRoiRight > scaledWidth) {
+          xOffset = -(scaledRoiRight - scaledWidth); // Move left if right edge is out
+        }
+
+        // Adjust yOffset to keep ROI top and bottom edges in view
+        if (scaledRoiTop < 0) {
+          yOffset = -scaledRoiTop; // Move down if top edge is out
+        } else if (scaledRoiBottom > scaledHeight) {
+          yOffset = -(scaledRoiBottom - scaledHeight); // Move up if bottom edge is out
+        }
+
+        // Clamp offsets to prevent over-shifting
         const maxXOffset = (scaledWidth - containerWidth) / 2;
         const maxYOffset = (scaledHeight - containerHeight) / 2;
         const clampedX = Math.max(-maxXOffset, Math.min(maxXOffset, xOffset));
         const clampedY = Math.max(-maxYOffset, Math.min(maxYOffset, yOffset));
 
+        // Logging for debugging
+        console.log({
+          containerWidth,
+          containerHeight,
+          rawRoiX: activeZoom.roi?.x,
+          rawRoiY: activeZoom.roi?.y,
+          normalizedRoiX: roiX,
+          normalizedRoiY: roiY,
+          roiWidth,
+          roiHeight,
+          roiPixelWidth,
+          roiPixelHeight,
+          roiLeft,
+          roiTop,
+          roiRight,
+          roiBottom,
+          currentZoom,
+          scaledWidth,
+          scaledHeight,
+          scaledRoiLeft,
+          scaledRoiTop,
+          scaledRoiRight,
+          scaledRoiBottom,
+          xOffset,
+          yOffset,
+          clampedX,
+          clampedY,
+          transformOrigin: `${roiXPercent}% ${roiYPercent}%`,
+          zoomApplied: currentZoom !== 1,
+        });
+
         return {
           scale: currentZoom,
           x: clampedX,
           y: clampedY,
-          transition: {
-            duration: 0.1,
-            ease: "easeInOut",
-          },
+          transition: { duration: 0.1, ease: "easeInOut" },
         };
       }
 
+      setTransformOrigin("center center");
       return {
         scale: 1,
         x: 0,
         y: 0,
-        transition: {
-          duration: 0.1,
-          ease: "easeInOut",
-        },
+        transition: { duration: 0.1, ease: "easeInOut" },
       };
     };
 
@@ -112,7 +181,6 @@ function Player({ playerRef }) {
     setAnimationProps((prev) =>
       JSON.stringify(prev) !== JSON.stringify(newProps) ? newProps : prev
     );
-
   }, [currentPlayTime, zooms, videoDimensions]);
 
   return (
@@ -130,7 +198,7 @@ function Player({ playerRef }) {
         style={{
           width: "100%",
           height: "100%",
-          transformOrigin: "center center",
+          transformOrigin: transformOrigin,
         }}
       >
         <ReactPlayer
