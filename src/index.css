@@ -318,3 +318,33 @@
 .dd_bg_op option:hover {
   background-color: #303032;
 }
+
+.img_op .img_del {
+  display: none;
+}
+
+.img_op img {
+  border-radius: 8px;
+}
+
+.img_op:hover .img_del {
+  display: flex;
+  top: 10px;
+  left: 10px;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 20px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 15px;
+  color: #aaa;
+  align-items: center;
+}
+
+.img_op:hover .img_del svg {
+  cursor: pointer;
+}
+
+.img_op:hover .img_del svg:hover {
+  color: #fff;
+}
