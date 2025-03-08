@@ -47,7 +47,7 @@ const BASE_URL =
   ): Promise<{ progress: number; status: string; details?: string; result?: unknown } | null> {
     return new Promise((resolve) => {
       api
-        .get(`/flsk/progress/${requestId}`)
+        .get(`http://158.220.94.84:3000/progress/${requestId}`)
         .then((res) => {
           resolve(res.data);
         })
@@ -79,7 +79,7 @@ const BASE_URL =
   }): Promise<{ request_id: string }> {
     return new Promise((resolve) => {
       api
-        .post("/flsk/dubbing", payload)
+        .post("http://158.220.94.84:3000/dubbing", payload)
         .then((res) => {
           resolve(res.data);
         })

@@ -7,9 +7,9 @@ import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
 import { TbGenderIntergender } from 'react-icons/tb';
-import {     FadeLoader} from 'react-spinners'
+import {FadeLoader} from 'react-spinners'
 function DubHeader() {
-  const [selectedLanguage, setSelectedLanguage] = useState('')
+  const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
   const [gender, setGender] = useState('Male')
   const [voiceList, setVoiceList] = useState([])
@@ -21,7 +21,6 @@ function DubHeader() {
 
   useEffect(() => {
     setLanguageList(Object.keys(languages).map((item) => item))
-    setSelectedLanguage("English")
   }, [])
 
 
@@ -30,6 +29,7 @@ function DubHeader() {
     setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
+    console.log('handleVoiceChange',e.target.value)
     setSelectedVoice(e.target.value)
   }
 
@@ -42,10 +42,12 @@ function DubHeader() {
       let voices = languages[selectedLanguage]
       voices = voices[gender.toLowerCase()]
       setVoiceList(voices)
+      setSelectedVoice(voices[0])
     }
   }, [gender, selectedLanguage, languages])
-
+console.log('voiceList',voiceList)
   function handleDubChange() {
+    console.log('selectedLanguage && selectedVoice',selectedLanguage , selectedVoice)
     if (selectedLanguage && selectedVoice) {
       console.log('onisooo')
       const payload = {
