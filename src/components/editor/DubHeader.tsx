@@ -6,70 +6,78 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
-
+import { TbGenderIntergender } from 'react-icons/tb';
+import {     FadeLoader} from 'react-spinners'
 function DubHeader() {
-  const [selectedLanguage, setSelectedLanguage] = useState({})
+  const [selectedLanguage, setSelectedLanguage] = useState('')
   const [languageList, setLanguageList] = useState([])
-  const [selectedVoice, setSelectedVoice] = useState({})
+  const [gender, setGender] = useState('Male')
+  const [voiceList, setVoiceList] = useState([])
+  const [selectedVoice, setSelectedVoice] = useState('')
   const { url } = useAppSelector(state => state.video)
-  const [requestId,setRequestId]=useState('')
-  const dispatch=useAppDispatch()
+  const [requestId, setRequestId] = useState('')
+  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
-    setSelectedLanguage(languages[0])
-    setLanguageList(languages.map(lang => Object.keys(lang)[0]))
+    setLanguageList(Object.keys(languages).map((item) => item))
+    setSelectedLanguage("English")
   }, [])
 
-  useEffect(() => {
-    if (Object.keys(selectedLanguage).length) {
-      const voices = Object.values(selectedLanguage)[0]?.voices
-      setSelectedVoice(voices[0])
-    }
 
-  }, [selectedLanguage])
 
   function handleLanguageChange(e) {
-    setSelectedLanguage(languages[e.target.value])
-    console.log('languages[e.target.value]:', Object.values(languages[e.target.value])[0].value)
+    setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
     setSelectedVoice(e.target.value)
   }
 
-  function handleDubChange() {
-    console.log('selectedLanguage:',Object.values(selectedLanguage)[0].value )
-    if(Object.values(selectedLanguage)[0].value){
-      const payload = {
-        s3_link: url,
-        target_language: Object.values(selectedLanguage)[0].value.split('-')[0],
-        voice: selectedVoice.value.split('-')[0]
-      }
-      console.log('payload:',payload)
-      translateAndDub(payload).then(res => setRequestId(res?.request_id??''))
-    }
+  function handleGenderChange(e) {
+    setGender(e.target.value)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
+    if (selectedLanguage) {
+      let voices = languages[selectedLanguage]
+      voices = voices[gender.toLowerCase()]
+      setVoiceList(voices)
+    }
+  }, [gender, selectedLanguage, languages])
+
+  function handleDubChange() {
+    if (selectedLanguage && selectedVoice) {
+      console.log('onisooo')
+      const payload = {
+        s3_link: url,
+        target_language: selectedLanguage,
+        voice: selectedVoice
+      }
+      translateAndDub(payload).then(res => setRequestId(res?.request_id ?? ''))
+    }
+  }
+useEffect(() => {
     getArticleData(requestId)
-  },[requestId])
+  }, [requestId])
 
   async function getArticleData(request_id) {
     if (request_id) {
-      dispatch(setLoader({ loading: true }))
+      setLoading(true)
       const progessInterval = setInterval(() => {
         getProgress(request_id).then(res => {
           if (res?.status?.toLowerCase() == 'completed') {
             clearInterval(progessInterval)
-            const data=res?.result
+            const data = res?.result
             if (data) {
-              const url=data?.dubbed_video_url;
+              const url = data?.dubbed_video_url;
               if (url) {
                 dispatch(setVideoUrl(url));
               }
             }
-            dispatch(setLoader({ loading: false }))
+            setLoading(false)
           } else if (res?.status?.toLocaleLowerCase().includes('failed')) {
             clearInterval(progessInterval)
-            dispatch(setLoader({ loading: false }))
+            setLoading(false)
             toast.error(res?.status)
           }
           else {
@@ -82,27 +90,32 @@ function DubHeader() {
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>
-      <button className="btn" onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice</button>
+      <button className="btn" onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading&&<span className=''><FadeLoader size={100}/></span>} </button>
       <dialog id="change_language_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">Press ESC key or click the button below to close</p>
           <div className="modal-action">
-            <form method="dialog">
+            <form method="dialog"className='flex w-full flex-col gap-2 p-4'>
               <div className='flex items-center justify-center gap-2'>
                 <div className='flex btn bg-transparent  shadow-none outline-none border-none w-content text-blue-400'>
-                  <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div>
+                 {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
                   <select className=' bg-transparent w-[180px] text-xs hovr:outline-none h-full outline-none border-none  text-slate-500  cursor-pointer' onChange={handleLanguageChange} value={selectedVoice.voice}>
-                    {languageList.map((item, index) => <option key={index} value={index} className='block' >{item}</option>)}
+                    {languageList.map((item, index) => <option key={index} value={item} className='block' >{item}</option>)}
                   </select>
                 </div>
 
+              </div>
+              <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
+                <TbGenderIntergender size={24} />
+                <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleGenderChange}>
+                  <option value='Male'>Male</option>
+                  <option value='Female'>Female</option>
+                </select>
               </div>
 
               <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
                 <IoIosMic size={24} />
                 <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleVoiceChange}>
-                  {Object.values(selectedLanguage)[0]?.voices.map(item => (<option key={item.value} value={item}>{item.voice}</option>))}
+                  {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
                 </select>
               </div>
               <button className="btn" onClick={handleDubChange}>Generate Voice</button>
