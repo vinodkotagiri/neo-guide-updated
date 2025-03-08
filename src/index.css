@@ -263,3 +263,58 @@
   margin-bottom: 16px !important;
   /* Space below paragraphs */
 }
+
+.change_voice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.change_voice button {
+  color: #fff;
+  font-weight: 400;
+  cursor: pointer;
+  font-size: 12px;
+  background-color: oklch(45% 0.24 277.023);
+  border-radius: 28px;
+  padding: 3px 6px;
+}
+
+.change_voice .flag_user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.change_voice .flag_user .flag_icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.change_voice .flag_user .flag_icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+}
+
+.chhange_modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.dd_bg_op option {
+  background-color: #16151a;
+  outline: none;
+  border: none;
+}
+
+.dd_bg_op option:hover {
+  background-color: #303032;
+}

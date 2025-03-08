@@ -7,7 +7,9 @@ import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
 import { TbGenderIntergender } from 'react-icons/tb';
-import {FadeLoader} from 'react-spinners'
+import { FadeLoader } from 'react-spinners';
+import Flag from 'react-world-flags'
+import { IoClose } from 'react-icons/io5';
 function DubHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
@@ -58,7 +60,7 @@ console.log('voiceList',voiceList)
       translateAndDub(payload).then(res => setRequestId(res?.request_id ?? ''))
     }
   }
-useEffect(() => {
+  useEffect(() => {
     getArticleData(requestId)
   }, [requestId])
 
@@ -92,36 +94,54 @@ useEffect(() => {
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>
-      <button className="btn" onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading&&<span className=''><FadeLoader size={100}/></span>} </button>
-      <dialog id="change_language_modal" className="modal">
-        <div className="modal-box">
-          <div className="modal-action">
-            <form method="dialog"className='flex w-full flex-col gap-2 p-4'>
-              <div className='flex items-center justify-center gap-2'>
-                <div className='flex btn bg-transparent  shadow-none outline-none border-none w-content text-blue-400'>
-                 {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
-                  <select className=' bg-transparent w-[180px] text-xs hovr:outline-none h-full outline-none border-none  text-slate-500  cursor-pointer' onChange={handleLanguageChange} value={selectedVoice.voice}>
+      <div className='change_voice'>
+        <div className='flag_user'>
+          <div className='flag_icon'>
+            <Flag code="IN" /></div>
+          <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
+        </div>
+        <button onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className=''> <FadeLoader size={100} /></span>}
+        </button>
+      </div>
+      <dialog id="change_language_modal" className="modal chhange_modal">
+        <div className="modal-box p-[30px] bg-[#16151a] w-4/12 max-w-5xl rounded-2xl">
+          <div className="modal-action mt-0">
+
+            <form method="dialog" className='flex w-full flex-col gap-2 '>
+              <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                <h4 className='text-xl font-semibold text-[#fff]  '>Change Voice</h4>
+                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+              </div>
+              <div className='flex  flex-col mt-5 gap-3'>
+                <div className='flex w-full flex-col  '>
+                  {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
+
+                  <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
+                  <select className='mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
                     {languageList.map((item, index) => <option key={index} value={item} className='block' >{item}</option>)}
                   </select>
+
                 </div>
 
-              </div>
-              <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
-                <TbGenderIntergender size={24} />
-                <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleGenderChange}>
-                  <option value='Male'>Male</option>
-                  <option value='Female'>Female</option>
-                </select>
-              </div>
+                <div className='flex gap-5 mt-4'>
+                  <div className='flex flex-col w-1/2'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Gender</span>
+                    <select className='mt-2 px-2  py-3 text-xs    rounded-md    outline-none    border-[#303032]   text-[#a3a3a5]  cursor-pointer ' onChange={handleGenderChange}>
+                      <option value='Male'>Male</option>
+                      <option value='Female'>Female</option>
+                    </select>
+                  </div>
 
-              <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
-                <IoIosMic size={24} />
-                <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleVoiceChange}>
-                  {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
-                </select>
+                  <div className='flex flex-col w-1/2'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
+                    <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer' onChange={handleVoiceChange}>
+                      {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
+                    </select>
+                  </div>
+                </div>
               </div>
-              <button className="btn" onClick={handleDubChange}>Generate Voice</button>
-              <button className="btn">Close</button>
+              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleDubChange}>Generate Voice</button>
+
             </form>
           </div>
         </div>
