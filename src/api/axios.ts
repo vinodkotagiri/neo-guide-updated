@@ -5,9 +5,8 @@ import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 
 const BASE_URL =
-  import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://recorder.effybiz.com/api";
-
-  const api = axios.create({
+  import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
+const api = axios.create({
   baseURL: BASE_URL,
 });
 
@@ -26,14 +25,14 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       ContentType: payload.file.type
     };
     let response;
-    if(payload.file.type=='video/mp4'){
+    if (payload.file.type == 'video/mp4') {
       response = await s3.upload(params).promise();
     }
-    else{
+    else {
       const formData = new FormData();
       formData.append('file', file);
-      const {file}=payload
-      response= await api.post('/upload',formData,{headers:{'Content-Type': 'multipart/form-data'}})
+      const { file } = payload
+      response = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     }
     if (!response?.Location) return null;
     return { file_url: response.Location };
@@ -48,7 +47,7 @@ export async function getProgress(
 ): Promise<{ progress: number; status: string; details?: string; result?: unknown } | null> {
   return new Promise((resolve) => {
     api
-      .get(`/progress/${requestId}`)
+      .get(`http://158.220.94.84:3000/progress/${requestId}`)
       .then((res) => {
         resolve(res.data);
       })
@@ -80,7 +79,7 @@ export async function translateAndDub(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/dubbing", payload)
+      .post("http://158.220.94.84:3000/dubbing", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -125,7 +124,7 @@ export async function getSubtitles(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/subtitle", payload)
+      .post("/flsk/subtitle", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -140,7 +139,7 @@ export async function getSubtitles(payload: {
 export async function createArticle(payload: { video_url: string }) {
   return new Promise((resolve) => {
     api
-      .post("/article_formate", payload)
+      .post("http://158.220.94.84:3000/article_formate", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -156,7 +155,7 @@ export async function enhanceAIArticle(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/enhance_ai", payload)
+      .post("/flsk/enhance_ai", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -172,7 +171,7 @@ export async function articleCreation(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/article_creation", payload)
+      .post("/flsk/article_creation", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -189,7 +188,7 @@ export async function articleLanguage(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/article_lang", payload)
+      .post("/flsk/article_lang", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -205,7 +204,7 @@ export async function conciseArticle(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/article_concise", payload)
+      .post("/flsk/article_concise", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -221,9 +220,9 @@ export async function articleStep(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/article_step", payload)
+      .post("/flsk/article_step", payload)
       .then((res) => {
-        console.log('res',res)
+        console.log('res', res)
         resolve(res.data);
       })
       .catch((error) => {
@@ -238,7 +237,7 @@ export async function rephraseArticle(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/article_rephrase", payload)
+      .post("/flsk/article_rephrase", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -256,7 +255,7 @@ export async function generateGIF(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/gif/generate-gif", payload)
+      .post("/gif/download-gif", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -268,3 +267,4 @@ export async function generateGIF(payload: {
 }
 
 export default api;
+

@@ -1,5 +1,7 @@
+import { GoArrowLeft } from 'react-icons/go'
 import { useAppSelector } from '../../redux/hooks'
 import LocalLoader from '../global/LocalLoader'
+import { FaArrowLeft, FaRegTrashAlt } from 'react-icons/fa'
 
 function DubContent() {
   const { articleData } = useAppSelector(state => state.article)
@@ -13,10 +15,23 @@ function DubContent() {
         <div className='w-full h-full  p-4 pt-0 scrollbar overflow-y-scroll'>
           {articleData.map((item: { text: string, image_url: string }, index: number) =>
             <>
-              {item.image_url && <img src={item.image_url} alt='img' />}
-              {
-                item.text && <div key={index} className='w-full h-auto  p-2 py-4 text-[#ccc]' contentEditable>{item.text}</div>
-              }
+              <div className='relative img_op'>
+                {item.image_url &&
+                  <>
+                    <img src={item.image_url} alt='img' />
+                    <div className='  img_del' ><FaArrowLeft /> <FaRegTrashAlt />
+
+                    </div>
+                  </>
+                }
+              </div>
+              {item.text && (
+                <div
+                  className='w-full h-auto p-2 py-4 text-[#ccc]'
+                  dangerouslySetInnerHTML={{ __html: item.text }} // Render HTML content
+                  contentEditable
+                />
+              )}
             </>
           )}
         </div>}

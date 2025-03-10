@@ -2,64 +2,151 @@
 import React, { useEffect, useState } from 'react'
 import { languages } from '../../constants'
 import { IoIosMic } from "react-icons/io";
-
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { getProgress, translateAndDub } from '../../api/axios';
+import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
+import { setVideoUrl } from '../../redux/features/videoSlice';
+import { TbGenderIntergender } from 'react-icons/tb';
+import { FadeLoader } from 'react-spinners';
+import Flag from 'react-world-flags'
+import { IoClose } from 'react-icons/io5';
 function DubHeader() {
-  const [selectedLanguage, setSelectedLanguage] = useState({})
+  const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
-  const [selectedVoice, setSelectedVoice] = useState({})
-  useEffect(() => {
-    setSelectedLanguage(languages[0])
-    setLanguageList(languages.map(lang => Object.keys(lang)[0]))
-  }, [languages])
+  const [gender, setGender] = useState('Male')
+  const [voiceList, setVoiceList] = useState([])
+  const [selectedVoice, setSelectedVoice] = useState('')
+  const { url } = useAppSelector(state => state.video)
+  const [requestId, setRequestId] = useState('')
+  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(selectedLanguage).length) {
-      const voices = Object.values(selectedLanguage)[0]?.voices
-      setSelectedVoice(voices[0])
-    }
-  }, [selectedLanguage])
+    setLanguageList(Object.keys(languages).map((item) => item))
+  }, [])
+
+
+
   function handleLanguageChange(e) {
-    setSelectedLanguage(languages[e.target.value])
+    setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
+    console.log('handleVoiceChange',e.target.value)
     setSelectedVoice(e.target.value)
   }
 
+  function handleGenderChange(e) {
+    setGender(e.target.value)
+  }
+
+  useEffect(() => {
+    if (selectedLanguage) {
+      let voices = languages[selectedLanguage]
+      voices = voices[gender.toLowerCase()]
+      setVoiceList(voices)
+      setSelectedVoice(voices[0])
+    }
+  }, [gender, selectedLanguage, languages])
+console.log('voiceList',voiceList)
+  function handleDubChange() {
+    console.log('selectedLanguage && selectedVoice',selectedLanguage , selectedVoice)
+    if (selectedLanguage && selectedVoice) {
+      console.log('onisooo')
+      const payload = {
+        s3_link: url,
+        target_language: selectedLanguage,
+        voice: selectedVoice
+      }
+      translateAndDub(payload).then(res => setRequestId(res?.request_id ?? ''))
+    }
+  }
+  useEffect(() => {
+    getArticleData(requestId)
+  }, [requestId])
+
+  async function getArticleData(request_id) {
+    if (request_id) {
+      setLoading(true)
+      const progessInterval = setInterval(() => {
+        getProgress(request_id).then(res => {
+          if (res?.status?.toLowerCase() == 'completed') {
+            clearInterval(progessInterval)
+            const data = res?.result
+            if (data) {
+              const url = data?.dubbed_video_url;
+              if (url) {
+                dispatch(setVideoUrl(url));
+              }
+            }
+            setLoading(false)
+          } else if (res?.status?.toLocaleLowerCase().includes('failed')) {
+            clearInterval(progessInterval)
+            setLoading(false)
+            toast.error(res?.status)
+          }
+          else {
+            dispatch(setLoaderData({ status: res?.status, percentage: res?.progress }))
+          }
+        })
+      }, 5000)
+    }
+  }
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>
-      <div className='flex items-center justify-center gap-2'>
-        {/* <div className='dropdown'>
-          <details>
-          <summary className="btn m-1 bg-transparent  shadow-none outline-none border-none w-content text-blue-400"><span className='mr-2 text-xl'><span className='text-slate-500 text-xs'>{Object.keys(selectedLanguage)[0]}</span></summary>
-          <ul className="menu dropdown-content bg-base-100 flex flex-col rounded-box z-[1] w-48 overflow-x-scroll h-[180px] p-2 shadow">
-            {languageList.map((item,index)=><li key={index} className='block'>{item}</li>)}
-          </ul>
-          </details>  
-        </div> */}
-        <div className='flex btn bg-transparent  shadow-none outline-none border-none w-content text-blue-400'>
-          <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div>
-          <select className=' bg-transparent w-[180px] text-xs hovr:outline-none h-full outline-none border-none  text-slate-500  cursor-pointer' onChange={handleLanguageChange} value={selectedVoice.voice}>
-            {languageList.map((item, index) => <option key={index} value={index} className='block' >{item}</option>)}
-          </select>
+      <div className='change_voice'>
+        <div className='flag_user'>
+          <div className='flag_icon'>
+            <Flag code="IN" /></div>
+          <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
         </div>
+        <button onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className=''> <FadeLoader size={100} /></span>}
+        </button>
+      </div>
+      <dialog id="change_language_modal" className="modal chhange_modal">
+        <div className="modal-box p-[30px] bg-[#16151a] w-4/12 max-w-5xl rounded-2xl">
+          <div className="modal-action mt-0">
 
-      </div>
-      {/* <div className="dropdown ">
-        <details>
-          <summary className="btn m-1 bg-transparent  shadow-none outline-none border-none w-content text-blue-400"><span><IoIosMic size={24}/></span><span className=' text-xs'>{selectedVoice.voice}</span></summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow ">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-          </ul>
-        </details>
-      </div> */}
-      <div className='flex gap-1 items-center justify-center text-xs font-semibold text-blue-500'>
-        <IoIosMic size={24} />
-        <select className='bg-transparent   h-full outline-none border-none cursor-pointer' onChange={handleVoiceChange}>
-          {Object.values(selectedLanguage)[0]?.voices.map(item => (<option key={item.value} value={item}>{item.voice}</option>))}
-        </select>
-      </div>
+            <form method="dialog" className='flex w-full flex-col gap-2 '>
+              <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                <h4 className='text-xl font-semibold text-[#fff]  '>Change Voice</h4>
+                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+              </div>
+              <div className='flex  flex-col mt-5 gap-3'>
+                <div className='flex w-full flex-col  '>
+                  {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
+
+                  <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
+                  <select className='mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
+                    {languageList.map((item, index) => <option key={index} value={item} className='block' >{item}</option>)}
+                  </select>
+
+                </div>
+
+                <div className='flex gap-5 mt-4'>
+                  <div className='flex flex-col w-1/2'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Gender</span>
+                    <select className='mt-2 px-2  py-3 text-xs    rounded-md    outline-none    border-[#303032]   text-[#a3a3a5]  cursor-pointer ' onChange={handleGenderChange}>
+                      <option value='Male'>Male</option>
+                      <option value='Female'>Female</option>
+                    </select>
+                  </div>
+
+                  <div className='flex flex-col w-1/2'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
+                    <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer' onChange={handleVoiceChange}>
+                      {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleDubChange}>Generate Voice</button>
+
+            </form>
+          </div>
+        </div>
+      </dialog>
+
     </div>
   )
 }
