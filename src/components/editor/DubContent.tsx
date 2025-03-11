@@ -13,7 +13,7 @@ function DubContent() {
       </div>
         :
         <div className='w-full h-full  p-4 pt-0 scrollbar overflow-y-scroll'>
-          {articleData.map((item: { text: string, image_url: string }, index: number) =>
+          {articleData.map((item: { text: string, image_url: string }) =>
             <>
               <div className='relative img_op'>
                 {item.image_url &&
