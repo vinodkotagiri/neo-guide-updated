@@ -1,15 +1,15 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { languages } from '../../constants'
-import { IoIosMic } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
-import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
+import {  setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
-import { TbGenderIntergender } from 'react-icons/tb';
 import { FadeLoader } from 'react-spinners';
 import Flag from 'react-world-flags'
 import { IoClose } from 'react-icons/io5';
+import {MdFindReplace, MdClose} from 'react-icons/md'
+import FindAndReplaceComponent from './FindAndReplaceComponent';
 function DubHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
@@ -20,7 +20,7 @@ function DubHeader() {
   const [requestId, setRequestId] = useState('')
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
-
+  const [showReplace, setShowReplace] =useState(false)
   useEffect(() => {
     setLanguageList(Object.keys(languages).map((item) => item))
   }, [])
@@ -46,12 +46,11 @@ function DubHeader() {
       setVoiceList(voices)
       setSelectedVoice(voices[0])
     }
-  }, [gender, selectedLanguage, languages])
-console.log('voiceList',voiceList)
+  }, [gender, selectedLanguage])
+
   function handleDubChange() {
-    console.log('selectedLanguage && selectedVoice',selectedLanguage , selectedVoice)
+
     if (selectedLanguage && selectedVoice) {
-      console.log('onisooo')
       const payload = {
         s3_link: url,
         target_language: selectedLanguage,
@@ -93,12 +92,16 @@ console.log('voiceList',voiceList)
   }
 
   return (
-    <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2'>
+    <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2 relative'>
+     {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace}/>}
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>
             <Flag code="IN" /></div>
           <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
+        </div>
+        <div className='tooltip' data-tip='Find and Replace'>
+        {showReplace?<MdClose size={24} color='#ff000095' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>:<MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>}
         </div>
         <button onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className=''> <FadeLoader size={100} /></span>}
         </button>

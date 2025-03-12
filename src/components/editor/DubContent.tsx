@@ -1,4 +1,3 @@
-import { GoArrowLeft } from 'react-icons/go'
 import { useAppSelector } from '../../redux/hooks'
 import LocalLoader from '../global/LocalLoader'
 import { FaArrowLeft, FaRegTrashAlt } from 'react-icons/fa'
@@ -12,7 +11,7 @@ function DubContent() {
         <LocalLoader progress={percentage} text={status} />
       </div>
         :
-        <div className='w-full h-full  p-4 pt-0 scrollbar overflow-y-scroll'>
+        <div className='w-full h-full  p-4 pt-0 scrollbar overflow-y-scroll' id='dub-content-all'>
           {articleData.map((item: { text: string, image_url: string }) =>
             <>
               <div className='relative img_op'>
@@ -26,8 +25,8 @@ function DubContent() {
                 }
               </div>
               {item.text && (
-                <div
-                  className='w-full h-auto p-2 py-4 text-[#ccc]'
+                <p
+                  className='w-full h-auto p-2 py-4 text-[#ccc] dub-text-content'
                   dangerouslySetInnerHTML={{ __html: item.text }} // Render HTML content
                   contentEditable
                 />
