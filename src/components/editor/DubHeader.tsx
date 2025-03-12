@@ -20,7 +20,7 @@ function DubHeader() {
   const [requestId, setRequestId] = useState('')
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
-  const [showReplace, setShowReplace] =useState(!false)
+  const [showReplace, setShowReplace] =useState(false)
   useEffect(() => {
     setLanguageList(Object.keys(languages).map((item) => item))
   }, [])
@@ -93,7 +93,7 @@ function DubHeader() {
 
   return (
     <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2 relative'>
-     {showReplace && <FindAndReplaceComponent/>}
+     {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace}/>}
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>
