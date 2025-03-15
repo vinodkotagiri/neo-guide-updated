@@ -1,5 +1,6 @@
 //@ts-nocheck
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { motion, useSpring } from 'framer-motion'
 import SubtitleHeader from './SubtitleHeader'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { getSecondsFromTime } from '../../helpers'
@@ -10,21 +11,46 @@ import { setLoader, setLoaderData } from '../../redux/features/loaderSlice'
 import TimeLineLoader from './TimeLineLoader'
 import LocalLoader from '../global/LocalLoader'
 
-function SubtitleAreaComponent() {
-  const { subtitles, played, url,retries } = useAppSelector(state => state.video)
-   const { percentage, status } = useAppSelector(state => state.loader)
+function SubtitleAreaComponent({playerRef}) {
+  const { subtitles, played, url, retries } = useAppSelector(state => state.video)
+  const { percentage, status } = useAppSelector(state => state.loader)
+  const [currentIdx, setCurrentIdx] = useState(0)
   const [reqId, setReqId] = useState('')
   const dispatch = useAppDispatch()
+  const { currentPlayTime } = useAppSelector(state => state.video)
+  const containerRef = useRef(null)
+  
+  // Spring animation for smooth scrolling
+  const spring = useSpring(0, {
+    stiffness: 100,
+    damping: 20,
+  })
 
   useEffect(() => {
-    if (!subtitles.data.length && retries<3) {
+    if (currentPlayTime) {
+      const idx = subtitles.data.findIndex((subtitle) => {
+        return getSecondsFromTime(subtitle.start_time) <= currentPlayTime && getSecondsFromTime(subtitle.end_time) >= currentPlayTime
+      })
+      setCurrentIdx(idx)
+    }
+  }, [currentPlayTime])
+
+  // Animate scroll when currentIdx changes
+  useEffect(() => {
+    if (currentIdx >= 0 && containerRef.current) {
+      const subtitleHeight = 96 // h-24 in tailwind is 6rem or 96px
+      const containerHeight = containerRef.current.clientHeight
+      const targetScroll = currentIdx * subtitleHeight - (containerHeight / 2) + (subtitleHeight / 2)
+      spring.set(Math.max(0, targetScroll))
+    }
+  }, [currentIdx])
+
+  useEffect(() => {
+    if (!subtitles.data.length && retries < 3) {
       getSubtitles({ target_language: 'en', video_path: url }).then((res) => {
         const request_id = res?.request_id;
         if (request_id) {
           setReqId(request_id);
-          // toast.success('Video uploaded successfully');
-        } else {
-          // toast.error('Forbidden');
         }
       })
         .catch(() => {
@@ -36,6 +62,7 @@ function SubtitleAreaComponent() {
         });
     }
   }, [])
+
   useEffect(() => {
     if (reqId) {
       getArticleData(reqId)
@@ -75,29 +102,50 @@ function SubtitleAreaComponent() {
     return false;
   }
 
-
-  
-
   return (
-    <div className='w-full h-full overflow-y-scroll'>
+    <div className='w-full h-full overflow-y-scroll' ref={containerRef}>
       <SubtitleHeader />
       
-      <div className='flex flex-col gap-1 p-2 h-full'>
-      {!subtitles.data.length ? <div className='w-full h-full overflow-auto relative '>
-        <LocalLoader progress={percentage} text={status} />
-      </div>:
-        subtitles.data.map((item, index) =>
-          <div className='flex h-24 items-center justify-between gap-1  bg-slate-800 rounded-md' key={index} style={isActiveStyle(item.start_time, item.end_time) ? { color: '#fff' } : {}}>
-            <div className='flex flex-col h-full items-center justify-center px-2 gap-1'>
-              <div>{item.start_time}</div>
-              <div>{item.end_time}</div>
-            </div>
-            <div className='flex-1 px-2'>
-              {item.text}
-            </div>
+      <motion.div 
+        className='flex flex-col gap-1 p-2 h-full'
+        style={{ translateY: -spring }} // Use the spring value directly with negation
+      >
+        {!subtitles.data.length ? 
+          <div className='w-full h-full overflow-auto relative'>
+            <LocalLoader progress={percentage} text={status} />
           </div>
-        )}
-      </div>
+          :
+          subtitles.data.map((item, index) => {
+            return (      
+              <motion.div 
+                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-slate-800 rounded-md'
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={currentIdx===index && isActiveStyle(item.start_time, item.end_time) ? { 
+                  color: '#fff', 
+                  backgroundColor: '#422AD5' 
+                } : {}} 
+                onClick={() => {
+                  playerRef.current.seekTo(getSecondsFromTime(item.start_time))
+                  setCurrentIdx(index)
+                }}
+              >
+                <div className='flex flex-col h-full items-center justify-center px-2 gap-1'>
+                  <div>{item?.start_time?.split(',')[0]}</div>
+                  <div>{item?.end_time?.split(',')[0]}</div>
+                </div>
+                <p
+                  className='w-full h-auto p-2 py-4 text-[#ccc] dub-text-content'
+                  dangerouslySetInnerHTML={{ __html: item.text }}
+                  contentEditable
+                />
+              </motion.div>
+            )
+          })
+        }
+      </motion.div>
     </div>
   )
 }

@@ -1,11 +1,12 @@
 import React from 'react'
 import { RiSpeakAiLine } from "react-icons/ri";
-import { MdArrowOutward, MdBlurOn, MdOutlineCenterFocusStrong, MdOutlineRectangle, MdOutlineTextFields, MdZoomOutMap } from 'react-icons/md';
+import { MdArrowOutward, MdBlurOn, MdOutlineCenterFocusStrong, MdOutlineRectangle, MdOutlineTextFields, MdSubtitles, MdZoomOutMap } from 'react-icons/md';
 
 function RightMenuIcons({ setRightActiveArea, rightActiveArea }) {
   return (
     <div className='h-full   w-full text-slate-400 flex flex-col  align-items-center'>
-      <MenuIconButton label='Dub' icon={<RiSpeakAiLine size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={1} rightActiveArea={rightActiveArea} />
+      {/* <MenuIconButton label='Dub' icon={<RiSpeakAiLine size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={1} rightActiveArea={rightActiveArea} /> */}
+      <MenuIconButton label='Subtitle' icon={<MdSubtitles size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={2} rightActiveArea={rightActiveArea} />
       <MenuIconButton label='Blur' icon={<MdBlurOn size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={4} rightActiveArea={rightActiveArea} />
       <MenuIconButton label='Rectangle' icon={<MdOutlineRectangle size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={5} rightActiveArea={rightActiveArea} />
       <MenuIconButton label='Text' icon={<MdOutlineTextFields size={24} className='shrink-0' />} setRightActiveArea={setRightActiveArea} val={6} rightActiveArea={rightActiveArea} />

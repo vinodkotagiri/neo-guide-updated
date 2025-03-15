@@ -15,7 +15,7 @@ import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, setCur
 import ZoomOptions from './Elements/ZoomOptions'
 
 const EditorSider = ({ playerRef }) => {
-  const [rightActiveArea, setRightActiveArea] = useState(1)
+  const [rightActiveArea, setRightActiveArea] = useState(2)
   const { currentPlayTime } = useAppSelector(state => state.video)
   const { rectangles, blurs, texts, arrows, spotLights,zooms, currentElement, currentElementId } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
@@ -174,7 +174,7 @@ const EditorSider = ({ playerRef }) => {
       </div> */}
       <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
         {rightActiveArea == 1 && <DubAreaComponent />}
-        {rightActiveArea == 2 && <SubtitleAreaComponent />}
+        {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef}/>}
         {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
         {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
         {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
