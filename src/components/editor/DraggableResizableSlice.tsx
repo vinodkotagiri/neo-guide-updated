@@ -22,6 +22,7 @@ interface DraggableResizableSliceProps {
   color?: string;
 }
 
+
 const DraggableResizableSlice = ({
   playerRef,
   wrapperRef,
@@ -189,7 +190,7 @@ const DraggableResizableSlice = ({
 
   return (
     <div
-      className="h-full absolute cursor-grab select-none flex items-center justify-center capitalize text-xs rounded-lg"
+      className="h-full absolute cursor-grab select-none flex items-center justify-center capitalize text-xs rounded-sm border-l-2 border-slate-200 border-r-2"
       ref={sliceRef}
       style={{ 
         left: sliceStyle.left, 
@@ -205,31 +206,25 @@ const DraggableResizableSlice = ({
         </p>
       )}
       <div 
-        className="resize-handle left"
+        className="resize-handle left rounded-l-sm"
         style={{
           position: 'absolute',
           left: 0,
           top: 0,
           width: '10px',
           height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.5)',
           cursor: 'ew-resize',
-          borderTopLeftRadius: "0.5rem",
-          borderBottomLeftRadius: "0.5rem"
         }}
       />
       <div 
-        className="resize-handle right"
+        className="resize-handle right rounded-r-sm"
         style={{
           position: 'absolute',
           right: 0,
           top: 0,
           width: '10px',
           height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.5)',
           cursor: 'ew-resize',
-          borderTopRightRadius: "0.5rem",
-          borderBottomRightRadius: "0.5rem"
         }}
       />
     </div>

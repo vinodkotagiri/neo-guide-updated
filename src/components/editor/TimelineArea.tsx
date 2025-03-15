@@ -239,7 +239,7 @@ function TimelineArea({ playerRef }) {
         {playerRef.current && <ShapesLayer wrapperRef={scrollRef}
           playerRef={playerRef}
           numSegments={Math.ceil(duration / 5)}
-          thumbnailHeight={36} width={markers[markers.length - 1] * pixelFactor} />}
+          thumbnailHeight={24} width={markers[markers.length - 1] * pixelFactor} />}
       </div>
     </div>
   );
