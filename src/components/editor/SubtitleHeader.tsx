@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { languages } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
-import {  setLoaderData } from '../../redux/features/loaderSlice';
+import { setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
 import { FadeLoader } from 'react-spinners';
 import Flag from 'react-world-flags'
 import { IoClose } from 'react-icons/io5';
-import {MdFindReplace, MdClose} from 'react-icons/md'
+import { MdFindReplace, MdClose } from 'react-icons/md'
 import FindAndReplaceComponent from './FindAndReplaceComponent';
+import spinner from '../../assets/images/fade-stagger-circles.svg'
 function SubtitleHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
@@ -20,7 +21,7 @@ function SubtitleHeader() {
   const [requestId, setRequestId] = useState('')
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
-  const [showReplace, setShowReplace] =useState(false)
+  const [showReplace, setShowReplace] = useState(false)
   useEffect(() => {
     setLanguageList(Object.keys(languages).map((item) => item))
   }, [])
@@ -31,7 +32,7 @@ function SubtitleHeader() {
     setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
-    console.log('handleVoiceChange',e.target.value)
+    console.log('handleVoiceChange', e.target.value)
     setSelectedVoice(e.target.value)
   }
 
@@ -92,19 +93,23 @@ function SubtitleHeader() {
   }
 
   return (
-    <div className='w-full border-b-[1px] border-slate-600 flex items-center justify-between px-2 relative'>
-     {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace}/>}
+    <div className='w-full border-b-[1px] border-[#303032] flex items-center justify-between px-2 relative'>
+      {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace} />}
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>
             <Flag code="IN" /></div>
           <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
+          <button className='text-[12px] text-[#a3a3a5] cursor-pointer flex items-center gap--2 ' onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className='loader_spin'> <img src={spinner} width={20} /> </span>}
+          </button>
         </div>
-        <div className='tooltip' data-tip='Find and Replace'>
-        {showReplace?<MdClose size={24} color='#ff000095' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>:<MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>}
+        <div className='flex items-center gap-2 '>
+          <button className='generate_button '  > Generate Speech
+          </button>
+          <div className='tooltip tooltip-left' data-tip='Find and Replace'>
+            <MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)} />
+          </div>
         </div>
-        <button onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className=''> <FadeLoader size={100} /></span>}
-        </button>
       </div>
       <dialog id="change_language_modal" className="modal chhange_modal">
         <div className="modal-box p-[30px] bg-[#16151a] w-4/12 max-w-5xl rounded-2xl">
@@ -143,7 +148,7 @@ function SubtitleHeader() {
                   </div>
                 </div>
               </div>
-              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleDubChange}>Generate Voice</button>
+              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleDubChange}>Generate Voice  </button>
 
             </form>
           </div>

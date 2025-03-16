@@ -1,13 +1,13 @@
 //@ts-nocheck
 import { useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import {  addZoom, deleteZoom, editZoom, setCurrentElement, setCurrentElementId, ZoomElementState } from '../../../redux/features/elementsSlice'
+import { addZoom, deleteZoom, editZoom, setCurrentElement, setCurrentElementId, ZoomElementState } from '../../../redux/features/elementsSlice'
 import { setAddingElements, setCurrentPlayTime } from '../../../redux/features/videoSlice'
 import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
 
 const ZoomOptions = ({ playerRef }) => {
   const { currentElementId, zooms, currentElement } = useAppSelector(state => state.elements)
-  const {  currentPlayTime } = useAppSelector(state => state.video)
+  const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
 
   const [zoomFactor, setZoomFactor] = useState(0)
@@ -31,8 +31,8 @@ const ZoomOptions = ({ playerRef }) => {
       zoom_factor: zoomFactor,
       easing_factor: easingFactor,
       start_time: currentPlayTime,
-      end_time: currentPlayTime+5,
-      roi:{x:100, y:100, width:100, height:100}
+      end_time: currentPlayTime + 5,
+      roi: { x: 100, y: 100, width: 100, height: 100 }
     }
     dispatch(addZoom(zoomData))
     dispatch(setCurrentElement('zoom'))
@@ -60,7 +60,7 @@ const ZoomOptions = ({ playerRef }) => {
 
   useEffect(() => {
     if (currentElementId && currentElement == 'zooms') {
-      dispatch(editZoom({ id: currentElementId, zoom_factor:zoomFactor, easing_factor:easingFactor, start_time:startTime, end_time:endTime }))
+      dispatch(editZoom({ id: currentElementId, zoom_factor: zoomFactor, easing_factor: easingFactor, start_time: startTime, end_time: endTime }))
     }
   }, [zoomFactor, easingFactor, startTime, endTime])
 
@@ -89,8 +89,10 @@ const ZoomOptions = ({ playerRef }) => {
         </div>
       </div>
 
-      <div className='bg-[#303032]'style={zooms.length ==0 ? {  } : {display: 'none' }}>
-        WELCOMEEEE
+      <div className='w-full flex' style={zooms.length == 0 ? {} : { display: 'none' }}>
+
+        <button className='cursor-pointer bg-[#422ad5]  rounded-lg text-white mx-auto px-3 py-2 mt-4 flex items-center gap-2' onClick={handleAddNewZoom}><FaPlus /> Add New Zoom</button>
+
       </div>
 
       <div className='border-b-[#303032] border-b' style={zooms.length == 0 ? { display: 'none' } : {}}>

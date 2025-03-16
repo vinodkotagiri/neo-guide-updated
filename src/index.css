@@ -272,7 +272,7 @@
   padding: 10px 0;
 }
 
-.change_voice button {
+.change_voice .generate_button {
   color: #fff;
   font-weight: 400;
   cursor: pointer;
@@ -347,4 +347,9 @@
 
 .img_op:hover .img_del svg:hover {
   color: #fff;
+}
+
+.loader_spin span {
+  background-color: #fff !important;
+
 }
