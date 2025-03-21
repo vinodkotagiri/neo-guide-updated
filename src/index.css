@@ -353,3 +353,7 @@
   background-color: #fff !important;
 
 }
+
+.bg_vv {
+  background-color: oklch(45% 0.24 277.023);
+}

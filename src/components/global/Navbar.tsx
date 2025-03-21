@@ -5,12 +5,13 @@ import logo from '../../assets/images/neo-logo.png'
 import { IoIosMenu } from "react-icons/io";
 
 interface NavbarProps {
-  from?: string
+  from?: string,
+  hideMenu?: string,
 }
 
-function Navbar({ from }: NavbarProps) {
-  const { isArticle,videoName } = useAppSelector(state => state.video)
-  const {articleData}=useAppSelector(state=>state.article)
+function Navbar({ from, hideMenu }: NavbarProps) {
+  const { isArticle, videoName } = useAppSelector(state => state.video)
+  const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
@@ -22,13 +23,14 @@ function Navbar({ from }: NavbarProps) {
       <div className="navbar-inside">
         <div className="px-4 flex  items-center justify-center gap-6">
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
-          <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName??"untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
+          {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
+          }
         </div>
 
         <div className="flex gap-4 items-center ">
           {from == 'editor' && <div className="w-full items-center justify-center flex gap-2">
             <div className="nav-custom-btn">
-              <button disabled={articleData?.length==0} className={!isArticle ? "" : "active"} onClick={handleVideoArticleSwitch}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+              <button disabled={articleData?.length == 0} className={!isArticle ? "" : "active"} onClick={handleVideoArticleSwitch}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
                 <path fillRule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625ZM7.5 15a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H8.25Z" clipRule="evenodd" />
                 <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
               </svg>
@@ -40,20 +42,22 @@ function Navbar({ from }: NavbarProps) {
                 Video</button>
             </div>
           </div>}
-          <div className="drawer drawer-end ml-8">
+          {!hideMenu &&
+            <div className="drawer drawer-end ml-8">
 
-            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content">
-              <label htmlFor="my-drawer" className="text-[#a3a3a3] text-3xl cursor-pointer   m-0  p-0"> <IoIosMenu /></label>
+              <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+              <div className="drawer-content">
+                <label htmlFor="my-drawer" className="text-[#a3a3a3] text-3xl cursor-pointer   m-0  p-0"> <IoIosMenu /></label>
+              </div>
+              <div className="drawer-side z-50">
+                <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                  <li><a>Version History</a></li>
+                  <li><a>Sidebar Item 2</a></li>
+                </ul>
+              </div>
             </div>
-            <div className="drawer-side z-50">
-              <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-              <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-                <li><a>Version History</a></li>
-                <li><a>Sidebar Item 2</a></li>
-              </ul>
-            </div>
-          </div>
+          }
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
