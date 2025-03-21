@@ -29,8 +29,8 @@ const Editor = () => {
 
   useEffect(() => {
     if (!articleData.length) {
-      dispatch(setLoader({ loading: true }));
-      dispatch(setLocked(true))
+      // dispatch(setLoader({ loading: true }));
+      // dispatch(setLocked(true))
       createArticle({ video_url: url })
         .then((res) => {
           const request_id = res?.request_id;
