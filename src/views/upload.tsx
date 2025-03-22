@@ -64,11 +64,11 @@ console.log('selectedFile',selectedFile)
 
             <p className="text-sm text-slate-400 mb-4">Attachments that have been uploaded as part of this project.</p>
             <label htmlFor="videoUpload"  >
-              <div className="border-2 border-dashed border-indigo-500 rounded-lg p-8 text-center cursor-pointer transition-colors bg-[#212025] hover:bg-[#1c1c21]">
+              <div className="border-2 border-dashed border-blue-400 rounded-lg p-8 text-center cursor-pointer transition-colors bg-[#212025] hover:bg-[#1c1c21]">
                 <div className="flex flex-col items-center justify-center">
-                  <IoCloudUploadOutline className="h-10 w-10 text-indigo-500 mb-4" />
+                  <IoCloudUploadOutline className="h-10 w-10 text-blue-400 mb-4" />
                   <p className="mb-1">
-                    Drag & drop your files here or <span className="text-indigo-500">choose files</span>
+                    Drag & drop your files here or <span className="text-blue-400">choose files</span>
                   </p>
                   <input
                     type="file"
@@ -77,7 +77,7 @@ console.log('selectedFile',selectedFile)
                     accept='video/*'
                     onChange={(e) => setSelectedFile(e.target.files?.[0])}
                   />
-                  <p className="text-sm text-slate-400">500 MB max file size.</p>
+                  <p className="text-sm text-red-300">500 MB max file size.</p>
                 </div>
               </div>
 
@@ -106,7 +106,7 @@ console.log('selectedFile',selectedFile)
               <button className="bg-[#16151a] text-white  px-3 py-2 cursor-pointer rounded-md font-semibold">
                 Cancel
               </button>
-              <button className=" bg_vv  px-3 py-2 cursor-pointer rounded-md font-semibold" onClick={handleUploadFile}>Upload</button>
+              <button className=" bg-blue-400 px-3 py-2 cursor-pointer rounded-md font-semibold disabled:cursor-none" onClick={handleUploadFile} disabled={!selectedFile}>Upload</button>
             </div>
           </div>
         </div>
