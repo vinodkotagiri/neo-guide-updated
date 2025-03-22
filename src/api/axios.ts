@@ -124,7 +124,7 @@ export async function getSubtitles(payload: {
 }): Promise<{ request_id: string }> {
   return new Promise((resolve) => {
     api
-      .post("/flsk/subtitle", payload)
+      .post("http://158.220.94.84:3000/subtitle", payload)
       .then((res) => {
         resolve(res.data);
       })

@@ -30,6 +30,13 @@ export async function getLanguagesListWithVoicesAndFlags(){
 
 }
 
+export function formatBytes(bytes) {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
+  if (bytes === 0) return "0 Bytes";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(2) + " " + sizes[i];
+}
+
 export function getSecondsFromTime(time) {
   const [hours, minutes, seconds] = time.split(":");
   return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);

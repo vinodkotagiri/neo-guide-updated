@@ -11,15 +11,18 @@ import { setArticleData } from '../redux/features/articleSlice';
 import { IoCloudUploadOutline } from 'react-icons/io5';
 import { MdOutlineClose } from 'react-icons/md';
 import Navbar from '../components/global/Navbar';
+import { formatBytes } from '../helpers';
 function UploadView() {
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleUploadFile() {
     window.localStorage.clear();
     dispatch(setArticleData([]));
     dispatch(setVideoUrl(''));
     dispatch(updateSubtitleData([]));
-    const file = e.target.files?.[0];
+    // const file = e.target.files?.[0];
+    const file=selectedFile
     dispatch(setLoader({ loading: true, status: 'please wait while we upload the file' }));
     if (file) {
       const response: UploadVideoResponse | null = await uploadFile({ user_id: '1', file });
@@ -35,7 +38,7 @@ function UploadView() {
     }
   }
 
-
+console.log('selectedFile',selectedFile)
   async function handleInitiateRecording() {
     dispatch(setLoader({ loading: true }));
     setTimeout(() => {
@@ -67,20 +70,27 @@ function UploadView() {
                   <p className="mb-1">
                     Drag & drop your files here or <span className="text-indigo-500">choose files</span>
                   </p>
+                  <input
+                    type="file"
+                    id='videoUpload'
+                    className="file-input file-input-bordered file-input-success w-full max-w-xs cursor-pointer hidden"
+                    accept='video/*'
+                    onChange={(e) => setSelectedFile(e.target.files?.[0])}
+                  />
                   <p className="text-sm text-slate-400">500 MB max file size.</p>
                 </div>
               </div>
 
             </label>
-            <div className="mt-6">
+            {selectedFile&&<div className="mt-6">
               <h3 className="text-sm font-medium mb-3">Uploaded file</h3>
               <div className="space-y-3">
 
                 <div className="bg-[#16151a] rounded-md p-3">
                   <div className="flex justify-between items-start mb-1">
                     <div className="flex-1 pr-4">
-                      <p className="text-sm font-medium truncate">video.mp4</p>
-                      <p className="text-xs text-slate-400">file-size</p>
+                      <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                      <p className="text-xs text-slate-400">{formatBytes(selectedFile.size)}</p>
                     </div>
                     <button className="text-slate-400 hover:text-white cursor-pointer">
                       <MdOutlineClose className="h-4 w-4" />
@@ -91,12 +101,12 @@ function UploadView() {
                 </div>
 
               </div>
-            </div>
+            </div>}
             <div className="flex justify-end gap-2 mt-6  items-center ">
               <button className="bg-[#16151a] text-white  px-3 py-2 cursor-pointer rounded-md font-semibold">
                 Cancel
               </button>
-              <button className=" bg_vv  px-3 py-2 cursor-pointer rounded-md font-semibold">Upload</button>
+              <button className=" bg_vv  px-3 py-2 cursor-pointer rounded-md font-semibold" onClick={handleUploadFile}>Upload</button>
             </div>
           </div>
         </div>
@@ -104,13 +114,13 @@ function UploadView() {
 
 
 
-        <input
+        {/* <input
           type="file"
           id='videoUpload'
           className="file-input file-input-bordered file-input-success w-full max-w-xs cursor-pointer hidden"
           accept='video/*'
           onChange={handleUploadFile}
-        />
+        /> */}
       </div>
 
     </div>
