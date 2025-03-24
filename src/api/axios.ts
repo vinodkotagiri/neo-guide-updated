@@ -3,6 +3,7 @@ import axios from "axios";
 import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
+import { getLanguages } from "../helpers";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
@@ -90,33 +91,6 @@ export async function translateAndDub(payload: {
   });
 }
 
-export async function getLanguageList() {
-  const url = `https://demo.effybiz.com/effybizgetlanguages`;
-  return new Promise((resolve) => {
-    axios
-      .get(url)
-      .then((res) => resolve(res.data))
-      .catch((err) => {
-        console.log(err);
-        resolve({});
-      });
-  });
-}
-
-export async function getLanguageVoiceList(Language_name_from_first_API: string) {
-  // const url=`https://demo.effybiz.com/effybizgetlanguages`;
-  const url = `https://demo.effybiz.com/effybizgetvoices?language=${Language_name_from_first_API}`;
-  axios
-    .get(url)
-    .then((res) => {
-      console.log("res::", res.data);
-      return res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-      return null;
-    });
-}
 
 export async function getSubtitles(payload: {
   target_language: string;
@@ -264,6 +238,36 @@ export async function generateGIF(payload: {
         resolve(null);
       });
   });
+}
+
+export async function getLanguages(){
+  return new Promise((resolve) => {
+    api
+      .get("https://contentinova.com/effybizgetlanguages")
+      .then((res) => {
+        let languages=[];
+        if(res.data){
+          languages=Object.keys(res.data).map(item=>item)
+        }
+        resolve(languages);
+      })
+      .catch((error) => {
+        console.log("error getLanguages", error);
+        resolve(null);
+      });
+  })
+}
+
+export async function getVoiceForLanguage(language:text){
+  return new Promise((resolve) => {
+    api.get(`https://contentinova.com/effybizgetvoices?language=${language}`)
+    .then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log("error getLanguages", error);
+      resolve(null);
+    })
+  })
 }
 
 export default api;
