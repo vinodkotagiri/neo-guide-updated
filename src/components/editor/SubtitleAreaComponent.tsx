@@ -215,7 +215,7 @@ function SubtitleAreaComponent({ playerRef }) {
                   <div>{item?.end_time?.split(',')[0]}</div>
                 </div>
                 <p
-                  className='w-full h-auto p-2 py-4 text-[#ccc] dub-text-content'
+                  className='w-full h-auto p-2 py-4 text-[#ccc] subtitle-content'
                   dangerouslySetInnerHTML={{ __html: item.text }}
                   contentEditable
                 />

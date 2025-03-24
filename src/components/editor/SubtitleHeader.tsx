@@ -32,7 +32,6 @@ function SubtitleHeader() {
     setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
-    console.log('handleVoiceChange', e.target.value)
     setSelectedVoice(e.target.value)
   }
 
@@ -94,7 +93,7 @@ function SubtitleHeader() {
 
   return (
     <div className='w-full border-b-[1px] border-[#303032] flex items-center justify-between px-2 relative'>
-      {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace} />}
+      {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace} subtitle={true} />}
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>

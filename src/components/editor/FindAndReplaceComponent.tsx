@@ -2,13 +2,15 @@ import { useEffect } from "react"
 import { handleReplaceText, setFindText, setReplaceText } from "../../redux/features/articleSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md"
+import { handleReplaceSubtitleText } from "../../redux/features/videoSlice"
 
-function FindAndReplaceComponent({ setShowReplace }: { setShowReplace: (val: boolean) => void }) {
+function FindAndReplaceComponent({ setShowReplace,subtitle }: { setShowReplace: (val: boolean) => void ,subtitle:boolean}) {
   const dispatch = useAppDispatch()
-  const { findText } = useAppSelector(state => state.article)
+  const { findText,replaceText } = useAppSelector(state => state.article)
 
   useEffect(() => {
-    const para = document.getElementsByClassName('dub-text-content');
+    const contentId=subtitle?'subtitle-content':'dub-text-content'
+    const para = document.getElementsByClassName(contentId);
     const regExp = new RegExp(findText, 'gi');
 
     if (findText !== "") {
@@ -25,7 +27,11 @@ function FindAndReplaceComponent({ setShowReplace }: { setShowReplace: (val: boo
   }, [findText]);
 
   function handleReplace() {
-    dispatch(handleReplaceText())
+    if(subtitle){
+      dispatch(handleReplaceSubtitleText({ findText,replaceText}))
+    }else{
+      dispatch(handleReplaceText())
+    }
     setShowReplace(false)
   }
 
