@@ -155,7 +155,7 @@ function SubtitleAreaComponent({ playerRef }) {
                 <legend className="fieldset-legend">Language</legend>
                 <select defaultValue="Pick a browser" className="select" onChange={(e) => setSelectedLaguage(e.target.value)} >
                   <option disabled={true}>Select a Language</option>
-                  {languages.map((item, index) => <option key={index} value={item}>{item}</option>)}
+                  {languages.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
                 </select>
               </fieldset>
 
@@ -163,7 +163,7 @@ function SubtitleAreaComponent({ playerRef }) {
                 <legend className="fieldset-legend">Voices</legend>
                 <select defaultValue="Pick a browser" className="select" onChange={e=>setSelectedVoice(e.target.value)}>
                   <option disabled={true}>Select a Voice</option>
-                  {voices.map((item, index) => <option key={index} value={item}>{item}</option>)}
+                  {voices.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
                 </select>
               </fieldset> : ''}
 

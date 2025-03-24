@@ -8,7 +8,7 @@ import { getLanguages } from "../helpers";
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL
 });
 
 export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVideoResponse | null> {
@@ -26,14 +26,13 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       ContentType: payload.file.type
     };
     let response;
-    if (payload.file.type == 'video/mp4') {
+    if (payload.file.type == "video/mp4") {
       response = await s3.upload(params).promise();
-    }
-    else {
+    } else {
       const formData = new FormData();
-      formData.append('file', file);
-      const { file } = payload
-      response = await api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      formData.append("file", file);
+      const { file } = payload;
+      response = await api.post("/upload", formData, { headers: { "Content-Type": "multipart/form-data" } });
     }
     if (!response?.Location) return null;
     return { file_url: response.Location };
@@ -90,7 +89,6 @@ export async function translateAndDub(payload: {
       });
   });
 }
-
 
 export async function getSubtitles(payload: {
   target_language: string;
@@ -196,7 +194,7 @@ export async function articleStep(payload: {
     api
       .post("/flsk/article_step", payload)
       .then((res) => {
-        console.log('res', res)
+        console.log("res", res);
         resolve(res.data);
       })
       .catch((error) => {
@@ -240,47 +238,59 @@ export async function generateGIF(payload: {
   });
 }
 
-export async function getLanguages(){
+export async function getLanguages(dub = false) {
   return new Promise((resolve) => {
     api
       .get("https://contentinova.com/effybizgetlanguages")
       .then((res) => {
-        let languages=[];
-        if(res.data){
-          languages=Object.keys(res.data).map(item=>item)
+        let languages = [];
+        if (res.data) {
+          languages = Object.keys(res.data).map((item) => item);
+          const dubbingLangs = [];
+          const ttsLangs = [];
+
+          languages.forEach((item) => {
+            if (item.split("-")[1] == "EE") dubbingLangs.push(item);
+            else ttsLangs.push(item);
+          });
+          if (dub) resolve (dubbingLangs);
+          else resolve(ttsLangs);
         }
-        resolve(languages);
+       
       })
       .catch((error) => {
         console.log("error getLanguages", error);
         resolve(null);
       });
-  })
+  });
 }
 
-export async function getVoiceForLanguage(language:text){
+export async function getVoiceForLanguage(language: text) {
   return new Promise((resolve) => {
-    api.get(`https://contentinova.com/effybizgetvoices?language=${language}`)
-    .then((res) => {
-      resolve(res.data);
-    }).catch((error) => {
-      console.log("error getLanguages", error);
-      resolve(null);
-    })
-  })
+    api
+      .get(`https://contentinova.com/effybizgetvoices?language=${language}`)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.log("error getLanguages", error);
+        resolve(null);
+      });
+  });
 }
 
-export async function textToSpeech(payload:{voice:string, text:string}):Promise<{audio_url:string|null}> {
+export async function textToSpeech(payload: { voice: string; text: string }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
-    api.post("https://contentinova.com/data/effybizgeneratevoice",payload)
-    .then((res) => {
-      resolve(res.data)
-    }).catch((error) => {
-      console.log("error getLanguages", error);
-      resolve(null);
-    })
-  })
+    api
+      .post("https://contentinova.com/data/effybizgeneratevoice", payload)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.log("error getLanguages", error);
+        resolve(null);
+      });
+  });
 }
 
 export default api;
-
