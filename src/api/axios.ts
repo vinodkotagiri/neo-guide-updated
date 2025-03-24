@@ -270,5 +270,17 @@ export async function getVoiceForLanguage(language:text){
   })
 }
 
+export async function textToSpeech(payload:{voice:string, text:string}):Promise<{audio_url:string|null}> {
+  return new Promise((resolve) => {
+    api.post("https://contentinova.com/data/effybizgeneratevoice",payload)
+    .then((res) => {
+      resolve(res.data)
+    }).catch((error) => {
+      console.log("error getLanguages", error);
+      resolve(null);
+    })
+  })
+}
+
 export default api;
 
