@@ -1,6 +1,6 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react'
-import { languages } from '../../constants'
+import { dubLanguages } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
 import {  setLoaderData } from '../../redux/features/loaderSlice';
@@ -13,7 +13,6 @@ import FindAndReplaceComponent from './FindAndReplaceComponent';
 function DubHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [languageList, setLanguageList] = useState([])
-  const [gender, setGender] = useState('Male')
   const [voiceList, setVoiceList] = useState([])
   const [selectedVoice, setSelectedVoice] = useState('')
   const { url } = useAppSelector(state => state.video)
@@ -22,7 +21,7 @@ function DubHeader() {
   const [loading, setLoading] = useState(false)
   const [showReplace, setShowReplace] =useState(false)
   useEffect(() => {
-    setLanguageList(Object.keys(languages).map((item) => item))
+    setLanguageList(dubLanguages)
   }, [])
 
 
@@ -31,22 +30,17 @@ function DubHeader() {
     setSelectedLanguage(e.target.value)
   }
   function handleVoiceChange(e) {
-    console.log('handleVoiceChange',e.target.value)
     setSelectedVoice(e.target.value)
   }
 
-  function handleGenderChange(e) {
-    setGender(e.target.value)
-  }
 
   useEffect(() => {
     if (selectedLanguage) {
-      let voices = languages[selectedLanguage]
-      voices = voices[gender.toLowerCase()]
+      const voices=selectedLanguage.voices
       setVoiceList(voices)
       setSelectedVoice(voices[0])
     }
-  }, [gender, selectedLanguage])
+  }, [selectedLanguage])
 
   function handleDubChange() {
 
@@ -120,20 +114,20 @@ function DubHeader() {
                   {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
 
                   <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
-                  <select className='mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
-                    {languageList.map((item, index) => <option key={index} value={item} className='block' >{item}</option>)}
+                  <select className='mt-2  px-2  py-3  text-xs outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
+                    {languageList.map((item, index) => <option key={index} value={item.code} className='block' >{item.language}</option>)}
                   </select>
 
                 </div>
 
                 <div className='flex gap-5 mt-4'>
-                  <div className='flex flex-col w-1/2'>
+                  {/* <div className='flex flex-col w-1/2'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Gender</span>
                     <select className='mt-2 px-2  py-3 text-xs    rounded-md    outline-none    border-[#303032]   text-[#a3a3a5]  cursor-pointer ' onChange={handleGenderChange}>
                       <option value='Male'>Male</option>
                       <option value='Female'>Female</option>
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className='flex flex-col w-1/2'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>

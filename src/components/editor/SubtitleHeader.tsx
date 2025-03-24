@@ -1,20 +1,19 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react'
-import { languages } from '../../constants'
+import { dubLanguages } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
-import { FadeLoader } from 'react-spinners';
 import Flag from 'react-world-flags'
 import { IoClose } from 'react-icons/io5';
-import { MdFindReplace, MdClose } from 'react-icons/md'
+import { MdFindReplace } from 'react-icons/md'
 import FindAndReplaceComponent from './FindAndReplaceComponent';
 import spinner from '../../assets/images/fade-stagger-circles.svg'
 function SubtitleHeader() {
-  const [selectedLanguage, setSelectedLanguage] = useState('English')
+  const [selectedLanguage, setSelectedLanguage] = useState('en')
   const [languageList, setLanguageList] = useState([])
-  const [gender, setGender] = useState('Male')
+ 
   const [voiceList, setVoiceList] = useState([])
   const [selectedVoice, setSelectedVoice] = useState('')
   const { url } = useAppSelector(state => state.video)
@@ -22,10 +21,10 @@ function SubtitleHeader() {
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [showReplace, setShowReplace] = useState(false)
-  useEffect(() => {
-    setLanguageList(Object.keys(languages).map((item) => item))
-  }, [])
 
+  useEffect(() => {
+    setLanguageList(dubLanguages)
+  }, [])
 
 
   function handleLanguageChange(e) {
@@ -35,19 +34,17 @@ function SubtitleHeader() {
     setSelectedVoice(e.target.value)
   }
 
-  function handleGenderChange(e) {
-    setGender(e.target.value)
-  }
 
   useEffect(() => {
+    console.log('selectedLanguage,selectedLanguage',selectedLanguage)
     if (selectedLanguage) {
-      let voices = languages[selectedLanguage]
-      voices = voices[gender.toLowerCase()]
+      const lang=dubLanguages.find((item)=>item.code==selectedLanguage)
+      const voices=lang.voices
+      console.log('voices',voices,selectedLanguage)
       setVoiceList(voices)
       setSelectedVoice(voices[0])
     }
-  }, [gender, selectedLanguage])
-
+  }, [selectedLanguage])
   function handleDubChange() {
 
     if (selectedLanguage && selectedVoice) {
@@ -125,19 +122,19 @@ function SubtitleHeader() {
 
                   <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
                   <select className='mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
-                    {languageList.map((item, index) => <option key={index} value={item} className='block' >{item}</option>)}
+                    {languageList.map((item, index) => <option key={index} value={item.code} className='block' >{item.language}</option>)}
                   </select>
 
                 </div>
 
                 <div className='flex gap-5 mt-4'>
-                  <div className='flex flex-col w-1/2'>
+                  {/* <div className='flex flex-col w-1/2'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Gender</span>
                     <select className='mt-2 px-2  py-3 text-xs    rounded-md    outline-none    border-[#303032]   text-[#a3a3a5]  cursor-pointer ' onChange={handleGenderChange}>
                       <option value='Male'>Male</option>
                       <option value='Female'>Female</option>
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className='flex flex-col w-1/2'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
