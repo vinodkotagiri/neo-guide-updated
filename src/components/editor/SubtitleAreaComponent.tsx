@@ -11,6 +11,7 @@ import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
 import { FaPlayCircle, FaSpinner } from 'react-icons/fa'
 import { MdPlayCircleFilled } from 'react-icons/md'
+
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector(state => state.video)
   const { percentage, status } = useAppSelector(state => state.loader)
@@ -28,12 +29,13 @@ function SubtitleAreaComponent({ playerRef }) {
   const [audioUrl, setAudioUrl] = useState('xyz')
   const [token,setToken]=useState('')
   const [loading,setLoading]=useState(false)
+
   // Spring animation for smooth scrolling
   const spring = useSpring(0, {
     stiffness: 100,
     damping: 20,
   })
-
+console.log('currentPlayTime',currentPlayTime)
   useEffect(() => {
     getLanguages().then(res => setLanguages(res))
   }, [])
@@ -49,15 +51,14 @@ function SubtitleAreaComponent({ playerRef }) {
 
 
   function handlePreviewAudio() {
-    console.log('previewItem',previewItem,selectedVoice)
-    if(selectedVoice && previewItem?.text){
-      const data={
-        voice:selectedVoice,
-        text:previewItem?.text
+    if (selectedVoice && previewItem?.text) {
+      const data = {
+        voice: selectedVoice,
+        text: previewItem?.text
       }
-      textToSpeech(data).then(res=>{
-        if(res?.audio_url){
-          audioRef.current.src=res?.audio_url
+      textToSpeech(data).then(res => {
+        if (res?.audio_url) {
+          audioRef.current.src = res?.audio_url
           audioRef.current.play()
           setAudioUrl(res?.audio_url)
         }
@@ -65,43 +66,45 @@ function SubtitleAreaComponent({ playerRef }) {
     }
   }
 
-  async function handleGenerate(){
-    if(audioUrl &&previewItem &&url){
-      const payload={
-        batchid:Date.now().toString(),
-        video:url,
-        voices:[{ audioid: (Date.now()*2).toString(),audio: audioUrl, start_time: previewItem?.start_time, end_time: previewItem?.end_time }]
+  async function handleGenerate() {
+    if (audioUrl && previewItem && url) {
+      const payload = {
+        batchid: Date.now().toString(),
+        video: url,
+        voices: [{ audioid: (Date.now() * 2).toString(), audio: audioUrl, start_time: previewItem?.start_time, end_time: previewItem?.end_time }]
       }
-      await mergeAudio(payload).then(res=>{
-        if(res){
+      await mergeAudio(payload).then(res => {
+        if (res) {
           setToken(res)
         }
       })
     }
   }
-  useEffect(()=>{
-    if(token){
+
+  useEffect(() => {
+    if (token) {
       setLoading(true)
       const progressInterval = setInterval(() => {
         mergeAudioProgress({ token }).then(res => {
           if (res?.status?.toLowerCase() == 'completed') {
-            clearInterval(progressInterval)    
+            clearInterval(progressInterval)
             if (res?.video_url) {
               if (url) {
-                dispatch(setVideoUrl(res.video_url));
+                dispatch(setVideoUrl(res.video_url))
               }
             }
             setLoading(false)
             setPreviewItem(null)
-          } 
-        }).catch(err=>{
-          console.log('error in generating audio',err)
+          }
+        }).catch(err => {
+          console.log('error in generating audio', err)
           setLoading(false)
           setPreviewItem(null)
         })
-      })
+      }, 5000)
     }
-  },[token])
+  }, [token])
+
   function handlePreviewSubtitle(e, item) {
     e.preventDefault()
     e.stopPropagation()
@@ -117,6 +120,8 @@ function SubtitleAreaComponent({ playerRef }) {
       setCurrentIdx(idx)
     }
   }, [currentPlayTime])
+
+
 
   // Animate scroll when currentIdx changes
   useEffect(() => {
@@ -177,19 +182,18 @@ function SubtitleAreaComponent({ playerRef }) {
   }
 
   function isActiveStyle(start, end) {
-    const startSeconds = getSecondsFromTime(start);
-    const endSeconds = getSecondsFromTime(end);
+    const startSeconds = getSecondsFromTime(start)
+    const endSeconds = getSecondsFromTime(end)
     if (startSeconds <= played && endSeconds >= played) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   return (
-    <div className='w-full h-full overflow-y-scroll' ref={containerRef}>
+    <div className='w-full h-full overflow-y-scroll text-xs' ref={containerRef}>
       <dialog id="subtitle_audio_preview_modal" className="modal">
         <div className="modal-box">
-          {/* <div className="modal-action"> */}
           <form method="dialog">
             <div className='flex w-full gap-2'>
               <fieldset className="fieldset">
@@ -202,30 +206,27 @@ function SubtitleAreaComponent({ playerRef }) {
 
               {selectedLanguage && voices.length ? <fieldset className="fieldset">
                 <legend className="fieldset-legend">Voices</legend>
-                <select defaultValue="Pick a browser" className="select" onChange={e=>setSelectedVoice(e.target.value)}>
+                <select defaultValue="Pick a browser" className="select" onChange={e => setSelectedVoice(e.target.value)}>
                   <option disabled={true}>Select a Voice</option>
                   {voices.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
                 </select>
               </fieldset> : ''}
-
             </div>
 
-            <div className='w-full flex justify-between mt-6 items-center gap-2' >
+            <div className='w-full flex justify-between mt-6 items-center gap-2'>
               <div className='flex items-center gap-2'>
                 <div className="btn btn-success btn-ghost" onClick={handlePreviewAudio}>
                   <MdPlayCircleFilled size={32} />
                 </div>
-                <audio ref={audioRef} src={previewItem?.audio} controlsList="nodownload nofullscreen">
-                </audio>
+                <audio ref={audioRef} src={previewItem?.audio} controlsList="nodownload nofullscreen" />
               </div>
-              {audioUrl?<fieldset className="fieldset">
+              {audioUrl ? <fieldset className="fieldset">
                 <div className="btn btn-success" onClick={handleGenerate}>Generate</div>
               </fieldset> : ''}
               <button className="btn">Close</button>
             </div>
 
           </form>
-          {/* </div> */}
         </div>
       </dialog>
       <SubtitleHeader />
@@ -242,7 +243,7 @@ function SubtitleAreaComponent({ playerRef }) {
           subtitles.data.map((item, index) => {
             return (
               <motion.div
-                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-slate-800 rounded-md'
+                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-slate-800 rounded-md px-1'
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -252,23 +253,27 @@ function SubtitleAreaComponent({ playerRef }) {
                   backgroundColor: '#422AD5'
                 } : {}}
                 onClick={() => {
+                  // setCurrentIdx(index)
                   playerRef.current.seekTo(getSecondsFromTime(item.start_time))
-                  setCurrentIdx(index)
                 }}
               >
-                <div className='flex flex-col h-full items-center justify-center px-2 gap-1'>
+                <div className='flex flex-col h-full items-center justify-center px-2 gap-1 w-[15%] font-light'>
                   <div>{item?.start_time?.split(',')[0]}</div>
                   <div>{item?.end_time?.split(',')[0]}</div>
                 </div>
                 <p
-                  className='w-full h-auto p-2 py-4 text-[#ccc] subtitle-content'
+                  className='h-auto p-2 py-4 text-[#ccc] subtitle-content w-[70%]'
                   dangerouslySetInnerHTML={{ __html: item.text }}
                   contentEditable
                 />
-                {loading && previewItem?.start_time==item.start_time? <FaSpinner size={32} className='mx-4 animate-spin' />:
-                <button disabled={loading && previewItem?.start_time!=item.start_time}>
-                  <FaPlayCircle size={32} className='mx-4' onClick={(e) => handlePreviewSubtitle(e, item)} />
-                </button>}
+                <div className='w-[15%] flex items-center justify-center cursor-pointer hover:animate-pulse'>
+                  {loading && previewItem?.start_time === item.start_time ?
+                    <FaSpinner size={32} className='mx-4 animate-spin' /> :
+                    <button disabled={loading && previewItem?.start_time !== item.start_time}>
+                      <FaPlayCircle size={20} className='mx-4 cursor-pointer' onClick={(e) => handlePreviewSubtitle(e, item)} />
+                    </button>
+                  }
+                </div>
               </motion.div>
             )
           })

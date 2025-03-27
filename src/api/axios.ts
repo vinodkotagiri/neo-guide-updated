@@ -281,7 +281,7 @@ export async function getVoiceForLanguage(language: text) {
 export async function textToSpeech(payload: { voice: string; text: string }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
     axios
-      .post("https://contentinova.com/data/effybizgeneratevoice", payload,{headers:{'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*"}})
+      .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
         resolve(res.data);
       })
@@ -299,10 +299,10 @@ export async function mergeAudio(payload: {
 }): Promise<{ status: string; token: string }> {
   return new Promise((resolve) => {
     axios
-      .post(" https://contentinova.com/mergeaudio", payload,{headers:{'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*"}})
+      .post(" https://contentinova.com/mergeaudio", payload)
       .then((res) => {
         if(res.data.token){
-          axios.post(" https://contentinova.com/mergeaudioprogress", { token: res.data.token },{headers:{'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*"}})
+          axios.post(" https://contentinova.com/mergeaudioprogress", { token: res.data.token })
         }
         resolve(res.data.token)
       })
