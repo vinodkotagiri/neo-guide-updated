@@ -113,16 +113,14 @@ console.log('currentPlayTime',currentPlayTime)
   }
 
   useEffect(() => {
-    if (currentPlayTime) {
       const idx = subtitles.data.findIndex((subtitle) => {
-        return getSecondsFromTime(subtitle.start_time) <= currentPlayTime && getSecondsFromTime(subtitle.end_time) >= currentPlayTime
+        return getSecondsFromTime(subtitle.start_time)-1 <= currentPlayTime && getSecondsFromTime(subtitle.end_time)-1 >= currentPlayTime
       })
-      setCurrentIdx(idx)
-    }
+      if(currentIdx!=idx) setCurrentIdx(idx)
   }, [currentPlayTime])
 
 
-
+  console.log(currentPlayTime,currentIdx)
   // Animate scroll when currentIdx changes
   useEffect(() => {
     if (currentIdx >= 0 && containerRef.current) {
