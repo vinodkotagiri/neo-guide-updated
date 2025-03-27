@@ -1,16 +1,18 @@
-//@ts-nocheck
+/* eslint-disable react-hooks/exhaustive-deps */
+// @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react'
 import { motion, useSpring } from 'framer-motion'
 import SubtitleHeader from './SubtitleHeader'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { getSecondsFromTime } from '../../helpers'
-import { getLanguages, getProgress, getSubtitles, getVoiceForLanguage, mergeAudio, textToSpeech } from '../../api/axios'
+import { getLanguages, getProgress, getSubtitles, getVoiceForLanguage, mergeAudio, mergeAudioProgress, textToSpeech } from '../../api/axios'
 import toast from 'react-hot-toast'
-import { setLocked, updateRetries, updateSubtitleData } from '../../redux/features/videoSlice'
+import { setLocked, setVideoUrl, updateRetries, updateSubtitleData } from '../../redux/features/videoSlice'
 import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
 import { FaPlayCircle, FaSpinner } from 'react-icons/fa'
 import { MdPlayCircleFilled } from 'react-icons/md'
+import { mergeAudioPayload, mergeAudioResponse } from '../../api/payloads/payloads'
 
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector(state => state.video)
@@ -37,7 +39,7 @@ function SubtitleAreaComponent({ playerRef }) {
   })
 console.log('currentPlayTime',currentPlayTime)
   useEffect(() => {
-    getLanguages().then(res => setLanguages(res))
+    getLanguages().then((res) => setLanguages(res))
   }, [])
 
   useEffect(() => {
@@ -68,14 +70,15 @@ console.log('currentPlayTime',currentPlayTime)
 
   async function handleGenerate() {
     if (audioUrl && previewItem && url) {
-      const payload = {
+      const payload:mergeAudioPayload = {
         batchid: Date.now().toString(),
         video: url,
         voices: [{ audioid: (Date.now() * 2).toString(), audio: audioUrl, start_time: previewItem?.start_time, end_time: previewItem?.end_time }]
       }
-      await mergeAudio(payload).then(res => {
-        if (res) {
-          setToken(res)
+      await mergeAudio(payload)
+      .then((res:mergeAudioResponse) => {
+        if (res.token) {
+          setToken(res.token)
         }
       })
     }

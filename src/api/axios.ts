@@ -1,6 +1,6 @@
 //@ts-nocheck
 import axios from "axios";
-import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
+import { ApplyZoomPayload, mergeAudioPayload, mergeAudioProgressPayload, mergeAudioProgressResponse, mergeAudioResponse, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
@@ -292,11 +292,7 @@ export async function textToSpeech(payload: { voice: string; text: string }): Pr
   });
 }
 
-export async function mergeAudio(payload: {
-  batchid: string;
-  video: string;
-  voices: [{ audioid: string;audio: string; start_time: string; end_time: string }];
-}): Promise<{ status: string; token: string }> {
+export async function mergeAudio(payload:mergeAudioPayload): Promise<mergeAudioResponse> {
   return new Promise((resolve) => {
     axios
       .post(" https://contentinova.com/mergeaudio", payload)
@@ -304,15 +300,13 @@ export async function mergeAudio(payload: {
         if(res.data.token){
           axios.post(" https://contentinova.com/mergeaudioprogress", { token: res.data.token })
         }
-        resolve(res.data.token)
+        resolve(res.data)
       })
       .catch(() => resolve(null));
   });
 }
 
-export async function mergeAudioProgress(payload: {
-  token: string;
-}): Promise<{ status: "Processing" | "Completed"; progress: string; video_url?: string }> {
+export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
   return new Promise((resolve) => {
     axios
       .post(" https://contentinova.com/mergeaudioprogress", payload)
