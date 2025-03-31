@@ -10,6 +10,7 @@ import { setLocked, updateRetries, updateSubtitleData } from '../../redux/featur
 import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
 import { FaPlayCircle } from 'react-icons/fa'
+import { IoEyeOutline } from 'react-icons/io5'
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector(state => state.video)
   const { percentage, status } = useAppSelector(state => state.loader)
@@ -46,15 +47,15 @@ function SubtitleAreaComponent({ playerRef }) {
 
 
   function handlePreviewAudio(e) {
-    console.log('previewItem',previewItem,selectedVoice)
-    if(selectedVoice && previewItem?.text){
-      const data={
-        voice:selectedVoice,
-        text:previewItem?.text
+    console.log('previewItem', previewItem, selectedVoice)
+    if (selectedVoice && previewItem?.text) {
+      const data = {
+        voice: selectedVoice,
+        text: previewItem?.text
       }
-      textToSpeech(data).then(res=>{
-        if(res?.audio_url){
-          audioRef.current.src=res?.audio_url
+      textToSpeech(data).then(res => {
+        if (res?.audio_url) {
+          audioRef.current.src = res?.audio_url
           audioRef.current.play()
         }
       })
@@ -145,7 +146,7 @@ function SubtitleAreaComponent({ playerRef }) {
   }
 
   return (
-    <div className='w-full h-full overflow-y-scroll' ref={containerRef}>
+    <div className='w-full h-full  mb--2' ref={containerRef}>
       <dialog id="subtitle_audio_preview_modal" className="modal">
         <div className="modal-box">
           {/* <div className="modal-action"> */}
@@ -161,7 +162,7 @@ function SubtitleAreaComponent({ playerRef }) {
 
               {selectedLanguage && voices.length ? <fieldset className="fieldset">
                 <legend className="fieldset-legend">Voices</legend>
-                <select defaultValue="Pick a browser" className="select" onChange={e=>setSelectedVoice(e.target.value)}>
+                <select defaultValue="Pick a browser" className="select" onChange={e => setSelectedVoice(e.target.value)}>
                   <option disabled={true}>Select a Voice</option>
                   {voices.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
                 </select>
@@ -185,7 +186,7 @@ function SubtitleAreaComponent({ playerRef }) {
       <SubtitleHeader />
 
       <motion.div
-        className='flex flex-col gap-1 p-2 h-full'
+        className='flex flex-col gap-1 p-2 h-[93%] overflow-auto'
         style={{ translateY: -spring }} // Use the spring value directly with negation
       >
         {!subtitles.data.length ?
@@ -196,7 +197,7 @@ function SubtitleAreaComponent({ playerRef }) {
           subtitles.data.map((item, index) => {
             return (
               <motion.div
-                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-slate-800 rounded-md'
+                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md'
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -211,15 +212,15 @@ function SubtitleAreaComponent({ playerRef }) {
                 }}
               >
                 <div className='flex flex-col h-full items-center justify-center px-2 gap-1'>
-                  <div>{item?.start_time?.split(',')[0]}</div>
-                  <div>{item?.end_time?.split(',')[0]}</div>
+                  <div className='text-[#ccc] text-[0.8rem]'>{item?.start_time?.split(',')[0]}</div>
+                  <div className='text-[#ccc] text-[0.8rem]'>{item?.end_time?.split(',')[0]}</div>
                 </div>
                 <p
-                  className='w-full h-auto p-2 py-4 text-[#ccc] subtitle-content'
+                  className='w-full h-auto p-2 py-3 text-[#ccc] subtitle-content text-[0.8rem] outline-0'
                   dangerouslySetInnerHTML={{ __html: item.text }}
                   contentEditable
                 />
-                <FaPlayCircle size={32} className='mx-4' onClick={(e) => handlePreviewSubtitle(e, item)} />
+                <IoEyeOutline size={24} className='mx-4 text-[#ccc]' onClick={(e) => handlePreviewSubtitle(e, item)} />
               </motion.div>
             )
           })
