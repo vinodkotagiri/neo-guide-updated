@@ -10,10 +10,9 @@ import toast from 'react-hot-toast'
 import { setLocked, setVideoUrl, updateRetries, updateSubtitleData } from '../../redux/features/videoSlice'
 import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
-import { FaPlayCircle, FaSpinner } from 'react-icons/fa'
-import { MdPlayCircleFilled } from 'react-icons/md'
+import { FaPlayCircle } from 'react-icons/fa'
+import { IoEyeOutline } from 'react-icons/io5'
 import { mergeAudioPayload, mergeAudioResponse } from '../../api/payloads/payloads'
-
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector(state => state.video)
   const { percentage, status } = useAppSelector(state => state.loader)
@@ -29,15 +28,15 @@ function SubtitleAreaComponent({ playerRef }) {
   const [selectedVoice, setSelectedVoice] = useState('')
   const audioRef = useRef(null);
   const [audioUrl, setAudioUrl] = useState('xyz')
-  const [token,setToken]=useState('')
-  const [loading,setLoading]=useState(false)
+  const [token, setToken] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Spring animation for smooth scrolling
   const spring = useSpring(0, {
     stiffness: 100,
     damping: 20,
   })
-console.log('currentPlayTime',currentPlayTime)
+  console.log('currentPlayTime', currentPlayTime)
   useEffect(() => {
     getLanguages().then((res) => setLanguages(res))
   }, [])
@@ -70,17 +69,17 @@ console.log('currentPlayTime',currentPlayTime)
 
   async function handleGenerate() {
     if (audioUrl && previewItem && url) {
-      const payload:mergeAudioPayload = {
+      const payload: mergeAudioPayload = {
         batchid: Date.now().toString(),
         video: url,
         voices: [{ audioid: (Date.now() * 2).toString(), audio: audioUrl, start_time: previewItem?.start_time, end_time: previewItem?.end_time }]
       }
       await mergeAudio(payload)
-      .then((res:mergeAudioResponse) => {
-        if (res.token) {
-          setToken(res.token)
-        }
-      })
+        .then((res: mergeAudioResponse) => {
+          if (res.token) {
+            setToken(res.token)
+          }
+        })
     }
   }
 
@@ -116,14 +115,14 @@ console.log('currentPlayTime',currentPlayTime)
   }
 
   useEffect(() => {
-      const idx = subtitles.data.findIndex((subtitle) => {
-        return getSecondsFromTime(subtitle.start_time)-1 <= currentPlayTime && getSecondsFromTime(subtitle.end_time)-1 >= currentPlayTime
-      })
-      if(currentIdx!=idx) setCurrentIdx(idx)
+    const idx = subtitles.data.findIndex((subtitle) => {
+      return getSecondsFromTime(subtitle.start_time) - 1 <= currentPlayTime && getSecondsFromTime(subtitle.end_time) - 1 >= currentPlayTime
+    })
+    if (currentIdx != idx) setCurrentIdx(idx)
   }, [currentPlayTime])
 
 
-  console.log(currentPlayTime,currentIdx)
+  console.log(currentPlayTime, currentIdx)
   // Animate scroll when currentIdx changes
   useEffect(() => {
     if (currentIdx >= 0 && containerRef.current) {
@@ -192,7 +191,7 @@ console.log('currentPlayTime',currentPlayTime)
   }
 
   return (
-    <div className='w-full h-full overflow-y-scroll text-xs' ref={containerRef}>
+    <div className='w-full h-full  mb--2' ref={containerRef}>
       <dialog id="subtitle_audio_preview_modal" className="modal">
         <div className="modal-box">
           <form method="dialog">
@@ -233,7 +232,7 @@ console.log('currentPlayTime',currentPlayTime)
       <SubtitleHeader />
 
       <motion.div
-        className='flex flex-col gap-1 p-2 h-full'
+        className='flex flex-col gap-1 p-2 h-[93%] overflow-auto'
         style={{ translateY: -spring }} // Use the spring value directly with negation
       >
         {!subtitles.data.length ?
@@ -244,7 +243,7 @@ console.log('currentPlayTime',currentPlayTime)
           subtitles.data.map((item, index) => {
             return (
               <motion.div
-                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-slate-800 rounded-md px-1'
+                className='flex h-24 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md'
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -258,23 +257,16 @@ console.log('currentPlayTime',currentPlayTime)
                   playerRef.current.seekTo(getSecondsFromTime(item.start_time))
                 }}
               >
-                <div className='flex flex-col h-full items-center justify-center px-2 gap-1 w-[15%] font-light'>
-                  <div>{item?.start_time?.split(',')[0]}</div>
-                  <div>{item?.end_time?.split(',')[0]}</div>
+                <div className='flex flex-col h-full items-center justify-center px-2 gap-1'>
+                  <div className='text-[#ccc] text-[0.8rem]'>{item?.start_time?.split(',')[0]}</div>
+                  <div className='text-[#ccc] text-[0.8rem]'>{item?.end_time?.split(',')[0]}</div>
                 </div>
                 <p
-                  className='h-auto p-2 py-4 text-[#ccc] subtitle-content w-[70%]'
+                  className='w-full h-auto p-2 py-3 text-[#ccc] subtitle-content text-[0.8rem] outline-0'
                   dangerouslySetInnerHTML={{ __html: item.text }}
                   contentEditable
                 />
-                <div className='w-[15%] flex items-center justify-center cursor-pointer hover:animate-pulse'>
-                  {loading && previewItem?.start_time === item.start_time ?
-                    <FaSpinner size={32} className='mx-4 animate-spin' /> :
-                    <button disabled={loading && previewItem?.start_time !== item.start_time}>
-                      <FaPlayCircle size={20} className='mx-4 cursor-pointer' onClick={(e) => handlePreviewSubtitle(e, item)} />
-                    </button>
-                  }
-                </div>
+                <IoEyeOutline size={24} className='mx-4 text-[#ccc]' onClick={(e) => handlePreviewSubtitle(e, item)} />
               </motion.div>
             )
           })
