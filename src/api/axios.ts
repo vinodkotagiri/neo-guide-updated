@@ -1,6 +1,6 @@
 //@ts-nocheck
 import axios from "axios";
-import { ApplyZoomPayload, UploadVideoPayload } from "./payloads/payloads";
+import { ApplyZoomPayload, mergeAudioPayload, mergeAudioProgressPayload, mergeAudioProgressResponse, mergeAudioResponse, UploadVideoPayload } from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
@@ -240,7 +240,7 @@ export async function generateGIF(payload: {
 
 export async function getLanguages(dub = false) {
   return new Promise((resolve) => {
-    api
+    axios
       .get("https://contentinova.com/effybizgetlanguages")
       .then((res) => {
         let languages = [];
@@ -253,10 +253,9 @@ export async function getLanguages(dub = false) {
             if (item.split("-")[1] == "EE") dubbingLangs.push(item);
             else ttsLangs.push(item);
           });
-          if (dub) resolve (dubbingLangs);
+          if (dub) resolve(dubbingLangs);
           else resolve(ttsLangs);
         }
-       
       })
       .catch((error) => {
         console.log("error getLanguages", error);
@@ -267,7 +266,7 @@ export async function getLanguages(dub = false) {
 
 export async function getVoiceForLanguage(language: text) {
   return new Promise((resolve) => {
-    api
+    axios
       .get(`https://contentinova.com/effybizgetvoices?language=${language}`)
       .then((res) => {
         resolve(res.data);
@@ -281,7 +280,7 @@ export async function getVoiceForLanguage(language: text) {
 
 export async function textToSpeech(payload: { voice: string; text: string }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
-    api
+    axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
         resolve(res.data);
@@ -290,6 +289,29 @@ export async function textToSpeech(payload: { voice: string; text: string }): Pr
         console.log("error getLanguages", error);
         resolve(null);
       });
+  });
+}
+
+export async function mergeAudio(payload:mergeAudioPayload): Promise<mergeAudioResponse> {
+  return new Promise((resolve) => {
+    axios
+      .post(" https://contentinova.com/mergeaudio", payload)
+      .then((res) => {
+        if(res.data.token){
+          axios.post(" https://contentinova.com/mergeaudioprogress", { token: res.data.token })
+        }
+        resolve(res.data)
+      })
+      .catch(() => resolve(null));
+  });
+}
+
+export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
+  return new Promise((resolve) => {
+    axios
+      .post(" https://contentinova.com/mergeaudioprogress", payload)
+      .then((res) => resolve(res.data))
+      .catch(() => resolve(null));
   });
 }
 
