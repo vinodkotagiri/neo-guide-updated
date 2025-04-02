@@ -13,7 +13,7 @@ import spinner from '../../assets/images/fade-stagger-circles.svg'
 function SubtitleHeader() {
   const [selectedLanguage, setSelectedLanguage] = useState('en')
   const [languageList, setLanguageList] = useState([])
- 
+
   const [voiceList, setVoiceList] = useState([])
   const [selectedVoice, setSelectedVoice] = useState('')
   const { url } = useAppSelector(state => state.video)
@@ -36,11 +36,11 @@ function SubtitleHeader() {
 
 
   useEffect(() => {
-    console.log('selectedLanguage,selectedLanguage',selectedLanguage)
+    console.log('selectedLanguage,selectedLanguage', selectedLanguage)
     if (selectedLanguage) {
-      const lang=dubLanguages.find((item)=>item.code==selectedLanguage)
-      const voices=lang.voices
-      console.log('voices',voices,selectedLanguage)
+      const lang = dubLanguages.find((item) => item.code == selectedLanguage)
+      const voices = lang.voices
+      console.log('voices', voices, selectedLanguage)
       setVoiceList(voices)
       setSelectedVoice(voices[0])
     }
@@ -136,9 +136,9 @@ function SubtitleHeader() {
                     </select>
                   </div> */}
 
-                  <div className='flex flex-col w-1/2'>
+                  <div className='flex flex-col w-full'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
-                    <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer' onChange={handleVoiceChange}>
+                    <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleVoiceChange}>
                       {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
                     </select>
                   </div>
