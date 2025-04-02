@@ -11,8 +11,9 @@ import { setLocked, setVideoUrl, updateRetries, updateSubtitleData } from '../..
 import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
 import { FaPlayCircle } from 'react-icons/fa'
-import { IoEyeOutline } from 'react-icons/io5'
+import { IoClose, IoEyeOutline } from 'react-icons/io5'
 import { mergeAudioPayload, mergeAudioResponse } from '../../api/payloads/payloads'
+import { MdPlayCircleFilled } from 'react-icons/md'
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector(state => state.video)
   const { percentage, status } = useAppSelector(state => state.loader)
@@ -192,39 +193,49 @@ function SubtitleAreaComponent({ playerRef }) {
 
   return (
     <div className='w-full h-full  mb--2' ref={containerRef}>
-      <dialog id="subtitle_audio_preview_modal" className="modal">
-        <div className="modal-box">
+      <dialog id="subtitle_audio_preview_modal" className="modal chhange_modal">
+        <div className="modal-box p-[30px]  bg-[#16151a] w-4/12 max-w-5xl rounded-2xl ">
           <form method="dialog">
-            <div className='flex w-full gap-2'>
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Language</legend>
-                <select defaultValue="Pick a browser" className="select" onChange={(e) => setSelectedLaguage(e.target.value)} >
-                  <option disabled={true}>Select a Language</option>
-                  {languages.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
-                </select>
-              </fieldset>
+            <div className='flex w-full gap-2 flex-col'>
+              <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                <h4 className='text-xl font-semibold text-[#fff]  '>Language</h4>
+                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+              </div>
+              <div className='flex justify-between gap-3'>
+                <fieldset className="fieldset">
+                  <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
+                  <select defaultValue="Pick a browser" className="mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op" onChange={(e) => setSelectedLaguage(e.target.value)} >
+                    <option disabled={true}>Select a Language</option>
+                    {languages.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
+                  </select>
+                </fieldset>
 
-              {selectedLanguage && voices.length ? <fieldset className="fieldset">
-                <legend className="fieldset-legend">Voices</legend>
-                <select defaultValue="Pick a browser" className="select" onChange={e => setSelectedVoice(e.target.value)}>
-                  <option disabled={true}>Select a Voice</option>
-                  {voices.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
-                </select>
-              </fieldset> : ''}
+                {selectedLanguage && voices.length ?
+                  <fieldset className="fieldset grow">
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
+                    <div className='flex justify-between gap-3'>
+                      <select defaultValue="Pick a browser" className="grow mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op" onChange={e => setSelectedVoice(e.target.value)}>
+                        <option disabled={true}>Select a Voice</option>
+                        {voices.map((item, index) => <option key={index} value={item}>{item.split('-')[0]}</option>)}
+                      </select>
+                      <div className='flex items-center gap-2'>
+                        <div className="cursor-pointer " onClick={handlePreviewAudio}>
+                          <MdPlayCircleFilled size={32} className='text-[#a3a3a5]' />
+                        </div>
+                        <audio ref={audioRef} src={previewItem?.audio} controlsList="nodownload nofullscreen" />
+                      </div>
+                    </div>
+                  </fieldset> : ''}
+              </div>
             </div>
 
-            <div className='w-full flex justify-between mt-6 items-center gap-2'>
-              <div className='flex items-center gap-2'>
-                <div className="btn btn-success btn-ghost" onClick={handlePreviewAudio}>
-                  <MdPlayCircleFilled size={32} />
-                </div>
-                <audio ref={audioRef} src={previewItem?.audio} controlsList="nodownload nofullscreen" />
-              </div>
+            {/*  <div className='w-full flex justify-between mt-6 items-center gap-2'>
+
               {audioUrl ? <fieldset className="fieldset">
                 <div className="btn btn-success" onClick={handleGenerate}>Generate</div>
               </fieldset> : ''}
               <button className="btn">Close</button>
-            </div>
+            </div> */}
 
           </form>
         </div>
