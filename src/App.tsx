@@ -36,7 +36,8 @@ const App = () => {
   return (
     <div className='w-screen h-screen '>
       <Routes>
-        <Route path='/' element={<UploadView />} />
+        <Route path='/' element={<div className='bg-[#16151a] h-full flex items-center justify-center text-white text-2xl'>Welcome to Neo Guide</div>} />
+        <Route path='/upload' element={<UploadView />} />
         <Route path='/editor' element={<Editor />} />
         <Route path='/recorder' element={<RecorderPage />} />
       </Routes>

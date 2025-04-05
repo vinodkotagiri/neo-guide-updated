@@ -12,7 +12,7 @@ const RectangleOptions = ({ playerRef }) => {
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const fillColorRef = useRef<HTMLInputElement>(null)
-  const [strokeColor, setStrokeColor] = useState('#fff')
+  const [strokeColor, setStrokeColor] = useState('#000')
   const [strokeWidth, setStrokeWidth] = useState(1)
   const [cornerRadius, setCornerRadius] = useState([1, 1, 1, 1])
   const [fillColor, setFillColor] = useState('')
