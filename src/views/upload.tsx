@@ -92,7 +92,10 @@ function UploadView() {
                       <p className="text-sm font-medium truncate">{selectedFile.name}</p>
                       <p className="text-xs text-slate-400">{formatBytes(selectedFile.size)}</p>
                     </div>
-                    <button className="text-slate-400 hover:text-white cursor-pointer">
+                    <button className="text-slate-400 hover:text-white cursor-pointer" onClick={() => {
+                      setSelectedFile(null)
+                      window.location.reload()
+                    }}>
                       <MdOutlineClose className="h-4 w-4" />
                     </button>
                   </div>
@@ -107,7 +110,7 @@ function UploadView() {
                 Cancel
               </button> */}
               {selectedFile && (
-                <button className=" bg-[#422AD5] px-3 py-2 cursor-pointer rounded-md font-semibold" onClick={handleUploadFile} disabled={!selectedFile}>Upload</button>
+                <button className=" bg-[#422AD5] px-3 py-2 cursor-pointer rounded-md font-semibold disabled:cursor-not-allowed" onClick={handleUploadFile} disabled={!selectedFile}>Upload</button>
               )}
             </div>
           </div>
