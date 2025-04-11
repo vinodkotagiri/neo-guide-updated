@@ -190,7 +190,7 @@ function SubtitleAreaComponent({ playerRef }) {
     }
     return false
   }
-
+  console.log('languages', languages)
   return (
     <div className='w-full h-full  mb--2' ref={containerRef}>
       <dialog id="subtitle_audio_preview_modal" className="modal chhange_modal">
@@ -198,7 +198,7 @@ function SubtitleAreaComponent({ playerRef }) {
           <form method="dialog">
             <div className='flex w-full gap-2 flex-col'>
               <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
-                <h4 className='text-xl font-semibold text-[#fff]  '>Language</h4>
+                <h4 className='text-xl font-semibold text-[#fff] '>Language</h4>
                 <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
               </div>
               <div className='flex justify-between gap-3'>
