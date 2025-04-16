@@ -90,7 +90,6 @@ function SubtitleHeader() {
 
   return (
     <div className='w-full border-b-[1px] border-[#303032] flex items-center justify-between px-2 relative'>
-      {/* {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace} subtitle={true} />} */}
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>
@@ -102,9 +101,6 @@ function SubtitleHeader() {
         <div className='flex items-center gap-2 '>
           <button className='generate_button '  > Generate Speech
           </button>
-          {/* <div className='tooltip tooltip-left' data-tip='Find and Replace'>
-            <MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)} />
-          </div> */}
         </div>
       </div>
       <dialog id="change_language_modal" className="modal chhange_modal">
