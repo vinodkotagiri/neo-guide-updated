@@ -190,12 +190,12 @@ const TextOptions = ({ playerRef }) => {
             <div className='flex items-center gap-3'>
               <label className='text-[#a3a3a5] text-sm text-nowrap'>Start Time</label>
 
-              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(startTime).toFixed(2)}</span>
+              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(text.startTime).toFixed(2)}</span>
             </div>
             <div className='flex items-center gap-3'>
               <label className='text-[#a3a3a5] text-sm text-nowrap'>End Time</label>
 
-              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(endTime).toFixed(2)}</span>
+              <span className='w-1/2  outline-none   border-0 bg-[#212025] text-[#ffffff] rounded-md px-2 py-1 text-center'>{Number(text.endTime).toFixed(2)}</span>
             </div>
             <div className='flex items-center gap-3'>
               <label className='text-[#ffa6bf] cursor-pointer' onClick={() => dispatch(deleteText({ id: currentElementId }))}> <FaRegTrashAlt /></label>

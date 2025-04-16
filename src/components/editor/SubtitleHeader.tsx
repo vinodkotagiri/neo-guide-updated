@@ -6,7 +6,7 @@ import { getProgress, translateAndDub } from '../../api/axios';
 import { setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
 import Flag from 'react-world-flags'
-import { IoClose } from 'react-icons/io5';
+import { IoClose, IoPauseOutline, IoPlayOutline } from 'react-icons/io5';
 import { MdFindReplace } from 'react-icons/md'
 import FindAndReplaceComponent from './FindAndReplaceComponent';
 import spinner from '../../assets/images/fade-stagger-circles.svg'
@@ -93,15 +93,63 @@ function SubtitleHeader() {
       <div className='change_voice'>
         <div className='flag_user'>
           <div className='flag_icon'>
-            <Flag code="IN" /></div>
-          <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
+            <Flag code="US" /></div>
+          <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Jessica</p>
+          <button className='text-[12px] text-[#a3a3a5] cursor-pointer flex items-center gap--2 ' onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className='loader_spin'> <img src={spinner} width={20} /> </span>}
+          </button>
         </div>
         <div className='flex items-center gap-2 '>
           <button className='generate_button '  > Generate Speech
           </button>
         </div>
       </div>
-     
+      <dialog id="change_language_modal" className="modal chhange_modal">
+        <div className="modal-box p-[30px] bg-[#16151a] w-4/10 max-w-5xl rounded-2xl">
+          <div className="modal-action mt-0">
+
+            <form method="dialog" className='flex w-full flex-col gap-2 '>
+              <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                <h4 className='text-xl font-semibold text-[#fff]  '>Change Voice</h4>
+                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+              </div>
+              <div className='  flex   mt-5 gap-3 items-center justify-between'>
+                <div className='flex  w-1/2  flex-col  '>
+                  {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
+
+                  <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
+                  <select className='mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
+                    {languageList.map((item, index) => <option key={index} value={item.code} className='block' >{item.language}</option>)}
+                  </select>
+
+                </div>
+
+                <div className='flex w-1/2     gap-5 '>
+                  {/* <div className='flex flex-col w-1/2'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Gender</span>
+                    <select className='mt-2 px-2  py-3 text-xs    rounded-md    outline-none    border-[#303032]   text-[#a3a3a5]  cursor-pointer ' onChange={handleGenderChange}>
+                      <option value='Male'>Male</option>
+                      <option value='Female'>Female</option>
+                    </select>
+                  </div> */}
+
+                  <div className='flex flex-col w-full'>
+                    <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
+                    <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleVoiceChange}>
+                      {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
+                    </select>
+                  </div>
+                </div>
+                <div className='mt-5'>
+                  <IoPlayOutline size={24} className='  text-[#ccc] cursor-pointer' />
+                </div>
+              </div>
+              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleDubChange}>Generate Voice  </button>
+
+            </form>
+          </div>
+        </div>
+      </dialog>
+
     </div>
   )
 }
