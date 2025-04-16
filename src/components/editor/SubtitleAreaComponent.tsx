@@ -11,7 +11,7 @@ import { setLocked, setVideoUrl, updateRetries, updateSubtitleData } from '../..
 import { setLoaderData } from '../../redux/features/loaderSlice'
 import LocalLoader from '../global/LocalLoader'
 import { FaPlayCircle } from 'react-icons/fa'
-import { IoClose, IoEyeOutline } from 'react-icons/io5'
+import { IoClose, IoEyeOutline, IoPauseOutline, IoPlayOutline } from 'react-icons/io5'
 import { mergeAudioPayload, mergeAudioResponse } from '../../api/payloads/payloads'
 import { MdPlayCircleFilled } from 'react-icons/md'
 function SubtitleAreaComponent({ playerRef }) {
@@ -277,7 +277,10 @@ function SubtitleAreaComponent({ playerRef }) {
                   dangerouslySetInnerHTML={{ __html: item.text }}
                   contentEditable
                 />
-                <IoEyeOutline size={24} className='mx-4 text-[#ccc]' onClick={(e) => handlePreviewSubtitle(e, item)} />
+                {/* <IoEyeOutline size={24} className='mx-4 text-[#ccc]' onClick={(e) => handlePreviewSubtitle(e, item)} /> */}
+                <IoPlayOutline size={24} className='mx-4 text-[#ccc]' />
+                <IoPauseOutline size={24} className='mx-4 text-[#ccc]' />
+
               </motion.div>
             )
           })
