@@ -1,8 +1,7 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react'
-import { dubLanguages } from '../../constants'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { getProgress, translateAndDub } from '../../api/axios';
+import { getLanguages, getProgress, getVoiceForLanguage, translateAndDub } from '../../api/axios';
 import {  setLoaderData } from '../../redux/features/loaderSlice';
 import { setVideoUrl } from '../../redux/features/videoSlice';
 import { FadeLoader } from 'react-spinners';
@@ -20,11 +19,17 @@ function DubHeader() {
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [showReplace, setShowReplace] =useState(false)
+
+
   useEffect(() => {
-    setLanguageList(dubLanguages)
+    getLanguages().then(languages=>setLanguageList(languages))
+    setLanguageList()
   }, [])
 
-
+useEffect(()=>{
+  if(selectedLanguage?.language_id)
+  getVoiceForLanguage(selectedLanguage.language_id).then(voices=>setVoiceList(voices))
+},[selectedLanguage])
 
   function handleLanguageChange(e) {
     setSelectedLanguage(e.target.value)
@@ -34,13 +39,6 @@ function DubHeader() {
   }
 
 
-  useEffect(() => {
-    if (selectedLanguage) {
-      const voices=selectedLanguage.voices
-      setVoiceList(voices)
-      setSelectedVoice(voices[0])
-    }
-  }, [selectedLanguage])
 
   function handleDubChange() {
 
@@ -114,8 +112,8 @@ function DubHeader() {
                   {/* <div><span className='text-xl'>{Object.values(selectedLanguage)[0]?.flag}</span></div> */}
 
                   <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
-                  <select className='mt-2  px-2  py-3  text-xs outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedVoice.voice}>
-                    {languageList.map((item, index) => <option key={index} value={item.code} className='block' >{item.language}</option>)}
+                  <select className='mt-2  px-2  py-3  text-xs outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedLanguage.language}>
+                    {languageList.map((item) => <option key={item.language_id} value={item.language_id} className='block' >{item.language}</option>)}
                   </select>
 
                 </div>
@@ -132,7 +130,7 @@ function DubHeader() {
                   <div className='flex flex-col w-1/2'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
                     <select className='mt-2 px-2  py-3  text-xs       rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer' onChange={handleVoiceChange}>
-                      {voiceList.map(item => (<option key={item} value={item}>{item}</option>))}
+                      {voiceList.map(item => (<option key={item} value={item.voiceid}>{item}</option>))}
                     </select>
                   </div>
                 </div>

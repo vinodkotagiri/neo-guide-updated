@@ -238,23 +238,13 @@ export async function generateGIF(payload: {
   });
 }
 
-export async function getLanguages(dub = false) {
+export async function getLanguages() {
   return new Promise((resolve) => {
     axios
       .get("https://contentinova.com/effybizgetlanguages")
       .then((res) => {
-        let languages = [];
         if (res.data) {
-          languages = Object.keys(res.data).map((item) => item);
-          const dubbingLangs = [];
-          const ttsLangs = [];
-
-          languages.forEach((item) => {
-            if (item.split("-")[1] == "EE") dubbingLangs.push(item);
-            else ttsLangs.push(item);
-          });
-          if (dub) resolve(dubbingLangs);
-          else resolve(ttsLangs);
+          resolve(languages) 
         }
       })
       .catch((error) => {
@@ -264,10 +254,10 @@ export async function getLanguages(dub = false) {
   });
 }
 
-export async function getVoiceForLanguage(language: text) {
+export async function getVoiceForLanguage(language_id: text) {
   return new Promise((resolve) => {
     axios
-      .get(`https://contentinova.com/effybizgetvoices?language=${language}`)
+      .get(`https://contentinova.com/effybizgetvoices?language_id=${language_id}`)
       .then((res) => {
         resolve(res.data);
       })
@@ -278,12 +268,12 @@ export async function getVoiceForLanguage(language: text) {
   });
 }
 
-export async function textToSpeech(payload: { voice: string; text: string }): Promise<{ audio_url: string | null }> {
-  return new Promise((resolve) => {
+export async function textToSpeech(payload: { voiceid: string; text: string }): Promise<{ audio_url: string | null }> {
+   return new Promise((resolve) => {
     axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
-        resolve(res.data);
+        resolve(res?.data?.audio_url);
       })
       .catch((error) => {
         console.log("error getLanguages", error);
