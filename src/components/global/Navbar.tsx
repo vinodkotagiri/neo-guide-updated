@@ -3,6 +3,11 @@ import { setIsArticle, setVideoName } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
 import { IoIosMenu } from "react-icons/io";
+import { PiExportBold } from "react-icons/pi";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { exportVideo, trackExportProgress } from "../../api/axios";
+
 
 interface NavbarProps {
   from?: string,
@@ -10,13 +15,54 @@ interface NavbarProps {
 }
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
+  const [token, setToken] = useState('')
+  const [loading,setLoading]=useState(false)
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
+  const { rectangles, arrows, texts, spotLights, blurs, zooms } = useAppSelector(state => state.elements)
+  useEffect(() => {
+    if (token) {
+      trackProgress(token);
+    }
+  }, [token]);
 
+  function handleExport() {
+    setLoading(true)
+    const payload = { video: url, videoWidth, videoHeight, rectangles, arrows, texts, spotLights, blurs, zooms }
+    exportVideo(payload).then(token => {
+      if(token){
+        setToken(token)
+        toast.success('Exporting video, token:')
+      }else{
+        setLoading(false)
+        toast.error('Something went wrong while exporting video')
+      }
+    }).catch(()=>setLoading(false))
+
+  }
+  async function trackProgress(request_id) {
+    if (request_id) {
+      const interval = setInterval(() => {
+        trackExportProgress(request_id).then((res) => {
+          if (res?.status?.toLowerCase() === 'completed') {
+            clearInterval(interval);
+            setLoading(false)
+            const data = res?.result?.subtitles;
+            if (data?.error) {
+              toast.error(data?.error);
+              setLoading(false)
+              return;
+            }
+          }
+        });
+      }, 5000);
+      setToken('');
+    }
+  }
 
   return (
     <div className="navbar ">
@@ -25,6 +71,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
           {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
           }
+          <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
+            {loading?
+            <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
+            :<><PiExportBold size={32} color="white" />Export</>}
+          </button>
         </div>
 
         <div className="flex gap-4 items-center ">

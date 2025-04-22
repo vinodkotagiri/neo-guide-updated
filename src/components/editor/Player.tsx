@@ -3,6 +3,7 @@ import ReactPlayer from "react-player";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   setCurrentPlayTime,
+  setPlayerVideoDimensions,
   setVideoDuration,
   setVideoPlayed,
 } from "../../redux/features/videoSlice";
@@ -13,7 +14,7 @@ function Player({ playerRef }) {
   const dispatch = useAppDispatch();
   const videoContainerRef = useRef(null);
   const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
-
+  
   const { url, playing, muted, currentPlayTime } = useAppSelector(
     (state) => state.video
   );
@@ -35,6 +36,10 @@ function Player({ playerRef }) {
         width: videoElement.videoWidth || 0,
         height: videoElement.videoHeight || 0,
       });
+      dispatch(setPlayerVideoDimensions({
+        width: videoElement.videoWidth || 0,
+        height: videoElement.videoHeight || 0,
+      }))
     }
   };
 

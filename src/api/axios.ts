@@ -305,4 +305,29 @@ export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Pro
   });
 }
 
+export function exportVideo(payload){
+ return new Promise(resolve=>{
+  const url='https://contentinova/neoguideExport'
+  axios.post(url,payload).then(res=>{
+    if(res.data.status=="Success") {
+      axios.post(url+'Start',{token:res.data.token})
+      resolve(res.data.token)
+    }
+  }).catch((err)=>{
+  console.log("error in export video",err)
+  resolve( false)
+  })
+ })
+}
+
+export function trackExportProgress(token){
+  return new Promise(resolve=>{
+    const url='https://contentinova/neoguideExportProgress'
+    axios.post(url,{token}).then(res=>resolve(res.data)).catch(err=>{
+      console.log("error fetching export progress",err)
+      resolve(false)
+    })
+  })
+}
+
 export default api;

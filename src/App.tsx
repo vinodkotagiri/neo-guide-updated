@@ -41,7 +41,26 @@ const App = () => {
         <Route path='/editor' element={<Editor />} />
         <Route path='/recorder' element={<RecorderPage />} />
       </Routes>
-      <Toaster />
+      <Toaster position="top-right" 
+      toastOptions={{
+        style:{
+          padding: '16px',
+          color: '#713200',
+          fontSize:14
+        },
+        success:{
+          style:{
+            border:"2px solid #008000",
+            color:'#008000'
+          }
+        },error:{
+          style:{
+            border:"2px solid #800000",
+            color:'#800000'
+          }
+        },
+      }}
+      />
     </div>
   )
 }

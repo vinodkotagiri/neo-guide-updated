@@ -12,6 +12,8 @@ interface SubtitlesState {
 }
 interface VideoState {
   url: string;
+  videoWidth:number;
+  videoHeight:number;
   videoName: string;
   pixelFactor: number;
   muted: boolean;
@@ -61,6 +63,8 @@ const initialSubtitleState: SubtitlesState = {
 const initialState: VideoState = {
   url: '',
   videoName: "",
+  videoWidth:0,
+  videoHeight:0,
   duration: 0,
   muted: true,
   language: "",
@@ -103,6 +107,10 @@ const videoSlice = createSlice({
     },
     setVideoName: (state, action) => {
       state.videoName = action.payload;
+    },
+    setPlayerVideoDimensions:(state,actions)=>{
+      state.videoHeight=actions.payload.height
+      state.videoWidth=actions.payload.width
     },
     setVideoUrl: (state, action) => {
       state.url = action.payload;
@@ -170,6 +178,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setPlayerVideoDimensions,
   handleReplaceSubtitleText,
   setPixelFactor,
   setVideoName,
