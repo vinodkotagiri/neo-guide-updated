@@ -232,7 +232,7 @@ function SubtitleAreaComponent({ playerRef }) {
           }
         };
         audio.onerror = () => {
-          console.error(`Audio error for index ${index}:`, audio.error);
+          // console.error(`Audio error for index ${index}:`, audio.error);
           setActiveAudioIndex(null);
         };
         audio.oncanplay = () => {
@@ -303,15 +303,7 @@ function SubtitleAreaComponent({ playerRef }) {
                 {loading && activeAudioIndex === index ? (
                   <div className="loader" />
                 ) : activeAudioIndex === index && audioRefs.current[index] && !audioRefs.current[index].paused ? (
-                  <IoPauseOutline
-                    size={24}
-                    color='red'
-                    className="text-[#ccc] cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleAudio(index, item);
-                    }}
-                  />
+                  <span className="loading loading-dots loading-xl"></span>
                 ) : (
                   <IoPlayOutline
                     size={24}

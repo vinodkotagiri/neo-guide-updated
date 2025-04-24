@@ -288,7 +288,7 @@ export async function mergeAudio(payload:mergeAudioPayload): Promise<mergeAudioR
       .post(" https://contentinova.com/mergeaudio", payload)
       .then((res) => {
         if(res.data.token){
-          axios.post(" https://contentinova.com/mergeaudioprogress", { token: res.data.token })
+          axios.post(" https://contentinova.com/mergeaudio_start", { token: res.data.token })
         }
         resolve(res.data)
       })
@@ -300,7 +300,10 @@ export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Pro
   return new Promise((resolve) => {
     axios
       .post(" https://contentinova.com/mergeaudioprogress", payload)
-      .then((res) => resolve(res.data))
+      .then((res) =>{
+        console.log('res.data',res.data)
+        resolve(res.data)
+      })
       .catch(() => resolve(null));
   });
 }

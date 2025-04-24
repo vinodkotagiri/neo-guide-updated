@@ -3,37 +3,48 @@ import React, { useEffect, useRef, useState } from 'react'
 import { elvenLanguages, elvenVoices } from '../../constants/index.ts'
 import Flag from 'react-world-flags'
 import { IoClose, IoPlayOutline, IoPauseOutline } from 'react-icons/io5';
-// import { MdFindReplace } from 'react-icons/md'
-// import FindAndReplaceComponent from './FindAndReplaceComponent';
-import spinner from '../../assets/images/fade-stagger-circles.svg'
-function SubtitleHeader({selectedVoiceID,setSelectedVoiceID,setSubAudioUrl}) {
+import { MdFindReplace } from 'react-icons/md'
+import FindAndReplaceComponent from './FindAndReplaceComponent';
+import toast from 'react-hot-toast';
+import { mergeAudio, mergeAudioProgress, textToSpeech } from '../../api/axios.ts';
+import { useAppSelector } from '../../redux/hooks.ts';
+import { generateRandomString, getSecondsFromTime } from '../../helpers/index.ts';
+import { setVideoUrl } from '../../redux/features/videoSlice.ts';
+function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl }) {
   const [selectedLanguage, setSelectedLanguage] = useState()
   const [languageList, setLanguageList] = useState()
   const [voiceList, setVoiceList] = useState()
   const [selectedVoice, setSelectedVoice] = useState('')
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedName,setSelectedName]=useState('')
-  const [audioUrl,setAudioUrl]=useState('')
-
+  const [selectedName, setSelectedName] = useState('')
+  const [audioUrl, setAudioUrl] = useState('')
+  const { subtitles, url } = useAppSelector(state => state.video)
+  const [mergeToken, setMergeToken] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showReplace, setShowReplace] = useState(false)
   useEffect(() => {
     setLanguageList(elvenLanguages)
     setSelectedLanguage(elvenLanguages[0].language_id)
-    const voices=elvenVoices.find(voice => voice.language_id == elvenLanguages[0].language_id)
+    const voices = elvenVoices.find(voice => voice.language_id == elvenLanguages[0].language_id)
     setVoiceList(voices?.voices)
     setSelectedVoice(voices?.voices[0].voiceid)
     setAudioUrl(voices?.voices[0].preview)
   }, [])
 
   useEffect(() => {
-    if (selectedLanguage)
+    if (selectedLanguage){
       setVoiceList(elvenVoices.find(voice => voice.language_id == selectedLanguage)?.voices)
-    setSelectedVoiceID('')
+      setSelectedVoice(voiceList[0].voiceid)
+      setSelectedVoiceID(voiceList[0].voiceid)
+      setAudioUrl(voiceList[0].preview)
+    }
   }, [selectedLanguage])
+
   function handleLanguageChange(e) {
     setSelectedLanguage(e.target.value)
   }
-  
+
   const toggleAudio = () => {
     if (!audioRef.current) return;
 
@@ -65,35 +76,104 @@ function SubtitleHeader({selectedVoiceID,setSelectedVoiceID,setSubAudioUrl}) {
 
   function handleVoiceChange(e) {
     setSelectedVoice(e.target.value)
-    const voice=voiceList.find(voice=>voice.voiceid==e.target.value)
+    const voice = voiceList.find(voice => voice.voiceid == e.target.value)
     setAudioUrl(voice.preview)
   }
-  useEffect(()=>{
-    if(selectedVoiceID){
-      const voice=voiceList?.find(voice=>voice.voiceid==selectedVoiceID)
+  useEffect(() => {
+    if (selectedVoiceID) {
+      const voice = voiceList?.find(voice => voice.voiceid == selectedVoiceID)
       setSelectedName(voice?.voice)
     }
 
-  },[selectedVoiceID,voiceList])
+  }, [selectedVoiceID, voiceList])
 
-  function handleSelectVoice(){
+  function handleSelectVoice() {
     setSelectedVoiceID(selectedVoice)
     setSubAudioUrl(audioUrl)
   }
-console.log(selectedVoice)
+  async function handleGenerateSpeech() {
+    if (!selectedVoiceID) return toast.error("Please select a voice to proceed")
+    setLoading(true)
+    const payload = {
+      batchid: generateRandomString(),
+      video: url,
+      voices: []
+    }
+
+    const subtitlesArr = subtitles?.data
+    for (const item of subtitlesArr) {
+      const audioObj = {
+        audioid: generateRandomString(6),
+        audio: '',
+        start_time: getSecondsFromTime(item.start_time),
+        end_time: getSecondsFromTime(item.end_time)
+      }
+      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text })
+      if (audio_url) audioObj.audio = audio_url
+      else continue
+      payload.voices.push(audioObj)
+    }
+    if (payload.voices.length) {
+      await mergeAudio(payload).then(res => setMergeToken(res?.token ?? '')).catch(err => {
+        console.log('error merging audio', err)
+        setLoading(false)
+        return toast.error('Error in merging audio')
+      })
+    } else {
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    if (mergeToken) {
+      console.log("got mergeToken", mergeToken)
+      getMergeVideo(mergeToken);
+    }
+  }, [mergeToken]);
+
+  async function getMergeVideo(request_id) {
+    if (request_id) {
+      const interval = setInterval(() => {
+        mergeAudioProgress({ token: request_id }).then((res) => {
+          if (res?.status?.toLowerCase() === 'completed') {
+            clearInterval(interval);
+            const data = res?.result?.video_url;
+            if (data?.error) {
+              toast.error(data?.error);
+              return;
+            }
+            dispatch(setVideoUrl(data));
+            setLoading(false)
+          }
+        }).catch(err => {
+          console.log(err)
+          setLoading(false)
+        })
+      }, 5000);
+      setMergeToken('');
+    }
+  }
+
+
   return (
     <div className='w-full border-b-[1px] border-[#303032] flex items-center justify-between px-2 relative'>
+      {showReplace && <FindAndReplaceComponent setShowReplace={setShowReplace} subtitle={true} />}
       <div className='change_voice'>
         <div className='flag_user'>
-           {/*<div className='flag_icon'>
+          {/*<div className='flag_icon'>
             <Flag code="US" /></div> */}
           <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>{selectedName}</p>
-          <button className='text-[12px] text-[#a3a3a5] cursor-pointer flex items-center gap--2 ' onClick={() => document.getElementById('change_language_modal').showModal()}>{selectedName?'Change Voice':"Select Voice"}
+          <button className='text-[12px] text-[#a3a3a5] cursor-pointer flex items-center gap--2 ' onClick={() => document.getElementById('change_language_modal').showModal()}>{selectedName ? 'Change Voice' : "Select Voice"}
           </button>
         </div>
         <div className='flex items-center gap-2 '>
-          <button className='generate_button '  > Generate Speech
+          <div className='tooltip tooltip-left' data-tip='Find and Replace'>
+            <MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)} />
+          </div>
+          <button className='generate_button ' onClick={handleGenerateSpeech}>
+            {loading ? <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Generating</span>
+              : <>Generate Speech</>}
           </button>
+
         </div>
       </div>
       <dialog id="change_language_modal" className="modal chhange_modal">
@@ -108,15 +188,15 @@ console.log(selectedVoice)
               <div className='  flex   mt-5 gap-3 items-center justify-between'>
                 <div className='flex  w-1/2  flex-col  '>
                   <span className="text-[12px] text-[#a3a3a5] ">Select Language</span>
-                  <select className='mt-2  px-2  py-3  text-xs  outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleLanguageChange} value={selectedLanguage}>
+                  <select className='mt-2  px-2  py-3  text-xs  outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op disabled:bg-slate-600 disabled:cursor-not-allowed' onChange={handleLanguageChange} disabled={isPlaying} value={selectedLanguage}>
                     {languageList?.length && languageList.map((item) => <option key={item.language_id} value={item.language_id} className='block' >{item.language}</option>)}
                   </select>
                 </div>
                 <div className='flex w-1/2 gap-5 '>
                   <div className='flex flex-col w-full'>
                     <span className="text-[12px] text-[#a3a3a5] ">Select Voice</span>
-                    <select className='mt-2 px-2  py-3  text-xs rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op' onChange={handleVoiceChange} value={selectedVoice}>
-                      {voiceList?.length && voiceList.map((item,index) => (<option key={item.voiceid+index} value={item.voiceid}>{item.voice}</option>))}
+                    <select className='mt-2 px-2  py-3  text-xs rounded-md    outline-none  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op disabled:bg-slate-600 disabled:cursor-not-allowed' onChange={handleVoiceChange} disabled={isPlaying} value={selectedVoice}>
+                      {voiceList?.length && voiceList.map((item, index) => (<option key={item.voiceid + index} value={item.voiceid}>{item.voice}</option>))}
                     </select>
                   </div>
                 </div>
