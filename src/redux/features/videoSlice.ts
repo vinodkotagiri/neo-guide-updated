@@ -477,7 +477,7 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url: url_test,
+  url: '',
   videoName: "",
   videoWidth:0,
   videoHeight:0,
