@@ -4,10 +4,14 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  
   server: {
     port: 3000,
     cors: {
       origin: '*',
+    },
+    fs: {
+      allow: ['.'],
     },
   },
   define: {
@@ -20,6 +24,6 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ["buffer", "crypto-browserify"]
+    include: ["buffer", "crypto-browserify",'@ffmpeg/ffmpeg', '@ffmpeg/util']
   }
 });

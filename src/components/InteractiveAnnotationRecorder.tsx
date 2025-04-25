@@ -9,16 +9,19 @@ import { setLoader } from '../redux/features/loaderSlice';
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
-  // const [annotations, setAnnotations] = useState<{ x: number; y: number; text: string }[]>([]);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  // const annotationOverlayRef = useRef<HTMLDivElement | null>(nul
-  const navigate=useNavigate();
-  const dispatch=useDispatch()
+  const [videoFormat, setVideoFormat] = useState<{ mimeType: string; extension: string }>({
+    mimeType: 'video/mp4; codecs=avc3',
+    extension: 'mp4',
+  });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Clean up streams on unmount
   useEffect(() => {
     return () => {
-      // Clean up the stream and media recorder when component unmounts
       if (screenStream) {
         const tracks = screenStream.getTracks();
         tracks.forEach((track) => track.stop());
@@ -28,50 +31,66 @@ const InteractiveScreenRecorder: React.FC = () => {
 
   const startScreenRecording = async () => {
     try {
-      // Ask the user to select a screen/window for recording
+      console.log('Starting screen recording...');
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: { echoCancellation: true, noiseSuppression: true }
+        audio: { echoCancellation: true, noiseSuppression: true },
       });
-  
-      // Capture microphone audio separately (optional)
+
       const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  
-      // Combine screen and microphone audio streams
+
       const combinedStream = new MediaStream([
-        ...screenStream.getVideoTracks(), // Add screen video
-        ...screenStream.getAudioTracks(), // Add system audio (if available)
-        ...audioStream.getAudioTracks()   // Add microphone audio
+        ...screenStream.getVideoTracks(),
+        ...screenStream.getAudioTracks(),
+        ...audioStream.getAudioTracks(),
       ]);
-  
+
       setScreenStream(combinedStream);
-  
-      const recorder = new MediaRecorder(combinedStream);
+
+      // Check if MP4 is supported, fallback to WebM if not
+      let selectedFormat = { mimeType: 'video/mp4; codecs=avc3', extension: 'mp4' };
+      if (!MediaRecorder.isTypeSupported('video/mp4; codecs=avc3')) {
+        console.log('MP4 not supported, falling back to WebM');
+        selectedFormat = { mimeType: 'video/webm', extension: 'webm' };
+        toast.error('MP4 recording not supported in this browser. Using WebM instead.');
+      } else {
+        console.log('MP4 recording supported');
+        toast.success('Recording in MP4 format');
+      }
+      setVideoFormat(selectedFormat);
+
+      const recorder = new MediaRecorder(combinedStream, {
+        mimeType: selectedFormat.mimeType,
+      });
       const recordedChunks: Blob[] = [];
-  
+
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           recordedChunks.push(event.data);
+          console.log('Received data chunk, size:', event.data.size);
         }
       };
-  
+
       recorder.onstop = () => {
-        const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
+        console.log('Recording stopped, creating video blob...');
+        const videoBlob = new Blob(recordedChunks, { type: selectedFormat.mimeType });
         const videoUrl = URL.createObjectURL(videoBlob);
         setRecordedVideoUrl(videoUrl);
       };
-  
+
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
+      console.log('Screen recording started in', selectedFormat.mimeType);
     } catch (err) {
-      console.error("Error accessing screen:", err);
-      toast.error("Failed to access screen or microphone.");
+      console.error('Error accessing screen:', err);
+      toast.error('Failed to access screen or microphone.');
     }
   };
 
   const stopScreenRecording = () => {
     if (mediaRecorder) {
+      console.log('Stopping screen recording...');
       mediaRecorder.stop();
     }
     setIsRecording(false);
@@ -80,60 +99,85 @@ const InteractiveScreenRecorder: React.FC = () => {
   const togglePauseRecording = () => {
     if (mediaRecorder) {
       if (isPaused) {
+        console.log('Resuming recording...');
         mediaRecorder.resume();
       } else {
+        console.log('Pausing recording...');
         mediaRecorder.pause();
       }
       setIsPaused(!isPaused);
     }
   };
 
-
-  const handleSaveRecording = async() => {
+  const handleSaveRecording = async () => {
     if (recordedVideoUrl) {
       try {
-      const a = document.createElement('a');
-      a.href = recordedVideoUrl;
-      a.download = 'screen_recording.webm';
-      a.click();
-      toast.success('file downloaded ')
-        const blob = await fetch(recordedVideoUrl).then(r => r.blob()); // Convert URL to Blob
-        const file = new File([blob], 'screen_recording.webm', { type: 'video/webm' });
-        const response=await uploadFile({user_id:'1',file})
-        if (response) {
-          dispatch(setVideoUrl(response.file_url));
-          navigate(`/editor`);
-          dispatch(setLoader({loading:false}))
-        } else {
-          dispatch(setLoader({loading:false}));
-          return toast.error('Error uploading video');
-        }
-  
-      } catch (error) {
-        console.error("Error uploading video:", error);
-        toast.error('Video upload failed. Please try again.'); // Show error toast
-      }
-    }
+        console.log('Starting save recording process...');
+        dispatch(setLoader({ loading: true }));
+        toast('Preparing to save recording...', { duration: 2000 });
 
+        const videoBlob = await fetch(recordedVideoUrl).then((r) => r.blob());
+        console.log('Fetched video blob, size:', videoBlob.size);
+
+        // Download the video file
+        const a = document.createElement('a');
+        a.href = recordedVideoUrl;
+        a.download = `screen_recording.${videoFormat.extension}`;
+        a.click();
+        console.log('Video download triggered');
+        toast.success(`File downloaded as ${videoFormat.extension.toUpperCase()}`);
+
+        // Upload the video file
+        console.log('Uploading video file...');
+        const file = new File([videoBlob], `screen_recording-${Date.now()}.${videoFormat.extension}`, {
+          type: videoFormat.mimeType,
+        });
+        const response = await uploadFile({ user_id: '1', file });
+
+        if (response) {
+          console.log('Upload successful, navigating to editor...');
+          dispatch(setVideoUrl(response.file_url));
+          navigate('/editor');
+          dispatch(setLoader({ loading: false }));
+        } else {
+          console.error('Upload failed');
+          dispatch(setLoader({ loading: false }));
+          toast.error('Error uploading video');
+        }
+      } catch (error) {
+        console.error('Error processing video:', error);
+        dispatch(setLoader({ loading: false }));
+        toast.error('Video processing failed. Please try again.');
+      }
+    } else {
+      console.error('No recorded video URL available');
+      toast.error('No recording available to save.');
+    }
   };
 
   return (
-    <div className='w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4'>
-
+    <div className="w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
-      <div className='flex gap-4'>
-        <button className='btn btn-error text-error-content btn-sm' onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}>
+      <div className="flex gap-4">
+        <button
+          className="btn btn-error text-error-content btn-sm"
+          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
+        >
           {isRecording ? 'Stop Recording' : 'Start Recording'}
         </button>
         {isRecording && (
-          <button onClick={togglePauseRecording} className='btn btn-secondary btn-sm'>
+          <button onClick={togglePauseRecording} className="btn btn-secondary btn-sm">
             {isPaused ? 'Resume Recording' : 'Pause Recording'}
           </button>
         )}
-        {recordedVideoUrl && <button onClick={handleSaveRecording} className='btn btn-success btn-sm'>Save Recording</button>}
+        {recordedVideoUrl && (
+          <button onClick={handleSaveRecording} className="btn btn-success btn-sm">
+            Save Recording
+          </button>
+        )}
       </div>
       {/* Screen Recording Video */}
-      <div style={{ position: 'relative' }} className='w-[60%] h-full border-slate-700'>
+      <div style={{ position: 'relative' }} className="w-[60%] h-full border-slate-700">
         <video
           controls
           width="100%"
