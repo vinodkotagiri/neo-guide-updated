@@ -25,6 +25,7 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       Body: payload.file,
       ContentType: payload.file.type
     };
+    
     let response;
     if (payload.file.type == "video/mp4") {
       response = await s3.upload(params).promise();

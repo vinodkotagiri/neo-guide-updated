@@ -38,7 +38,7 @@ function TimelineArea({ playerRef }) {
     const initMarkers = async () => {
       if (duration) {
         try {
-          const mrkrs = Array.from({ length: duration }, (_, i) => i);
+          const mrkrs = Array.from({ length: duration<200?200:duration }, (_, i) => i);
           setMarkers(mrkrs);
           setLoading(false);
         } catch (error) {

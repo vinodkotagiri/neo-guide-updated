@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { uploadFile } from '../api/axios';
 import { useDispatch } from 'react-redux';
-import { setVideoUrl } from '../redux/features/videoSlice';
 import { setLoader } from '../redux/features/loaderSlice';
 
 const InteractiveScreenRecorder: React.FC = () => {
@@ -114,7 +112,7 @@ const InteractiveScreenRecorder: React.FC = () => {
       try {
         console.log('Starting save recording process...');
         dispatch(setLoader({ loading: true }));
-        toast('Preparing to save recording...', { duration: 2000 });
+        // toast('Preparing to save recording...', { duration: 2000 });
 
         const videoBlob = await fetch(recordedVideoUrl).then((r) => r.blob());
         console.log('Fetched video blob, size:', videoBlob.size);
@@ -122,28 +120,12 @@ const InteractiveScreenRecorder: React.FC = () => {
         // Download the video file
         const a = document.createElement('a');
         a.href = recordedVideoUrl;
-        a.download = `screen_recording.${videoFormat.extension}`;
+        a.download = `screen_recording_${new Date()}.${videoFormat.extension}`;
         a.click();
         console.log('Video download triggered');
         toast.success(`File downloaded as ${videoFormat.extension.toUpperCase()}`);
-
-        // Upload the video file
-        console.log('Uploading video file...');
-        const file = new File([videoBlob], `screen_recording-${Date.now()}.${videoFormat.extension}`, {
-          type: videoFormat.mimeType,
-        });
-        const response = await uploadFile({ user_id: '1', file });
-
-        if (response) {
-          console.log('Upload successful, navigating to editor...');
-          dispatch(setVideoUrl(response.file_url));
-          navigate('/editor');
-          dispatch(setLoader({ loading: false }));
-        } else {
-          console.error('Upload failed');
-          dispatch(setLoader({ loading: false }));
-          toast.error('Error uploading video');
-        }
+        dispatch(setLoader({ loading: false }));
+        navigate('/upload')
       } catch (error) {
         console.error('Error processing video:', error);
         dispatch(setLoader({ loading: false }));
