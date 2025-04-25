@@ -3,6 +3,9 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoader } from '../redux/features/loaderSlice';
+import { BsPauseCircle, BsRecordCircle, BsStopCircle } from 'react-icons/bs';
+import { GrResume } from 'react-icons/gr';
+import { TbFileExport } from 'react-icons/tb';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -138,28 +141,11 @@ const InteractiveScreenRecorder: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
+    <div className="w-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
-      <div className="flex gap-4">
-        <button
-          className="btn btn-error text-error-content btn-sm"
-          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
-        >
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
-        </button>
-        {isRecording && (
-          <button onClick={togglePauseRecording} className="btn btn-secondary btn-sm">
-            {isPaused ? 'Resume Recording' : 'Pause Recording'}
-          </button>
-        )}
-        {recordedVideoUrl && (
-          <button onClick={handleSaveRecording} className="btn btn-success btn-sm">
-            Save Recording
-          </button>
-        )}
-      </div>
+
       {/* Screen Recording Video */}
-      <div style={{ position: 'relative' }} className="w-[60%] h-full border-slate-700">
+      <div style={{ position: 'relative' }} className="w-[60%] ">
         <video
           controls
           width="100%"
@@ -169,6 +155,41 @@ const InteractiveScreenRecorder: React.FC = () => {
           muted
           style={{ width: '100%', height: 'auto' }}
         ></video>
+      </div>
+      <div className="flex gap-4">
+        <button
+          className=" bg-[#422AD5] text-white cursor-pointer px-3 py-2 rounded-md  font-medium "
+          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
+        >
+          {isRecording ? 'Stop Recording' : 'Start Recording'}
+        </button>
+        {isRecording && (
+          <button onClick={togglePauseRecording} className=" bg-[#39383d] text-white cursor-pointer px-3 py-2 rounded-md  font-medium ">
+            {isPaused ? 'Resume Recording' : 'Pause Recording'}
+          </button>
+        )}
+        {recordedVideoUrl && (
+          <button onClick={handleSaveRecording} className="bg-red-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
+            Save Recording
+          </button>
+        )}
+      </div>
+      <div className='fixed right-0   bg-[#333] text-white flex flex-col rounded-ss-md rounded-es-md px-2 '>
+        <button
+          className="   text-[#ccc] cursor-pointer  py-2    font-medium text-xl border-b border-[#ccc] "
+          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
+        >
+          {/* {isRecording ? 'Stop Recording' : 'Start Recording'} */}
+          {isRecording ? <div className='tooltip tooltip-left' data-tip="Stop Recording"><BsStopCircle className='text-red-500 ' /> </div> : <div className='tooltip tooltip-left' data-tip="Start Recording"><BsRecordCircle /></div>}
+        </button>
+        <button onClick={togglePauseRecording} className="  text-[#ccc] cursor-pointer  py-2 border-b border-[#ccc]  font-medium text-xl ">
+          {isPaused ? <div className='tooltip tooltip-left' data-tip="Resume Recording"><GrResume /></div>
+            : <div className='tooltip tooltip-left' data-tip="Pause Recording"><BsPauseCircle /></div>}
+        </button>
+        <button onClick={handleSaveRecording} className=" text-[#ccc]  cursor-pointer py-2   font-medium text-xl tooltip tooltip-left" data-tip="Export Recording">
+          <TbFileExport />
+        </button>
+
       </div>
     </div>
   );
