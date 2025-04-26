@@ -38,6 +38,7 @@ const VideoEditor = ({ playerRef }) => {
     }
   }
 
+
   return (
     <div className='w-full h-full flex flex-col gap-1 px-2 '>
       <div className="w-full h-[65%]  flex items-center  flex-col bg-[#212025] rounded-2xl  py-8 relative">
@@ -75,8 +76,10 @@ const VideoEditor = ({ playerRef }) => {
         </div>
       </div>
 
-      <div className="w-full h-[35%] bg-black/30">
+      <div className="w-full h-[35%]  bg_gr">
+      
         <TimelineArea playerRef={playerRef} />
+      
       </div>
     </div>
   );

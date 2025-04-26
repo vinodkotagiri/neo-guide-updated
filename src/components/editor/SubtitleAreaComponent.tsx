@@ -158,7 +158,7 @@ function SubtitleAreaComponent({ playerRef }) {
         audio.volume = 1.0; // Ensure volume is set
         audio.play().catch((err) => {
           console.error(`Error playing audio for index ${index}:`, err);
-          toast.error('Error playing audio');
+          // toast.error('Error playing audio');
         });
         setActiveAudioIndex(index);
       } else {

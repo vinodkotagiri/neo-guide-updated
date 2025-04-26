@@ -40,7 +40,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
       setAudioUrl(voiceList[0].preview)
     }
   }, [selectedLanguage])
-
+console.log('selectedVoiceID',selectedVoiceID)
   function handleLanguageChange(e) {
     setSelectedLanguage(e.target.value)
   }

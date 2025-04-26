@@ -357,3 +357,6 @@
 .bg_vv {
   background-color: oklch(45% 0.24 277.023);
 }
+.bg_gr{
+  background:repeating-linear-gradient(-45deg, #111112, #111112 .8rem, rgba(0, 0, 0, .2) 10px, rgba(0, 0, 0, .2) 20px);
+}

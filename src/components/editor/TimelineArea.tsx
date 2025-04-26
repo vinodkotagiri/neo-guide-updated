@@ -38,7 +38,7 @@ function TimelineArea({ playerRef }) {
     const initMarkers = async () => {
       if (duration) {
         try {
-          const mrkrs = Array.from({ length: duration<200?200:duration }, (_, i) => i);
+          const mrkrs = Array.from({ length: duration }, (_, i) => i);
           setMarkers(mrkrs);
           setLoading(false);
         } catch (error) {
@@ -158,7 +158,7 @@ function TimelineArea({ playerRef }) {
   return (
     <div
       ref={scrollRef}
-      className='w-full h-full overflow-x-scroll bg-[#16151a]'
+      className='w-full h-full overflow-x-scroll '
       style={{
         scrollBehavior: 'smooth',
         userSelect: 'none',
@@ -169,7 +169,10 @@ function TimelineArea({ playerRef }) {
       <div
         ref={timelineRef}
         className='w-full h-full relative'
-        style={{ pointerEvents: 'auto' }}
+         
+        style={{
+          pointerEvents: 'auto'
+        }}
       >
         {markers.map((item, index) => (
           <motion.div
@@ -213,7 +216,7 @@ function TimelineArea({ playerRef }) {
           ))}
         </AnimatePresence>
         <div
-          className='absolute h-[calc(100%-36px)] top-[36px]'
+          className='absolute h-[calc(100%-36px)] top-[36px] '
           style={{ width: markers.length > 0 ? markers[markers.length - 1] * pixelFactor : 0 }}
         >
           <div className='absolute h-[48px] w-full bg-black opacity-10 -top-[36px] -z-10' />

@@ -6,6 +6,8 @@ import { setLoader } from '../redux/features/loaderSlice';
 import { BsPauseCircle, BsRecordCircle, BsStopCircle } from 'react-icons/bs';
 import { GrResume } from 'react-icons/gr';
 import { TbFileExport } from 'react-icons/tb';
+import { uploadFile } from '../api/axios';
+import { setVideoUrl } from '../redux/features/videoSlice';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -128,7 +130,18 @@ const InteractiveScreenRecorder: React.FC = () => {
         console.log('Video download triggered');
         toast.success(`File downloaded as ${videoFormat.extension.toUpperCase()}`);
         dispatch(setLoader({ loading: false }));
-        navigate('/upload')
+        // navigate('/upload')
+        const file = new File([videoBlob], `screen_recording-${Date.now()}.${videoFormat.extension}`, {
+          type: videoFormat.mimeType,
+        });
+        const response = await uploadFile({ user_id: '1', file });
+        if(response.file_url){
+          dispatch(setVideoUrl(response.file_url));
+          navigate('/editor')
+        }
+        else
+         toast.error("Error uploading video")
+        
       } catch (error) {
         console.error('Error processing video:', error);
         dispatch(setLoader({ loading: false }));
@@ -146,7 +159,7 @@ const InteractiveScreenRecorder: React.FC = () => {
 
       {/* Screen Recording Video */}
       <div style={{ position: 'relative' }} className="w-[60%] ">
-        <video
+        {recordedVideoUrl&&<video
           controls
           width="100%"
           height="auto"
@@ -154,7 +167,7 @@ const InteractiveScreenRecorder: React.FC = () => {
           autoPlay
           muted
           style={{ width: '100%', height: 'auto' }}
-        ></video>
+        ></video>}
       </div>
       <div className="flex gap-4">
         <button

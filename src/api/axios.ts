@@ -27,7 +27,7 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
     };
     
     let response;
-    if (payload.file.type == "video/mp4") {
+    if (payload.file.type.includes ("video/mp4")) {
       response = await s3.upload(params).promise();
     } else {
       const formData = new FormData();
@@ -311,7 +311,7 @@ export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Pro
 
 export function exportVideo(payload){
  return new Promise(resolve=>{
-  const url='https://contentinova/neoguideExport'
+  const url='https://contentinova.effybiz.com/neoguideExport'
   axios.post(url,payload).then(res=>{
     if(res.data.status=="Success") {
       axios.post(url+'Start',{token:res.data.token})
