@@ -3,6 +3,11 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoader } from '../redux/features/loaderSlice';
+import { BsPauseCircle, BsRecordCircle, BsStopCircle } from 'react-icons/bs';
+import { GrResume } from 'react-icons/gr';
+import { TbFileExport } from 'react-icons/tb';
+import { uploadFile } from '../api/axios';
+import { setVideoUrl } from '../redux/features/videoSlice';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -125,7 +130,18 @@ const InteractiveScreenRecorder: React.FC = () => {
         console.log('Video download triggered');
         toast.success(`File downloaded as ${videoFormat.extension.toUpperCase()}`);
         dispatch(setLoader({ loading: false }));
-        navigate('/upload')
+        // navigate('/upload')
+        const file = new File([videoBlob], `screen_recording-${Date.now()}.${videoFormat.extension}`, {
+          type: videoFormat.mimeType,
+        });
+        const response = await uploadFile({ user_id: '1', file });
+        if(response.file_url){
+          dispatch(setVideoUrl(response.file_url));
+          navigate('/editor')
+        }
+        else
+         toast.error("Error uploading video")
+        
       } catch (error) {
         console.error('Error processing video:', error);
         dispatch(setLoader({ loading: false }));
@@ -138,29 +154,12 @@ const InteractiveScreenRecorder: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
+    <div className="w-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
-      <div className="flex gap-4">
-        <button
-          className="btn btn-error text-error-content btn-sm"
-          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
-        >
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
-        </button>
-        {isRecording && (
-          <button onClick={togglePauseRecording} className="btn btn-secondary btn-sm">
-            {isPaused ? 'Resume Recording' : 'Pause Recording'}
-          </button>
-        )}
-        {recordedVideoUrl && (
-          <button onClick={handleSaveRecording} className="btn btn-success btn-sm">
-            Save Recording
-          </button>
-        )}
-      </div>
+
       {/* Screen Recording Video */}
-      <div style={{ position: 'relative' }} className="w-[60%] h-full border-slate-700">
-        <video
+      <div style={{ position: 'relative' }} className="w-[60%] ">
+        {recordedVideoUrl&&<video
           controls
           width="100%"
           height="auto"
@@ -168,7 +167,42 @@ const InteractiveScreenRecorder: React.FC = () => {
           autoPlay
           muted
           style={{ width: '100%', height: 'auto' }}
-        ></video>
+        ></video>}
+      </div>
+      <div className="flex gap-4">
+        <button
+          className=" bg-[#422AD5] text-white cursor-pointer px-3 py-2 rounded-md  font-medium "
+          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
+        >
+          {isRecording ? 'Stop Recording' : 'Start Recording'}
+        </button>
+        {isRecording && (
+          <button onClick={togglePauseRecording} className=" bg-[#39383d] text-white cursor-pointer px-3 py-2 rounded-md  font-medium ">
+            {isPaused ? 'Resume Recording' : 'Pause Recording'}
+          </button>
+        )}
+        {recordedVideoUrl && (
+          <button onClick={handleSaveRecording} className="bg-red-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
+            Save Recording
+          </button>
+        )}
+      </div>
+      <div className='fixed right-0   bg-[#333] text-white flex flex-col rounded-ss-md rounded-es-md px-2 '>
+        <button
+          className="   text-[#ccc] cursor-pointer  py-2    font-medium text-xl border-b border-[#ccc] "
+          onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
+        >
+          {/* {isRecording ? 'Stop Recording' : 'Start Recording'} */}
+          {isRecording ? <div className='tooltip tooltip-left' data-tip="Stop Recording"><BsStopCircle className='text-red-500 ' /> </div> : <div className='tooltip tooltip-left' data-tip="Start Recording"><BsRecordCircle /></div>}
+        </button>
+        <button onClick={togglePauseRecording} className="  text-[#ccc] cursor-pointer  py-2 border-b border-[#ccc]  font-medium text-xl ">
+          {isPaused ? <div className='tooltip tooltip-left' data-tip="Resume Recording"><GrResume /></div>
+            : <div className='tooltip tooltip-left' data-tip="Pause Recording"><BsPauseCircle /></div>}
+        </button>
+        <button onClick={handleSaveRecording} className=" text-[#ccc]  cursor-pointer py-2   font-medium text-xl tooltip tooltip-left" data-tip="Export Recording">
+          <TbFileExport />
+        </button>
+
       </div>
     </div>
   );

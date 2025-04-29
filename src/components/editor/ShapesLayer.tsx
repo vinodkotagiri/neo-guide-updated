@@ -91,7 +91,7 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef, playerRe
         </div>}
 
       {/* Thumbnails section */}
-      <div className='w-full flex justify-between' style={{ paddingTop: '30px' }}>
+      <div className='w-full flex justify-between bg-[#212025]' style={{ paddingTop: '30px' }}>
         {segments.map((segment, index) => (
           <div
             key={index}
