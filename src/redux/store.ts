@@ -3,12 +3,14 @@ import loaderReducer from "./features/loaderSlice";
 import videoReducer from "./features/videoSlice";
 import articleReducer from './features/articleSlice';
 import elementsReducer from './features/elementsSlice';
+import savingReducer from './features/savingSlice';
 export const store = configureStore({
   reducer: {
     loader: loaderReducer,
     video: videoReducer,
     article:articleReducer,
-    elements:elementsReducer
+    elements:elementsReducer,
+    saving:savingReducer
   },
   devTools: import.meta.env.NODE_ENV !== "production"
 });

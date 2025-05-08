@@ -333,5 +333,25 @@ export function trackExportProgress(token){
     })
   })
 }
+export function exportOrupdateJSON(payload:{json:Array<unknown>,action:"insert"|"update",filename?:string},file_name:string){
+  if(file_name) payload.filename=file_name
+  return new Promise(resolve=>{
+    const url='https://contentinova.com/neoguidestorejson'
+    axios.post(url,payload).then(res=>{
+      if(res.data.file_url){
+        resolve(res.data)
+      }else{
+        resolve(false)
+      }
+    }).catch(err=>{
+      console.log("error in export or update json",err)
+      resolve(false)
+    })
+  })
+
+}
+export function exportOrupdateProject(){
+  
+}
 
 export default api;
