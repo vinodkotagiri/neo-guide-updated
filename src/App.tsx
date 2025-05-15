@@ -1,12 +1,12 @@
 //@ts-nocheck
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Editor from './views/Editor'
 import { Toaster } from 'react-hot-toast'
 import UploadView from './views/upload'
 import RecorderPage from './views/RecorderView'
 import { useAppDispatch } from './redux/hooks'
-import { setVideoUrl, updateSubtitleData } from './redux/features/videoSlice'
+import { init, setVideoUrl, updateSubtitleData } from './redux/features/videoSlice'
 import { setArticleData } from './redux/features/articleSlice'
 
 if (typeof global === "undefined") {
@@ -14,7 +14,7 @@ if (typeof global === "undefined") {
 }
 
 const App = () => {
-  // const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch()
   // React.useEffect(() => {
   //   let url = '';
   //   let articleData:Array<{text:string,image_url:string}> = [];
@@ -32,6 +32,9 @@ const App = () => {
   //     if(subtitles?.length) dispatch(updateSubtitleData(subtitles))
   //   }
   // }, [])
+  useEffect(() => {
+    dispatch(init());
+  }, [dispatch]);
 
   return (
     <div className='w-screen h-screen '>
