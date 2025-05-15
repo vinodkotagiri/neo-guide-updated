@@ -44,6 +44,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }).catch(()=>setLoading(false))
 
   }
+
   async function trackProgress(request_id) {
     if (request_id) {
       const interval = setInterval(() => {
@@ -51,7 +52,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           if (res?.status?.toLowerCase() === 'completed') {
             clearInterval(interval);
             setLoading(false)
-            const data = res?.result?.subtitles;
+            const data = res?.video_url;
+            downloadVideo(data);
             if (data?.error) {
               toast.error(data?.error);
               setLoading(false)
@@ -64,6 +66,21 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }
   }
 
+  const downloadVideo = (videoURL: string, fileName: string = "exportted_video.mp4") => {
+    fetch(videoURL)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error("Error downloading videoURL:", error));
+  };
   return (
     <div className="navbar ">
       <div className="navbar-inside">
