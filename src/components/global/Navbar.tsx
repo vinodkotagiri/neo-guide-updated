@@ -7,13 +7,19 @@ import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { exportOrupdateJSON, exportOrupdateProject, exportVideo, trackExportProgress } from "../../api/axios";
-import { MdHistory } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
-
+import { MdContentCopy, MdHistory, MdOutlineArticle } from "react-icons/md";
+import { IoChevronDown, IoClose } from "react-icons/io5";
+import { CiExport, CiLogout, CiUser } from "react-icons/ci";
+import { FaRegSave } from "react-icons/fa";
+import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
+import { BsFiletypeGif } from "react-icons/bs";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
 }
+
+
+
 
 function Navbar({ from, hideMenu }: NavbarProps) {
   const { isArticle, videoName, videoHeight, videoWidth, url, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
@@ -35,7 +41,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       trackProgress(token);
     }
   }, [token]);
-
+  const [open, setOpen] = useState<string | null>("Docs");
   function handleExport() {
     setLoading(true)
     const payload = { video: url, videoWidth, videoHeight, rectangles, arrows, texts, spotLights, blurs, zooms }
@@ -166,30 +172,20 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             </div>
           </div>}
 
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
+
+          <div   >
+            <div className="w-10 "   >
+              <label htmlFor="my-drawer">
                 <img
                   alt="Tailwind CSS Navbar component"
                   src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  className="cursor-pointer rounded-full "
                 />
-              </div>
-
+              </label>
             </div>
-            <ul
-              tabIndex={0}
-              className="  dropdown-content bg-[#212025] rounded-box z-[1] mt-3 w-52 p-2 shadow user_menu">
-              <li>
-                <a  >
-                  Profile
-
-                </a>
-              </li>
 
 
-              <li><a><label htmlFor="my-drawer" > Version History</label></a> </li>
-              <li><a>Logout</a></li>
-            </ul>
+
           </div>
           {!hideMenu &&
             <div className="drawer drawer-end">
@@ -198,14 +194,110 @@ function Navbar({ from, hideMenu }: NavbarProps) {
               <div className="drawer-side z-50">
 
                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-                <div className="min-h-full bg-[#16151a] menu  p-4">
-                  <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4">Version History</h3>
-                  <ul className="   w-80   version_history">
+                <div className="min-h-full bg-[#16151a] menu  p-4 w-75">
+                  <h6 className="text-md text-white ">Welcome</h6>
+                  <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4">Suman Chepuri</h3>
+                  <aside className="text-white    mt-4">
+                    <ul className="space-y-2">
+                      <li>
+                        <a href="#" className="flex items-center gap-2 py-1">
+                          <CiUser />
+                          <span>Profile</span>
+                        </a>
+                      </li>
+                      <li>
+                        <div
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => setOpen(open === "Version History" ? null : "Version History")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MdHistory />
+                            <span>Version History</span>
+                          </div>
+                          <IoChevronDown className={`${open === "Version History" ? 'rotate-180' : ''} transition-transform`} />
+                        </div>
+                        {open === "Version History" && (
+                          <ul className="m-0 p-0  text-sm     version_history  ">
+                            <li
+                              onClick={() => document.getElementById('my_modal_3')?.showModal()}>
+                              <MdHistory />
+                              <span>12:49 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:40 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <MdContentCopy />
+                          <span>Make a copy</span>
+                        </a>
+                      </li>
+                      {/* Docs */}
+                      <li>
+                        <div
+                          className="flex items-center justify-between cursor-pointer "
+                          onClick={() => setOpen(open === "Docs" ? null : "Docs")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <CiExport />
+                            <span>Export</span>
+                          </div>
+                          <IoChevronDown className={`${open === "Docs" ? 'rotate-180' : ''} transition-transform`} />
+                        </div>
+                        {open === "Docs" && (
+                          <ul className="ml-4 mt-1 space-y-1 text-sm text-gray-300">
+                            <li><RiFileVideoLine />  Video </li>
+                            <li><MdOutlineArticle />  Article</li>
+                            <li><BsFiletypeGif /> Gif</li>
 
-                    <li onClick={() => document.getElementById('my_modal_3').showModal()}><MdHistory /> <span>12:49 PM on May 17, 2025</span> </li>
-                    <li><MdHistory /> <span>12:49 PM on May 17, 2025</span> </li>
-                    <li><MdHistory /> <span>12:49 PM on May 17, 2025</span> </li>
-                  </ul>
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <a href="#" >
+                          <FaRegSave />
+                          <span>Save</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <RiDeleteBin6Line />
+                          <span>Delete Project</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <CiLogout />
+                          <span>Logout</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </aside>
+
                 </div>
               </div>
             </div>

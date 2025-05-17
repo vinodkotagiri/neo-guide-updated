@@ -179,17 +179,17 @@ export const elvenVoices = [
   {
     language_id: "R8TEAQU0WLEJcnosVTHDAw==",
     voices: [
-      {
-        voiceid: "QSZenrsn46TMsOT7LPy8",
-        voice: "Namrata SBI (Indian)",
-        preview:
-          "https://storage.googleapis.com/eleven-public-prod/database/user/zdv7xUgDw3Q73NV5I2DPsC7worG2/voices/QSZenrsn46TMsOT7LPy8/c4abec81-392c-4022-ab7c-bd4d9a5b3ab1.mp3"
-      },
-      {
-        voiceid: "Eq2CuQCR5pJtnaGWMnEo",
-        voice: "Namrata SBI (Indian)",
-        preview: ""
-      },
+      // {
+      //   voiceid: "QSZenrsn46TMsOT7LPy8",
+      //   voice: "Namrata SBI (Indian)",
+      //   preview:
+      //     "https://storage.googleapis.com/eleven-public-prod/database/user/zdv7xUgDw3Q73NV5I2DPsC7worG2/voices/QSZenrsn46TMsOT7LPy8/c4abec81-392c-4022-ab7c-bd4d9a5b3ab1.mp3"
+      // },
+      // {
+      //   voiceid: "Eq2CuQCR5pJtnaGWMnEo",
+      //   voice: "Namrata SBI (Indian)",
+      //   preview: ""
+      // },
       {
         voiceid: "29vD33N1CtxCmqQRPOHJ",
         voice: "Drew (American)",
