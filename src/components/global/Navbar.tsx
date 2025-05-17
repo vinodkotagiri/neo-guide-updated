@@ -2,29 +2,36 @@
 import { setIsArticle, setVideoName } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
-import { IoIosMenu,IoMdCloudDone,IoMdCloudUpload } from "react-icons/io";
+import { IoIosMenu, IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
 import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { exportOrupdateJSON, exportOrupdateProject, exportVideo, trackExportProgress } from "../../api/axios";
-
-
+import { MdContentCopy, MdHistory, MdOutlineArticle } from "react-icons/md";
+import { IoChevronDown, IoClose } from "react-icons/io5";
+import { CiExport, CiLogout, CiUser } from "react-icons/ci";
+import { FaRegSave } from "react-icons/fa";
+import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
+import { BsFiletypeGif } from "react-icons/bs";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
 }
 
+
+
+
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url,subtitles,sourceLang,sourceLangName,targetLang,targetLangName,voice,voice_language,voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
-  const [loading,setLoading]=useState(false)
-  const [savingStatus,setSavingStatus]=useState(null)
-  const [uniqueId,setUniqueId]=useState('')
-  const [subtitleId,setSubtitleId]=useState('')
-  const [articleId,setArticleId]=useState('')
-  const [refId,setRefId]=useState('')
+  const [loading, setLoading] = useState(false)
+  const [savingStatus, setSavingStatus] = useState(null)
+  const [uniqueId, setUniqueId] = useState('')
+  const [subtitleId, setSubtitleId] = useState('')
+  const [articleId, setArticleId] = useState('')
+  const [refId, setRefId] = useState('')
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
@@ -34,19 +41,19 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       trackProgress(token);
     }
   }, [token]);
-
+  const [open, setOpen] = useState<string | null>("Docs");
   function handleExport() {
     setLoading(true)
     const payload = { video: url, videoWidth, videoHeight, rectangles, arrows, texts, spotLights, blurs, zooms }
     exportVideo(payload).then(token => {
-      if(token){
+      if (token) {
         setToken(token)
         toast.success('Exporting video, token:')
-      }else{
+      } else {
         setLoading(false)
         toast.error('Something went wrong while exporting video')
       }
-    }).catch(()=>setLoading(false))
+    }).catch(() => setLoading(false))
 
   }
 
@@ -94,7 +101,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     const video = url ? url.split('/').pop() : ''
     const subtitlePayload = subtitles.data
     const articlePayload = articleData
-    if(subtitlePayload?.length && articlePayload?.length){
+    if (subtitlePayload?.length && articlePayload?.length) {
       exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
         if (res.file_url) setSubtitleId(res.file_url.split('/').pop())
       }).catch(err => console.log(err))
@@ -120,18 +127,18 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }
     if (refId) payload['reference_id'] = refId
     setSavingStatus(true)
-    if(articleId&&subtitleId&&video&&payload.targetLang&& payload.targetLangName&&payload.sourceLang&&payload.sourceLangName&&payload.voiceid&&payload.voice&&payload.voice_language){
+    if (articleId && subtitleId && video && payload.targetLang && payload.targetLangName && payload.sourceLang && payload.sourceLangName && payload.voiceid && payload.voice && payload.voice_language) {
       exportOrupdateProject(payload).then(res => {
         setRefId(res.reference_id)
       }).catch(err => console.log(err)).finally(() => setSavingStatus(false))
     }
   }
 
-useEffect(()=>{
-  setInterval(() => {
-    saveVideo()
-  }, 10000);
-},[])
+  useEffect(() => {
+    setInterval(() => {
+      saveVideo()
+    }, 10000);
+  }, [])
 
   return (
     <div className="navbar ">
@@ -140,14 +147,14 @@ useEffect(()=>{
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
           {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
           }
-          {url&&<button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
-            {loading?
-            <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
-            :<><PiExportBold size={32} color="white" />Export</>}
+          {url && <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
+            {loading ?
+              <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
+              : <><PiExportBold size={32} color="white" />Export</>}
           </button>}
-          {url&&savingStatus==true&&<span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>} 
-          {url&&savingStatus==false&&<span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>}
-        </div>
+          {url && savingStatus == true && <span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>}
+          {url && savingStatus == false && <span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>}
+        </div >
 
         <div className="flex gap-4 items-center ">
           {from == 'editor' && <div className="w-full items-center justify-center flex gap-2">
@@ -164,48 +171,160 @@ useEffect(()=>{
                 Video</button>
             </div>
           </div>}
-          {!hideMenu &&
-            <div className="drawer drawer-end ml-8">
 
-              <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-              <div className="drawer-content">
-                <label htmlFor="my-drawer" className="text-[#a3a3a3] text-3xl cursor-pointer   m-0  p-0"> <IoIosMenu /></label>
-              </div>
-              <div className="drawer-side z-50">
-                <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-                <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-                  <li><a>Version History</a></li>
-                  <li><a>Sidebar Item 2</a></li>
-                </ul>
-              </div>
-            </div>
-          }
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
+
+          <div   >
+            <div className="w-10 "   >
+              <label htmlFor="my-drawer">
                 <img
                   alt="Tailwind CSS Navbar component"
                   src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  className="cursor-pointer rounded-full "
                 />
-              </div>
-
+              </label>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-              <li>
-                <a className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </a>
-              </li>
-              <li><a>Settings</a></li>
-              <li><a>Logout</a></li>
-            </ul>
+
+
+
           </div>
+          {!hideMenu &&
+            <div className="drawer drawer-end">
+              <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+
+              <div className="drawer-side z-50">
+
+                <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                <div className="min-h-full bg-[#16151a] menu  p-4 w-75">
+                  <h6 className="text-md text-white ">Welcome</h6>
+                  <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4">Suman Chepuri</h3>
+                  <aside className="text-white    mt-4">
+                    <ul className="space-y-2">
+                      <li>
+                        <a href="#" className="flex items-center gap-2 py-1">
+                          <CiUser />
+                          <span>Profile</span>
+                        </a>
+                      </li>
+                      <li>
+                        <div
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => setOpen(open === "Version History" ? null : "Version History")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <MdHistory />
+                            <span>Version History</span>
+                          </div>
+                          <IoChevronDown className={`${open === "Version History" ? 'rotate-180' : ''} transition-transform`} />
+                        </div>
+                        {open === "Version History" && (
+                          <ul className="m-0 p-0  text-sm     version_history  ">
+                            <li
+                              onClick={() => document.getElementById('my_modal_3')?.showModal()}>
+                              <MdHistory />
+                              <span>12:49 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:40 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                            <li  >
+                              <MdHistory />
+                              <span>12:30 PM on May 17, 2025</span>
+                            </li>
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <MdContentCopy />
+                          <span>Make a copy</span>
+                        </a>
+                      </li>
+                      {/* Docs */}
+                      <li>
+                        <div
+                          className="flex items-center justify-between cursor-pointer "
+                          onClick={() => setOpen(open === "Docs" ? null : "Docs")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <CiExport />
+                            <span>Export</span>
+                          </div>
+                          <IoChevronDown className={`${open === "Docs" ? 'rotate-180' : ''} transition-transform`} />
+                        </div>
+                        {open === "Docs" && (
+                          <ul className="ml-4 mt-1 space-y-1 text-sm text-gray-300">
+                            <li><RiFileVideoLine />  Video </li>
+                            <li><MdOutlineArticle />  Article</li>
+                            <li><BsFiletypeGif /> Gif</li>
+
+                          </ul>
+                        )}
+                      </li>
+                      <li>
+                        <a href="#" >
+                          <FaRegSave />
+                          <span>Save</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <RiDeleteBin6Line />
+                          <span>Delete Project</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#"  >
+                          <CiLogout />
+                          <span>Logout</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </aside>
+
+                </div>
+              </div>
+            </div>
+          }
+          <dialog id="my_modal_3" className="modal change_modal">
+            <div className="modal-box p-[30px] bg-[#16151a]   rounded-2xl">
+              <form method="dialog">
+                {/* if there is a button in form, it will close the modal */}
+                <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                  <h4 className='text-xl font-semibold text-[#fff]  '>Are you sure Restore History</h4>
+                  <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+                </div>
+
+
+                <p className="py-4 text-white">12:49 PM on May 17, 2025</p>
+                <div className="flex gap-2 items-center justify-end">
+
+
+                  <button className=" cursor-pointer text-[#777] p-3 font-semibold text-[14px] rounded-md  " >Cancel</button>
+                  <button className="bg-[#422ad5] cursor-pointer text-[#fff] p-3 font-semibold text-[14px] rounded-md" >Restore Version</button>
+                </div>
+              </form>
+            </div>
+          </dialog>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
 

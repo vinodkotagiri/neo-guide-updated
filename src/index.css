@@ -304,7 +304,7 @@
   object-fit: cover;
 }
 
-.chhange_modal {
+.change_modal {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
 }
@@ -357,6 +357,64 @@
 .bg_vv {
   background-color: oklch(45% 0.24 277.023);
 }
-.bg_gr{
-  background:repeating-linear-gradient(-45deg, #111112, #111112 .8rem, rgba(0, 0, 0, .2) 10px, rgba(0, 0, 0, .2) 20px);
+
+.bg_gr {
+  background: repeating-linear-gradient(-45deg, #111112, #111112 .8rem, rgba(0, 0, 0, .2) 10px, rgba(0, 0, 0, .2) 20px);
+}
+
+.version_history {
+  margin-top: 10px;
+  height: 30vh;
+  overflow-y: auto;
+}
+
+.version_history li {
+  color: #a3a3a5;
+  border-bottom: 1px solid #303032;
+  cursor: pointer;
+  padding: 3px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.version_history li:hover {
+  background-color: oklch(45% 0.24 277.023);
+  color: #fff;
+  border-radius: 10px;
+}
+
+.version_history li span:hover {
+  background-color: unset !important;
+}
+
+.version_history li svg {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+
+.user_menu li {
+  margin-bottom: 10px;
+
+}
+
+.user_menu li a {
+  color: #a3a3a5;
+  font-size: 14px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: block;
+}
+
+.user_menu li a:hover {
+  background-color: oklch(45% 0.24 277.023);
+  color: #fff;
+  border-radius: 6px;
+}
+
+.user_menu li a label {
+  cursor: pointer;
+  display: block;
 }
