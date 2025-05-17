@@ -9,7 +9,8 @@ import toast from 'react-hot-toast';
 import { mergeAudio, mergeAudioProgress, textToSpeech } from '../../api/axios.ts';
 import { useAppSelector } from '../../redux/hooks.ts';
 import { generateRandomString, getSecondsFromTime } from '../../helpers/index.ts';
-import { setVideoUrl } from '../../redux/features/videoSlice.ts';
+import { setTargetLanguage, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage } from '../../redux/features/videoSlice.ts';
+import { useDispatch } from 'react-redux';
 function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl }) {
   const [selectedLanguage, setSelectedLanguage] = useState()
   const [languageList, setLanguageList] = useState()
@@ -23,6 +24,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
   const [mergeToken, setMergeToken] = useState('')
   const [loading, setLoading] = useState(false)
   const [showReplace, setShowReplace] = useState(false)
+  const dispatch=useDispatch()
   useEffect(() => {
     setLanguageList(elvenLanguages)
     setSelectedLanguage(elvenLanguages[0].language_id)
@@ -38,9 +40,19 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
       setSelectedVoice(voiceList[0].voiceid)
       setSelectedVoiceID(voiceList[0].voiceid)
       setAudioUrl(voiceList[0].preview)
+      dispatch(setTargetLanguage({targetLang:selectedLanguage.substr(0,2),targetLangName:selectedLanguage}))
     }
   }, [selectedLanguage])
 console.log('selectedVoiceID',selectedVoiceID)
+
+useEffect(()=>{
+  if (selectedVoiceID){
+    const voice = voiceList?.find(voice => voice.voiceid == selectedVoiceID)
+    dispatch(setVoice(voice.voice))
+    dispatch(setVoiceId(selectedVoiceID))
+    dispatch(setVoiceLanguage(voice.language_id))
+  }
+},[selectedVoiceID])
   function handleLanguageChange(e) {
     setSelectedLanguage(e.target.value)
   }

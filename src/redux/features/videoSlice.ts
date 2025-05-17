@@ -2,7 +2,7 @@
 import { TimelineRow } from "@xzdarcy/react-timeline-editor";
 import { createSlice } from "@reduxjs/toolkit";
 
-// const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
+const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
 
 
 interface SubtitlesState {
@@ -34,6 +34,13 @@ interface VideoState {
   tracks: TimelineRow[];
   addingElements: boolean;
   locked: boolean;
+  sourceLang: string;
+  sourceLangName: string;
+  targetLang: string;
+  targetLangName: string;
+  voice_language: string;
+  voice: string;
+  voiceid: string;
 }
 
 const initialSubtitleState: SubtitlesState = {
@@ -46,7 +53,14 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url: "",
+  url: url_test,
+  sourceLang: 'en',
+  sourceLangName: "English",
+  targetLang: '',
+  targetLangName: '',
+  voice_language: '',
+  voice: '',
+  voiceid: '',
   videoName: "",
   videoWidth: 0,
   videoHeight: 0,
@@ -166,12 +180,26 @@ const videoSlice = createSlice({
     init: (state) => {
       // initVideo();
       state.locked = false; 
+    },
+    setTargetLanguage(state, action) {
+      state.targetLang = action.payload.targetLang;
+      state.targetLangName = action.payload.targetLangName;
+    },
+    setVoice(state, action) {
+      state.voice = action.payload;
+    },
+    setVoiceLanguage(state, action) {
+      state.voice_language = action.payload;
+    },
+    setVoiceId(state, action) {
+      state.voiceid = action.payload;
     }
   }
 });
 
 export default videoSlice.reducer;
 export const {
+  setTargetLanguage,setVoice,setVoiceLanguage,setVoiceId,
   setPlayerVideoDimensions,
   handleReplaceSubtitleText,
   setPixelFactor,
