@@ -350,8 +350,33 @@ export function exportOrupdateJSON(payload:{json:Array<unknown>,action:"insert"|
   })
 
 }
-export function exportOrupdateProject(){
-  
+
+export function exportOrupdateProject(payload){
+  return new Promise(resolve=>{
+    const url='https://contentinova.com/neoguideinsertdata'
+    axios.post(url,payload).then(res=>{
+      if(res.data.reference_id){
+        resolve(res.data)
+      }else{
+        resolve(false)
+      }
+    }).catch(err=>{
+      console.log("error in export or update json",err)
+      resolve(false)
+    })
+  })
+}
+
+export function getProjectData(reference_id:{reference_id:string}){
+  return new Promise(resolve=>{
+    const url='https://contentinova.com/neoguidegetdata'
+    axios.post(url,{reference_id}).then(res=>{
+     return res.data
+    }).catch(err=>{
+      console.log("error in export or update json",err)
+      resolve(false)
+    })
+  })
 }
 
 export default api;

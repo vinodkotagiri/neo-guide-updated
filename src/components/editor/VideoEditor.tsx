@@ -1,21 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Player from "./Player"
 import TimelineArea from "./TimelineArea";
 // import SubtitlesOverlay from "./SubtitlesOverlay";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
-import { setMuted, setPixelFactor, setVideoPlaying } from "../../redux/features/videoSlice";
+import { setMuted, setPixelFactor, setVideoName, setVideoPlaying, setVideoUrl } from "../../redux/features/videoSlice";
 import { formatTime } from "../../helpers";
 import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import { getProjectData } from "../../api/axios";
 
 const VideoEditor = ({ playerRef }) => {
 
   const { playing, duration, muted, pixelFactor } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-
-
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  
   const enterFullscreen = () => {
     if (playerRef.current) {
       const iframe = playerRef.current.getInternalPlayer();
@@ -25,9 +28,31 @@ const VideoEditor = ({ playerRef }) => {
     }
   };
   const { addingElements } = useAppSelector(state => state.video)
-  useEffect(() => {
-    // Setup for any initialization or cleanup
-  }, []);
+  // useEffect(() => {
+  //   const reference_id=searchParams.get('reference_id')
+  //   if(reference_id){
+  //      getProjectData(reference_id).then(res=>{
+  //       if(res){
+  //         dispatch(setVideoName(res.projectname))
+  //         dispatch(setVideoUrl(res.video))
+          
+  //       //   {"projectname":"Demo name",
+  //       //     "tstamp":"1234567890",
+  //       //     "video":"video.mp4",
+  //       //     "sourceLang":"en",
+  //       //     "sourceLangName":"English",
+  //       //     "targetLang":"hi",
+  //       //     "targetLangName":"Hindi",
+  //       //     "voice_language":"hi",
+  //       //     "voice":"Nipunn - Deep Hindi voice (Standard)",
+  //       //     "voiceid":"BmblbsReuLUooZ4LL0Rq",
+  //       //     "subtitle":"subtitle.srt",
+  //       //     "article":"article.json"}
+  //       }
+  //      })
+  //   }
+
+  // }, []);
 
   function handleZoomTimeline(operation) {
     if (operation == 'increase') {

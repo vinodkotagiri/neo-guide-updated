@@ -2,11 +2,11 @@
 import { setIsArticle, setVideoName } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
-import { IoIosMenu } from "react-icons/io";
+import { IoIosMenu,IoMdCloudDone,IoMdCloudUpload } from "react-icons/io";
 import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { exportVideo, trackExportProgress } from "../../api/axios";
+import { exportOrupdateJSON, exportOrupdateProject, exportVideo, trackExportProgress } from "../../api/axios";
 
 
 interface NavbarProps {
@@ -15,11 +15,16 @@ interface NavbarProps {
 }
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url,subtitles,sourceLang,sourceLangName,targetLang,targetLangName,voice,voice_language,voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
   const [loading,setLoading]=useState(false)
+  const [savingStatus,setSavingStatus]=useState(null)
+  const [uniqueId,setUniqueId]=useState('')
+  const [subtitleId,setSubtitleId]=useState('')
+  const [articleId,setArticleId]=useState('')
+  const [refId,setRefId]=useState('')
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
@@ -81,6 +86,53 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       })
       .catch(error => console.error("Error downloading videoURL:", error));
   };
+
+  const saveVideo = async () => {
+    if (!uniqueId) {
+      setUniqueId(Date.now().toString())
+    }
+    const video = url ? url.split('/').pop() : ''
+    const subtitlePayload = subtitles.data
+    const articlePayload = articleData
+    if(subtitlePayload?.length && articlePayload?.length){
+      exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
+        if (res.file_url) setSubtitleId(res.file_url.split('/').pop())
+      }).catch(err => console.log(err))
+      exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
+        if (res.file_url) setArticleId(res.file_url.split('/').pop())
+      }).catch(err => console.log(err))
+    }
+
+    const payload = {
+      unique_id: uniqueId,
+      projectname: videoName,
+      tstamp: Date.now().toString(),
+      video: video,
+      subtitle: subtitleId,
+      article: articleId,
+      sourceLang,
+      sourceLangName,
+      targetLang,
+      targetLangName,
+      voice,
+      voice_language,
+      voiceid
+    }
+    if (refId) payload['reference_id'] = refId
+    setSavingStatus(true)
+    if(articleId&&subtitleId&&video&&payload.targetLang&& payload.targetLangName&&payload.sourceLang&&payload.sourceLangName&&payload.voiceid&&payload.voice&&payload.voice_language){
+      exportOrupdateProject(payload).then(res => {
+        setRefId(res.reference_id)
+      }).catch(err => console.log(err)).finally(() => setSavingStatus(false))
+    }
+  }
+
+useEffect(()=>{
+  setInterval(() => {
+    saveVideo()
+  }, 10000);
+},[])
+
   return (
     <div className="navbar ">
       <div className="navbar-inside">
@@ -88,11 +140,13 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
           {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
           }
-          <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
+          {url&&<button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
             {loading?
             <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
             :<><PiExportBold size={32} color="white" />Export</>}
-          </button>
+          </button>}
+          {url&&savingStatus==true&&<span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>} 
+          {url&&savingStatus==false&&<span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>}
         </div>
 
         <div className="flex gap-4 items-center ">
