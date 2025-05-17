@@ -33,7 +33,7 @@ const App = () => {
   //   }
   // }, [])
   useEffect(() => {
-    dispatch(init());
+    // dispatch(init());
   }, [dispatch]);
 
   return (

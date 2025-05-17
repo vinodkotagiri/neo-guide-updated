@@ -92,7 +92,7 @@ const videoSlice = createSlice({
       state.locked = action.payload;
     },
     setCurrentPlayTime: (state, action) => {
-      initVideo()
+      // initVideo()
       state.currentPlayTime = action.payload;
     },
     setAddingElements: (state, action) => {
@@ -164,7 +164,7 @@ const videoSlice = createSlice({
       }
     },
     init: (state) => {
-      initVideo();
+      // initVideo();
       state.locked = false; 
     }
   }
