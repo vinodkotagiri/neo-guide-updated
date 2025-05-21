@@ -307,8 +307,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
                 <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
-                  <h4 className='text-xl font-semibold text-[#fff]  '>Are you sure Restore History</h4>
-                  <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+                  <h4 className='text-xl font-semibold text-[#ffffff]  '>Are you sure Restore History</h4>
+                  <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#ffffff]  text-xl"><IoClose /></button>
                 </div>
 
 
@@ -317,7 +317,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
 
                   <button className=" cursor-pointer text-[#777] p-3 font-semibold text-[14px] rounded-md  " >Cancel</button>
-                  <button className="bg-[#422ad5] cursor-pointer text-[#fff] p-3 font-semibold text-[14px] rounded-md" >Restore Version</button>
+                  <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] p-3 font-semibold text-[14px] rounded-md" >Restore Version</button>
                 </div>
               </form>
             </div>

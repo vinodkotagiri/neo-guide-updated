@@ -161,7 +161,7 @@ function ElementsOverlay() {
               x={rect.x}
               y={rect.y}
               fill={'transparent'}
-              // stroke={"#000"}
+              // stroke={"#000000"}
               width={rect.width}
               height={rect.height}
               draggable
@@ -334,7 +334,7 @@ function ElementsOverlay() {
               y={zoom.roi.y}
               width={zoom.roi.width}
               height={zoom.roi.height}
-              stroke={'#000'}
+              stroke={'#000000'}
               strokeWidth={2}
               dash={[4, 3]}
               draggable

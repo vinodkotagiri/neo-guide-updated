@@ -282,7 +282,7 @@ function SubtitleAreaComponent({ playerRef }) {
               transition={{ duration: 0.3 }}
               style={
                 currentIdx === index && isActiveStyle(item.start_time, item.end_time)
-                  ? { color: '#fff', backgroundColor: '#422AD5' }
+                  ? { color: '#ffffff', backgroundColor: '#422AD5' }
                   : {}
               }
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}

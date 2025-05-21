@@ -10,7 +10,7 @@ const SpotlightOptions = ({ playerRef }) => {
   const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
-  const [strokeColor, setStrokeColor] = useState('#fff')
+  const [strokeColor, setStrokeColor] = useState('#ffffff')
   const [strokeWidth, setStrokeWidth] = useState(1)
   const [cornerRadius, setCornerRadius] = useState([1, 1, 1, 1])
   const [startTime, setStartTime] = useState(0)
@@ -63,7 +63,7 @@ const SpotlightOptions = ({ playerRef }) => {
       y: 0,
       width: 100,
       height: 100,
-      glowColor: '#fff',
+      glowColor: '#ffffff',
       glowRadius: 50,
       cornerRadius: [50, 50, 50, 50],
       startTime: startTime,
@@ -100,7 +100,7 @@ const SpotlightOptions = ({ playerRef }) => {
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative'>
 
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#fff] text-[14px]'>
+        <div className='flex   text-[#ffffff] text-[14px]'>
           Spot Light
         </div>
         <button onClick={handleAddNewRectangle} className=' text-[#d9d9d9] cursor-pointer  text-[14px]'>

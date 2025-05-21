@@ -49,8 +49,8 @@ function FindAndReplaceComponent({ setShowReplace,subtitle }: { setShowReplace: 
       </div>
       <input className="mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op" placeholder='Replace' onChange={(e) => dispatch(setReplaceText(e.target.value))} />
       <div className="flex justify-between gap-2">
-        <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow" onClick={handleReplace}>Replace All</button>
-        <button className="bg-[#212025] cursor-pointer text-[#fff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow "  >Cancel</button>
+        <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow" onClick={handleReplace}>Replace All</button>
+        <button className="bg-[#212025] cursor-pointer text-[#ffffff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow "  >Cancel</button>
       </div>
     </div>
   )

@@ -9,7 +9,7 @@ const ArrowOptions = ({ playerRef }) => {
   const { currentElementId, arrows, currentElement } = useAppSelector(state => state.elements)
   const { currentPlayTime } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-  const [stroke, setStroke] = useState('#000');
+  const [stroke, setStroke] = useState('#000000');
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [pointerLength, setpointerLength] = useState(20);
   const [pointerWidth, setPointerWidth] = useState(20);
@@ -77,7 +77,7 @@ const ArrowOptions = ({ playerRef }) => {
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative'>
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#fff] text-[14px]'>
+        <div className='flex   text-[#ffffff] text-[14px]'>
 
           Arrow
         </div>

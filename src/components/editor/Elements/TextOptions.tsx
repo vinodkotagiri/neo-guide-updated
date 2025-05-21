@@ -94,7 +94,7 @@ const TextOptions = ({ playerRef }) => {
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative'>
 
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#fff] text-[14px]'>
+        <div className='flex   text-[#ffffff] text-[14px]'>
 
           Text
         </div>
@@ -119,16 +119,16 @@ const TextOptions = ({ playerRef }) => {
             <div className='w-10 h-10 flex items-center justify-center border-[1px] border-[#303032] cursor-pointer relative' onClick={() => setOpenTextDD(!openTextDD)}>
               <CiTextAlignJustify size={18} className='text-[#a3a3a5]' />
               {openTextDD && <><div className='  flex items-center justify-center border-[1px] border-[#303032] cursor-pointer absolute -bottom-11 left-0 bg-[#212025] gap-0  py-0'>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000] rounded-md' onClick={() => setJustify('left')}>
+                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('left')}>
                   <MdOutlineFormatAlignLeft size={20} className='text-[#a3a3a5]' />
                 </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000] rounded-md' onClick={() => setJustify('right')}>
+                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('right')}>
                   <MdOutlineFormatAlignRight size={20} className='text-[#a3a3a5]' />
                 </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000] rounded-md' onClick={() => setJustify('center')}>
+                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('center')}>
                   <MdOutlineFormatAlignCenter size={20} className='text-[#a3a3a5]' />
                 </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000] rounded-md' onClick={() => setJustify('justify')}>
+                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('justify')}>
                   <MdOutlineFormatAlignJustify size={20} className='text-[#a3a3a5]' />
                 </button>
               </div>

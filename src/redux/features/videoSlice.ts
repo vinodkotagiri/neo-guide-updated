@@ -45,8 +45,8 @@ interface VideoState {
 
 const initialSubtitleState: SubtitlesState = {
   data: [],
-  color: "#fff",
-  background: "#000",
+  color: "#ffffff",
+  background: "#000000",
   font: "Open Sans",
   fontSize: 12,
   textJustify: "center"

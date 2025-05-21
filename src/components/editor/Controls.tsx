@@ -42,7 +42,7 @@ const Controls = ({ playerRef }) => {
               style={{
                 width: `${secondsWidth}px`,
                 height: '100%',
-                // borderLeft: index % 30 === 0 ? '2px solid gray' : '0px solid #000',
+                // borderLeft: index % 30 === 0 ? '2px solid gray' : '0px solid #000000',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

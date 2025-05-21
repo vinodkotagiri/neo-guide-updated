@@ -69,13 +69,13 @@
 }
 
 .nav-custom-btn p {
-  color: #fff;
+  color: #ffffff;
   font-weight: 500;
   font-size: 16px;
 }
 
 .nav-custom-btn button {
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -95,7 +95,7 @@
 
 .ai-menu-btn {
   background-color: #463453;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   padding: 8px 10px;
@@ -144,7 +144,7 @@
   border-radius: 36px;
   background: #02bc7d;
   cursor: pointer;
-  color: #000;
+  color: #000000;
 }
 
 .toggler label::after {
@@ -244,7 +244,7 @@
   overflow: hidden !important;
   border-radius: 16px !important;
   padding: 32px !important;
-  background-color: #fff !important;
+  background-color: #ffffff !important;
   font-size: 20px !important;
   line-height: 28px !important;
 }
@@ -273,7 +273,7 @@
 }
 
 .change_voice .generate_button {
-  color: #fff;
+  color: #ffffff;
   font-weight: 400;
   cursor: pointer;
   font-size: 12px;
@@ -346,11 +346,11 @@
 }
 
 .img_op:hover .img_del svg:hover {
-  color: #fff;
+  color: #ffffff;
 }
 
 .loader_spin span {
-  background-color: #fff !important;
+  background-color: #ffffff !important;
 
 }
 
@@ -381,7 +381,7 @@
 
 .version_history li:hover {
   background-color: oklch(45% 0.24 277.023);
-  color: #fff;
+  color: #ffffff;
   border-radius: 10px;
 }
 
@@ -410,7 +410,7 @@
 
 .user_menu li a:hover {
   background-color: oklch(45% 0.24 277.023);
-  color: #fff;
+  color: #ffffff;
   border-radius: 6px;
 }
 

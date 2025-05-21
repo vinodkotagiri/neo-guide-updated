@@ -79,7 +79,7 @@ const ZoomOptions = ({ playerRef }) => {
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative '>
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#fff] text-[14px]'>
+        <div className='flex   text-[#ffffff] text-[14px]'>
           Zoom
         </div>
         <div className='flex items-center gap-4' >

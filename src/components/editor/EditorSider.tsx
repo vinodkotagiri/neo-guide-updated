@@ -28,7 +28,7 @@ const EditorSider = ({ playerRef }) => {
         y: 100,
         width: 100,
         height: 100,
-        strokeColor: '#000',
+        strokeColor: '#000000',
         strokeWidth: 4,
         cornerRadius: [1, 1, 1, 1],
         fillColor: 'transparent',

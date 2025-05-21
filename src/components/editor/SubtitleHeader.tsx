@@ -194,8 +194,8 @@ useEffect(()=>{
 
             <form method="dialog" className='flex w-full flex-col gap-2 '>
               <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
-                <h4 className='text-xl font-semibold text-[#fff]  '>Change Voice</h4>
-                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#fff]  text-xl"><IoClose /></button>
+                <h4 className='text-xl font-semibold text-[#ffffff]  '>Change Voice</h4>
+                <button className="  cursor-pointer  w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#ffffff]  text-xl"><IoClose /></button>
               </div>
               <div className='  flex   mt-5 gap-3 items-center justify-between'>
                 <div className='flex  w-1/2  flex-col  '>
@@ -229,7 +229,7 @@ useEffect(()=>{
                   )}
                 </div>
               </div>
-              <button className="bg-[#422ad5] cursor-pointer text-[#fff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleSelectVoice}>Select Voice</button>
+              <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] py-3 font-semibold text-[14px] rounded-md  border-[#303032]  border mt-5" onClick={handleSelectVoice}>Select Voice</button>
 
             </form>
           </div>

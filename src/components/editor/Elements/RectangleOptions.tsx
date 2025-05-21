@@ -12,7 +12,7 @@ const RectangleOptions = ({ playerRef }) => {
   const dispatch = useAppDispatch()
   const strokeColorRef = useRef<HTMLInputElement>(null)
   const fillColorRef = useRef<HTMLInputElement>(null)
-  const [strokeColor, setStrokeColor] = useState('#000')
+  const [strokeColor, setStrokeColor] = useState('#000000')
   const [strokeWidth, setStrokeWidth] = useState(1)
   const [cornerRadius, setCornerRadius] = useState([1, 1, 1, 1])
   const [fillColor, setFillColor] = useState('')
@@ -39,7 +39,7 @@ const RectangleOptions = ({ playerRef }) => {
       y: 100,
       width: 100,
       height: 100,
-      strokeColor: '#000',
+      strokeColor: '#000000',
       strokeWidth: 3,
       cornerRadius: [1, 1, 1, 1],
       fillColor: 'transparent',
@@ -87,7 +87,7 @@ const RectangleOptions = ({ playerRef }) => {
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative '>
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#fff] text-[14px]'>
+        <div className='flex   text-[#ffffff] text-[14px]'>
           Rectangle
         </div>
         <div className='flex items-center gap-4' >
