@@ -16,6 +16,7 @@ interface SubtitlesState {
 
 interface VideoState {
   url: string;
+  user_id?: string;
   videoWidth: number;
   videoHeight: number;
   videoName: string;
@@ -54,6 +55,7 @@ const initialSubtitleState: SubtitlesState = {
 
 const initialState: VideoState = {
   url: url_test,
+  user_id: undefined,
   sourceLang: 'en',
   sourceLangName: "English",
   targetLang: '',
@@ -95,6 +97,9 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setUserId: (state, action) => {
+      state.user_id = action.payload;
+    },
     setMuted: (state, action) => {
       state.muted = action.payload;
     },
@@ -201,6 +206,7 @@ export default videoSlice.reducer;
 export const {
   setTargetLanguage,setVoice,setVoiceLanguage,setVoiceId,
   setPlayerVideoDimensions,
+  setUserId,
   handleReplaceSubtitleText,
   setPixelFactor,
   setVideoName,

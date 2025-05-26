@@ -22,7 +22,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url,user_id, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -112,6 +112,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
     const payload = {
       unique_id: uniqueId,
+      user_id:user_id,
       projectname: videoName,
       tstamp: Date.now().toString(),
       video: video,

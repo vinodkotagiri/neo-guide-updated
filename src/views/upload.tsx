@@ -1,22 +1,32 @@
+//@ts-nocheck
 'use client'
 import React, { useEffect } from 'react'
 import { uploadFile } from '../api/axios';
 import { UploadVideoResponse } from '../api/responses/responses';
-import { useAppDispatch } from '../redux/hooks';
-import { useNavigate } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { setLoader } from '../redux/features/loaderSlice'
-import { setVideoUrl, updateSubtitleData } from '../redux/features/videoSlice';
+import { setUserId, setVideoUrl, updateSubtitleData } from '../redux/features/videoSlice';
 import toast from 'react-hot-toast';
 import { setArticleData } from '../redux/features/articleSlice';
 import { IoCloudUploadOutline } from 'react-icons/io5';
 import { MdOutlineClose } from 'react-icons/md';
 import Navbar from '../components/global/Navbar';
 import { formatBytes } from '../helpers';
-import { BsFillRecordCircleFill } from 'react-icons/bs';
 function UploadView() {
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const {user_id}=useAppSelector(state => state.video)
+  useEffect(()=>{
+    const {user_id}=searchParams.get('user_id') ?? null;
+    if(!user_id) toast.error('User ID is required to upload a video');
+    if(user_id){
+      dispatch(setUserId(user_id.toString()));
+    }
+
+  },[searchParams])
   async function handleUploadFile() {
     window.localStorage.clear();
     dispatch(setArticleData([]));
@@ -26,7 +36,7 @@ function UploadView() {
     const file = selectedFile
     dispatch(setLoader({ loading: true, status: 'please wait while we upload the file' }));
     if (file) {
-      const response: UploadVideoResponse | null = await uploadFile({ user_id: '1', file });
+      const response: UploadVideoResponse | null = await uploadFile({ user_id, file });
       if (response) {
         dispatch(setVideoUrl(response.file_url));
         navigate(`/editor`);
