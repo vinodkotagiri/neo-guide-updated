@@ -2,7 +2,7 @@
 import { setIsArticle, setVideoName } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
-import { IoIosMenu, IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
+import { IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
 import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
@@ -44,7 +44,21 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   const [open, setOpen] = useState<string | null>("Docs");
   function handleExport() {
     setLoading(true)
-    const payload = { video: url, videoWidth, videoHeight, rectangles, arrows, texts, spotLights, blurs, zooms }
+    
+    const payload = {
+       video: url, 
+      videoWidth, 
+      videoHeight, 
+      rectangles:rectangles.map(rect=>({
+        ...rect,
+        width:((rect.width/videoWidth)*100).toFixed(2),
+        height:((rect.height/videoHeight)*100).toFixed(2),
+        x:((rect.x/videoWidth)*100).toFixed(2),
+        y:((rect.y/videoHeight)*100).toFixed(2),
+        
+      })),
+       arrows, texts, spotLights, blurs, zooms }
+
     exportVideo(payload).then(token => {
       if (token) {
         setToken(token)

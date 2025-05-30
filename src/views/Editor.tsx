@@ -10,8 +10,8 @@ import toast from 'react-hot-toast'
 import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
 import { useDispatch } from 'react-redux'
 import { setArticleData } from '../redux/features/articleSlice'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { setLocked, setUserId } from '../redux/features/videoSlice'
+import { useNavigate } from 'react-router-dom'
+import { setLocked } from '../redux/features/videoSlice'
 
 const Editor = () => {
   const { isArticle, url } = useAppSelector(state => state.video)
@@ -27,15 +27,15 @@ const Editor = () => {
     }
   }, [url])
 
-  const [searchParams] = useSearchParams();
-  useEffect(()=>{
-    const user_id=searchParams.get('user_id') ?? null;
-    if(!user_id) toast.error('User ID is required to upload a video');
-    if(user_id){
-      dispatch(setUserId(user_id.toString()));
-    }
+  // const [searchParams] = useSearchParams();
+  // useEffect(()=>{
+  //   const user_id=searchParams.get('user_id') ?? null;
+  //   if(!user_id) toast.error('User ID is required to upload a video');
+  //   if(user_id){
+  //     dispatch(setUserId(user_id.toString()));
+  //   }
 
-  },[searchParams])
+  // },[searchParams])
 
   useEffect(() => {
     if (!articleData.length) {
