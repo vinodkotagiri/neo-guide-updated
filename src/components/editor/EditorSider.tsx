@@ -29,7 +29,7 @@ const EditorSider = ({ playerRef }) => {
         width: 100,
         height: 100,
         strokeColor: '#000000',
-        strokeWidth: 4,
+        strokeWidth: 1,
         cornerRadius: [1, 1, 1, 1],
         fillColor: 'transparent',
         startTime: currentPlayTime,

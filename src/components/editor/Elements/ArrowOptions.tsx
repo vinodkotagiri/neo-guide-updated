@@ -103,6 +103,9 @@ const ArrowOptions = ({ playerRef }) => {
             <input
               className='w-1/2  h-[3px]     outline-none      rounded-lg   cursor-pointer range-sm'
               type='range'
+              min={1}
+              max={10}
+              step={0.1}
               onChange={(e) => setStrokeWidth(e.target.valueAsNumber)}
               value={strokeWidth}
             />
@@ -113,8 +116,9 @@ const ArrowOptions = ({ playerRef }) => {
             <input
               className='w-1/2  h-[3px]     outline-none      rounded-lg   cursor-pointer range-sm'
               type='range'
-              min={1}
-              max={100}
+              min={10}
+              max={90}
+              step={0.01}
               onChange={(e) => setpointerLength(e.target.valueAsNumber)}
               value={pointerLength}
             />
@@ -125,8 +129,8 @@ const ArrowOptions = ({ playerRef }) => {
             <input
               className='w-1/2  h-[3px]     outline-none      rounded-lg   cursor-pointer range-sm'
               type='range'
-              min={1}
-              max={50}
+              min={20}
+              max={90}
               onChange={(e) => setPointerWidth(e.target.valueAsNumber)}
               value={pointerWidth}
             />

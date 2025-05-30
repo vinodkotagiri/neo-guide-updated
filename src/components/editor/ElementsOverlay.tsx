@@ -125,7 +125,7 @@ function ElementsOverlay() {
               stroke={rect.strokeColor}
               strokeWidth={rect.strokeWidth}
               cornerRadius={rect.cornerRadius}
-              dash={[4, 3]}
+              
               draggable
               visible={rect.startTime <= currentPlayTime && rect.endTime >= currentPlayTime}
               onClick={() => {
@@ -225,54 +225,59 @@ function ElementsOverlay() {
             />
           ))}
           {arrows.map((arrow) => (
-            <Arrow
-              key={arrow.id}
-              id={arrow.id}
-              x={100}
-              y={100}
-              points={arrow.points}
-              stroke={arrow.stroke}
-              strokeWidth={arrow.strokeWidth}
-              pointerLength={arrow.pointerLength}
-              pointerWidth={arrow.pointerWidth}
-              rotation={arrow.rotation}
-              fill={arrow.stroke}
-              draggable
-              visible={arrow.startTime <= played && arrow.endTime >= played}
-              onClick={() => {
-                setSelectedId(arrow.id)
-                dispatch(setCurrentElementId({ type: 'arrow', id: arrow.id }))
-              }}
-              onDragMove={(e) => {
-                const node = e.target;
-                const points = node.points();
-                dispatch(
-                  editArrow({
-                    id: arrow.id,
-                    points: [points[0] + e.evt.movementX, points[1] + e.evt.movementY, points[2] + e.evt.movementX, points[3] + e.evt.movementY],
-                  })
-                );
-              }}
-              onTransformEnd={(e) => {
-                const node = e.target;
-                const scaleX = node.scaleX();
-                const scaleY = node.scaleY();
-                const rotation = node.rotation();
-                const points = node.points().map((p, i) => (i % 2 === 0 ? p * scaleX : p * scaleY));
+  <Arrow
+    key={arrow.id}
+    id={arrow.id}
+    x={arrow.x}
+    y={arrow.y}
+    hitStrokeWidth={50}
+    points={arrow.points} // Points should be relative to (0, 0)
+    stroke={arrow.stroke}
+    strokeWidth={arrow.strokeWidth}
+    pointerLength={arrow.pointerLength}
+    pointerWidth={arrow.pointerWidth}
+    rotation={arrow.rotation}
+    fill={arrow.stroke}
+    draggable
+    visible={arrow.startTime <= played && arrow.endTime >= played}
+    onClick={() => {
+      setSelectedId(arrow.id);
+      dispatch(setCurrentElementId({ type: 'arrow', id: arrow.id }));
+    }}
+    onDragEnd={(e) => {
+      const { x, y } = e.target.position();
+      dispatch(
+        editArrow({
+          id: arrow.id,
+          x,
+          y,
+        })
+      );
+    }}
+    onTransformEnd={(e) => {
+      const node = e.target;
+      const scaleX = node.scaleX();
+      const scaleY = node.scaleY();
+      const rotation = node.rotation();
+      const scaledPoints = node.points().map((p, i) =>
+        i % 2 === 0 ? p * scaleX : p * scaleY
+      );
 
-                dispatch(
-                  editArrow({
-                    id: arrow.id,
-                    points,
-                    rotation
-                  })
-                );
+      // Reset scaling
+      node.scaleX(1);
+      node.scaleY(1);
 
-                node.scaleX(1);
-                node.scaleY(1);
-              }}
-            />
-          ))}
+      dispatch(
+        editArrow({
+          id: arrow.id,
+          points: scaledPoints,
+          rotation,
+        })
+      );
+    }}
+  />
+))}
+
           {spotLights.map((spotlight) => (
             <Group>
               {/* Dark Overlay */}

@@ -40,7 +40,7 @@ const RectangleOptions = ({ playerRef }) => {
       width: 100,
       height: 100,
       strokeColor: '#000000',
-      strokeWidth: 3,
+      strokeWidth: 1,
       cornerRadius: [1, 1, 1, 1],
       fillColor: 'transparent',
       startTime: startTime,
@@ -113,6 +113,9 @@ const RectangleOptions = ({ playerRef }) => {
             <input
               className='w-1/2  h-[3px]     outline-none      rounded-lg   cursor-pointer range-sm  '
               type='range'
+              min={1}
+              step={0.1}
+              max={10}
               onChange={(e) => setStrokeWidth(e.target.valueAsNumber)}
               value={strokeWidth}
             />
