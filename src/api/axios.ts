@@ -379,4 +379,17 @@ export function getProjectData(reference_id:{reference_id:string}){
   })
 }
 
+export function getVersions(){
+  return new Promise(resolve=>{
+  const url="https://contentinova.com/neoguidegetversion"
+    axios.post(url,encrypt({reference_id})).then(res=>{
+     return res.data
+    }).catch(err=>{
+      console.log("error in export or update json",err)
+      resolve(false)
+    })
+  })
+
+}
+
 export default api;

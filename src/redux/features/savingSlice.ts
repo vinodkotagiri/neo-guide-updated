@@ -3,31 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const savingSlice = createSlice({
   name: "saving",
   initialState: {
-    isSaving: false,
-    isSaved: false,
-    subtitle:'',
-    video:'',
-    article:'',
-    unique_id:'',
-    userid:'',
-    sourceLangName:'English',
-    targetLang:'',
-    targetLangName:'',
-    voice_language:'',
-    voice:'',
-    voiceid:'',
-    reference_id:'',
-    projectname:'',
+   versions: []
   },
   reducers: {
-    setIsSaving: (state, action) => {
-      state.isSaving = action.payload;
-    },
-    setIsSaved: (state, action) => {
-      state.isSaved = action.payload;
-    },
+   setVersions: (state, action) => {
+    state.versions = action.payload
+   }
   },
 })
 
-export const { setIsSaving, setIsSaved } = savingSlice.actions;
+export const {setVersions} = savingSlice.actions;
 export default savingSlice.reducer;

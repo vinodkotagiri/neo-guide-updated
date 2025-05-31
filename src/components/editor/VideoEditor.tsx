@@ -6,7 +6,7 @@ import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
 import { setMuted, setPixelFactor, setVideoName, setVideoPlaying, setVideoUrl } from "../../redux/features/videoSlice";
-import { formatTime } from "../../helpers";
+import { decrypt, formatTime } from "../../helpers";
 import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
@@ -62,7 +62,6 @@ const VideoEditor = ({ playerRef }) => {
       dispatch(setPixelFactor(pixelFactor - 1))
     }
   }
-
 
   return (
     <div className='w-full h-full flex flex-col gap-1 px-2 '>

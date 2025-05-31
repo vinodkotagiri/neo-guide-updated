@@ -27,3 +27,36 @@ export function generateRandomString(length: number=10): string {
   }
   return result;
 }
+
+
+import CryptoJS from "crypto-js";
+const KEY=import.meta.env.VITEVITE_ENC_KEY as string;
+const IV=import.meta.env.VITEVITE_ENC_IV as string;
+
+export const decrypt = function (val) {
+  try{
+
+    const decrypted = CryptoJS.AES.decrypt(val,
+       CryptoJS.enc.Utf8.parse(KEY), 
+    { mode: CryptoJS.mode.CBC,
+       iv : CryptoJS.enc.Utf8.parse(IV) }).toString(CryptoJS.enc.Latin1);
+    return decrypted;
+  }catch(err){
+    console.log('error decrypting', err);
+    return val
+  }
+}
+
+
+
+export const encrypt = val => {
+  try{
+    val= typeof val === 'string' ? val : JSON.stringify(val); 
+    const cryptobject = CryptoJS.AES.encrypt(val, CryptoJS.enc.Utf8.parse(KEY), 
+    { mode: CryptoJS.mode.CBC, iv : CryptoJS.enc.Utf8.parse(IV) });
+    return cryptobject+"";
+  }catch(error){
+    console.log('error encrypting', error);
+    return val
+  }
+};

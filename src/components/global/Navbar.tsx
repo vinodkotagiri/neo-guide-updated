@@ -44,7 +44,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   const [open, setOpen] = useState<string | null>("Docs");
   function handleExport() {
     setLoading(true)
-    
     const payload = {
        video: url, 
       videoWidth, 
