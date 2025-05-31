@@ -64,7 +64,7 @@ function ElementsOverlay() {
   const dispatch = useAppDispatch();
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const { rectangles, blurs, texts, arrows, spotLights, currentElementId,zooms } = useAppSelector((state) => state.elements);
-  const { played, currentPlayTime } = useAppSelector(state => state.video)
+  const { played, currentPlayTime,videoHeight,videoWidth } = useAppSelector(state => state.video)
 
   const checkDeselect = (e) => {
     if (e.target === stageRef.current) {
@@ -103,7 +103,8 @@ function ElementsOverlay() {
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played,zooms]);
 
 
-
+console.log('Stage::',stageSize)
+console.log('video:::',videoWidth,videoHeight)
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
@@ -111,7 +112,7 @@ function ElementsOverlay() {
         <BlurOverlay key={rect.id} rect={rect} played={played} />
       ))}
 
-      <Stage ref={stageRef} width={stageSize.width} height={stageSize.height} onMouseDown={checkDeselect}>
+      <Stage ref={stageRef} width={videoWidth} height={videoHeight} onMouseDown={checkDeselect} >
         <Layer>
           {rectangles.map((rect) => (
             <Rect

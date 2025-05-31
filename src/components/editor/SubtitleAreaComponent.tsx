@@ -181,11 +181,11 @@ function SubtitleAreaComponent({ playerRef }) {
       if (audio_url) {
         console.log(`Received audio URL for index ${index}: ${audio_url}`);
         // Test the audio URL
-        const testAudio = new Audio(audio_url);
-        testAudio.play().catch((err) => {
-          console.error(`Test audio failed for URL ${audio_url}:`, err);
-          toast.error('Invalid or inaccessible audio URL');
-        });
+        // const testAudio = new Audio(audio_url);
+        // testAudio.play().catch((err) => {
+        //   console.error(`Test audio failed for URL ${audio_url}:`, err);
+        //   toast.error('Invalid or inaccessible audio URL');
+        // });
 
         // Update audio URLs array
         setAudioUrls((prev) => {
@@ -303,7 +303,14 @@ function SubtitleAreaComponent({ playerRef }) {
                 {loading && activeAudioIndex === index ? (
                   <div className="loader" />
                 ) : activeAudioIndex === index && audioRefs.current[index] && !audioRefs.current[index].paused ? (
-                  <span className="loading loading-dots loading-xl"></span>
+                  <IoPauseOutline
+                  size={24}
+                  className="text-[#ccc] cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAudio(index, item);
+                  }}
+                />
                 ) : (
                   <IoPlayOutline
                     size={24}

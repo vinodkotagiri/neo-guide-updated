@@ -57,7 +57,30 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         y:((rect.y/videoHeight)*100).toFixed(2),
         
       })),
-       arrows, texts, spotLights, blurs, zooms }
+       arrows:arrows.map(arrow=>({
+         ...arrow,
+         strokeWidth:((arrow.strokeWidth/videoWidth)*100).toFixed(2),
+         pointerLength:((arrow.pointerLength/videoWidth)*100).toFixed(2),
+         pointerWidth:((arrow.pointerWidth/videoWidth)*100).toFixed(2),
+         x:((arrow.x/videoWidth)*100).toFixed(2),
+         y:((arrow.y/videoHeight)*100).toFixed(2),
+         points:arrow.points.map(point=>((point/videoWidth)*100).toFixed(2))
+       }))
+       , texts:texts.map(text=>({
+         ...text,
+         x:((text.x/videoWidth)*100).toFixed(2),
+         y:((text.y/videoHeight)*100).toFixed(2),
+       })), 
+       spotLights:spotLights.map(spot=>({
+         ...spot,
+         x:((spot.x/videoWidth)*100).toFixed(2),
+         y:((spot.y/videoHeight)*100).toFixed(2),
+         width:((spot.width/videoWidth)*100).toFixed(2),
+         height:((spot.height/videoHeight)*100).toFixed(2),
+       })), 
+       blurs:blurs.map(blur=>({...blur, blurRadius:((blur.blurRadius/videoWidth)*100).toFixed(2)})), 
+       zooms:zooms.map(zoom=>({...zoom, x:((zoom.x/videoWidth)*100).toFixed(2), y:((zoom.y/videoHeight)*100).toFixed(2)}))
+      }
 
     exportVideo(payload).then(token => {
       if (token) {
