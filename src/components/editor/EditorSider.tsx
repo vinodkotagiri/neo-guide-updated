@@ -98,7 +98,7 @@ const EditorSider = ({ playerRef }) => {
         y: 100,
         width: 100,
         height: 100,
-        glowColor: '#0ff',
+        glowColor: '#00ffff',
         glowRadius: 50,
         cornerRadius: [20, 20, 20, 20],
         startTime: currentPlayTime,
