@@ -90,7 +90,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         toast.error('Something went wrong while exporting video')
       }
     }).catch(() => setLoading(false))
-
   }
 
   async function trackProgress(request_id) {
@@ -184,11 +183,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
           {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
           }
-          {url && <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
+          {/* {url && <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
             {loading ?
               <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
               : <><PiExportBold size={32} color="white" />Export</>}
-          </button>}
+          </button>} */}
           {url && savingStatus == true && <span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>}
           {url && savingStatus == false && <span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>}
         </div >
@@ -307,7 +306,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         </div>
                         {open === "Docs" && (
                           <ul className="ml-4 mt-1 space-y-1 text-sm text-gray-300">
-                            <li><RiFileVideoLine />  Video </li>
+                            <li onClick={handleExport} className="cursor-pointer"><RiFileVideoLine />  Video </li>
                             <li><MdOutlineArticle />  Article</li>
                             <li><BsFiletypeGif /> Gif</li>
 
