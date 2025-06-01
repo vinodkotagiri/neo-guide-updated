@@ -74,12 +74,12 @@ const VideoEditor = ({ playerRef }) => {
           {addingElements ? <div className="w-full h-full absolute z-10">
             <ElementsOverlay />
           </div> : ''}
-          {/* <SubtitlesOverlay /> */}
+          <div className="w-full h-full object-fit-contain">
           <Player playerRef={playerRef} />
+          </div>
         </div>
         <div className="text-white flex justify-between w-[60%] mt-8">
           <div className="flex gap-3">
-
             <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
               <MdSkipPrevious size={24} />
             </div>
