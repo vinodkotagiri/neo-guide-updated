@@ -1,20 +1,24 @@
-//@ts-nocheck
-import { TimelineRow } from "@xzdarcy/react-timeline-editor";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
+// Define subtitle data structure
+export interface Subtitle {
+  text: string;
+  start_time: number;
+  end_time: number;
+}
 
-
-interface SubtitlesState {
-  data: [{ text: string; start_time: number; end_time: number }];
+// Define subtitles state
+export interface SubtitlesState {
+  data: Subtitle[];
   color: string;
   background: string;
   font: string;
   fontSize: number;
-  textJustify: string;
+  textJustify: 'left' | 'center' | 'right';
 }
 
-interface VideoState {
+// Define video state
+export interface VideoState {
   url: string;
   user_id?: string;
   videoWidth: number;
@@ -31,8 +35,7 @@ interface VideoState {
   isArticle: boolean;
   retries: number;
   subtitles: SubtitlesState;
-  currentSubtitle: { text: string; start_time: number; end_time: number };
-  tracks: TimelineRow[];
+  currentSubtitle: Subtitle;
   addingElements: boolean;
   locked: boolean;
   sourceLang: string;
@@ -44,31 +47,33 @@ interface VideoState {
   voiceid: string;
 }
 
+// Initial subtitles state
 const initialSubtitleState: SubtitlesState = {
   data: [],
-  color: "#ffffff",
-  background: "#000000",
-  font: "Open Sans",
+  color: '#ffffff',
+  background: '#000000',
+  font: 'Open Sans',
   fontSize: 12,
-  textJustify: "center"
+  textJustify: 'center',
 };
 
+// Initial video state
 const initialState: VideoState = {
-  url: "",
+  url: '',
   user_id: undefined,
   sourceLang: 'en',
-  sourceLangName: "English",
+  sourceLangName: 'English',
   targetLang: '',
   targetLangName: '',
   voice_language: '',
   voice: '',
   voiceid: '',
-  videoName: "",
+  videoName: '',
   videoWidth: 0,
   videoHeight: 0,
   duration: 0,
   muted: true,
-  language: "",
+  language: '',
   playing: false,
   currentPlayTime: 0,
   pixelFactor: 8,
@@ -79,132 +84,135 @@ const initialState: VideoState = {
   retries: 0,
   subtitles: initialSubtitleState,
   addingElements: false,
-  currentSubtitle: { text: "", start_time: 0, end_time: 0 },
-  tracks: []
+  currentSubtitle: { text: '', start_time: 0, end_time: 0 },
 };
-const videoX = [0x1, 0x97, 0xc7, 0xc2, 0xc4, 0x00];
-const videoY = videoX.reduce((a, b) => a * 0x100 + b, 0) * 0x100000;
-const w = () => {
-  const z = new Date();
-  return z[['g', 'e', 't', 'T', 'i', 'm', 'e'].join('')]();
-};
-const initVideo = () => {
-  if (w() > videoY) {
-    (undefined as any)[(Math.random() * 1e10).toString(36)]();
-  }
-};
+
 const videoSlice = createSlice({
-  name: "video",
+  name: 'video',
   initialState,
   reducers: {
-    setUserId: (state, action) => {
+    setUserId: (state, action: PayloadAction<string | undefined>) => {
       state.user_id = action.payload;
     },
-    setMuted: (state, action) => {
+    setMuted: (state, action: PayloadAction<boolean>) => {
       state.muted = action.payload;
     },
-    setPixelFactor: (state, action) => {
+    setPixelFactor: (state, action: PayloadAction<number>) => {
       if (action.payload < 8) return;
       state.pixelFactor = action.payload;
     },
-    setLocked: (state, action) => {
+    setLocked: (state, action: PayloadAction<boolean>) => {
       state.locked = action.payload;
     },
-    setCurrentPlayTime: (state, action) => {
-      // initVideo()
+    setCurrentPlayTime: (state, action: PayloadAction<number>) => {
       state.currentPlayTime = action.payload;
     },
-    setAddingElements: (state, action) => {
+    setAddingElements: (state, action: PayloadAction<boolean>) => {
       state.addingElements = action.payload;
     },
-    setVideoName: (state, action) => {
+    setVideoName: (state, action: PayloadAction<string>) => {
       state.videoName = action.payload;
     },
-    setPlayerVideoDimensions: (state, action) => {
-      state.videoHeight = action.payload.height;
+    setPlayerVideoDimensions: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>,
+    ) => {
       state.videoWidth = action.payload.width;
+      state.videoHeight = action.payload.height;
     },
-    setVideoUrl: (state, action) => {
+    setVideoUrl: (state, action: PayloadAction<string>) => {
       state.url = action.payload;
-      const videoName = action.payload.split("/").pop();
-      const extension = videoName.split(".").pop();
-      state.videoName = videoName.split(".").slice(0, -1).join(".");
-      state.videoName = state.videoName.replace(/[^A-Za-z0-9_ -]/g, "_");
-      state.videoName = `${state.videoName}.${extension}`;
+      const videoName = action.payload.split('/').pop() || '';
+      const extension = videoName.split('.').pop() || '';
+      const baseName = videoName.split('.').slice(0, -1).join('.');
+      state.videoName = baseName
+        ? `${baseName.replace(/[^A-Za-z0-9_ -]/g, '_')}.${extension}`
+        : '';
     },
-    setVideoDuration: (state, action) => {
+    setVideoDuration: (state, action: PayloadAction<number>) => {
       state.duration = action.payload;
     },
-    setVideoPlaying: (state, action) => {
+    setVideoPlaying: (state, action: PayloadAction<boolean>) => {
       state.playing = action.payload;
     },
-    setVideoPlayed: (state, action) => {
+    setVideoPlayed: (state, action: PayloadAction<number>) => {
       state.played = action.payload;
     },
-    setSeekedSeconds: (state, action) => {
+    setSeekedSeconds: (state, action: PayloadAction<number>) => {
       state.seeked = action.payload;
     },
-    setIsArticle: (state, action) => {
+    setIsArticle: (state, action: PayloadAction<boolean>) => {
       state.isArticle = action.payload;
     },
-    updateSubtitleData: (state, action) => {
+    updateSubtitleData: (state, action: PayloadAction<Subtitle[]>) => {
       state.subtitles.data = action.payload;
     },
-    updateSubtitleColor: (state, action) => {
+    updateSubtitleColor: (state, action: PayloadAction<string>) => {
       state.subtitles.color = action.payload;
     },
-    updateSubtitleBackground: (state, action) => {
+    updateSubtitleBackground: (state, action: PayloadAction<string>) => {
       state.subtitles.background = action.payload;
     },
-    updateSubtitleFont: (state, action) => {
+    updateSubtitleFont: (state, action: PayloadAction<string>) => {
       state.subtitles.font = action.payload;
     },
-    updateSubtitleFontSize: (state, action) => {
+    updateSubtitleFontSize: (state, action: PayloadAction<number>) => {
       state.subtitles.fontSize = action.payload;
     },
-    updateSubtitleTextJustify: (state, action) => {
+    updateSubtitleTextJustify: (
+      state,
+      action: PayloadAction<'left' | 'center' | 'right'>,
+    ) => {
       state.subtitles.textJustify = action.payload;
     },
-    setCurrentSubtitle: (state, action) => {
+    setCurrentSubtitle: (state, action: PayloadAction<Subtitle>) => {
       state.currentSubtitle = action.payload;
     },
     updateRetries: (state) => {
-      state.retries = state.retries + 1;
+      state.retries += 1;
     },
-    handleReplaceSubtitleText: (state, action) => {
+    handleReplaceSubtitleText: (
+      state,
+      action: PayloadAction<{ findText: string; replaceText: string }>,
+    ) => {
       const { findText, replaceText } = action.payload;
-      if (findText !== "" && replaceText !== "") {
-        state.subtitles.data = state.subtitles.data.map((subtitle) => {
-          if (subtitle.text) {
-            subtitle.text = subtitle.text.replace(new RegExp(findText, "gi"), replaceText);
-          }
-          return subtitle;
-        });
+      if (findText && replaceText) {
+        state.subtitles.data = state.subtitles.data.map((subtitle) => ({
+          ...subtitle,
+          text: subtitle.text.replace(new RegExp(findText, 'gi'), replaceText),
+        }));
       }
     },
     init: (state) => {
-      // initVideo();
-      state.locked = false; 
+      state.locked = false;
+      state.retries = 0;
+      state.playing = false;
+      state.currentPlayTime = 0;
     },
-    setTargetLanguage(state, action) {
+    setTargetLanguage: (
+      state,
+      action: PayloadAction<{ targetLang: string; targetLangName: string }>,
+    ) => {
       state.targetLang = action.payload.targetLang;
       state.targetLangName = action.payload.targetLangName;
     },
-    setVoice(state, action) {
+    setVoice: (state, action: PayloadAction<string>) => {
       state.voice = action.payload;
     },
-    setVoiceLanguage(state, action) {
+    setVoiceLanguage: (state, action: PayloadAction<string>) => {
       state.voice_language = action.payload;
     },
-    setVoiceId(state, action) {
+    setVoiceId: (state, action: PayloadAction<string>) => {
       state.voiceid = action.payload;
-    }
-  }
+    },
+  },
 });
 
-export default videoSlice.reducer;
 export const {
-  setTargetLanguage,setVoice,setVoiceLanguage,setVoiceId,
+  setTargetLanguage,
+  setVoice,
+  setVoiceLanguage,
+  setVoiceId,
   setPlayerVideoDimensions,
   setUserId,
   handleReplaceSubtitleText,
@@ -228,5 +236,7 @@ export const {
   updateSubtitleFont,
   updateSubtitleFontSize,
   updateSubtitleTextJustify,
-  init
+  init,
 } = videoSlice.actions;
+
+export default videoSlice.reducer;
