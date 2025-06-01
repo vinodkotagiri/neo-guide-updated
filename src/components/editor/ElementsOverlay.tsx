@@ -103,8 +103,6 @@ function ElementsOverlay() {
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played,zooms]);
 
 
-console.log('Stage::',stageSize)
-console.log('video:::',videoWidth,videoHeight)
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
@@ -112,7 +110,7 @@ console.log('video:::',videoWidth,videoHeight)
         <BlurOverlay key={rect.id} rect={rect} played={played} />
       ))}
 
-      <Stage ref={stageRef} width={videoWidth} height={videoHeight} onMouseDown={checkDeselect} >
+      <Stage ref={stageRef} width={stageSize.width} height={stageSize.height} onMouseDown={checkDeselect} >
         <Layer>
           {rectangles.map((rect) => (
             <Rect
@@ -245,6 +243,11 @@ console.log('video:::',videoWidth,videoHeight)
       setSelectedId(arrow.id);
       dispatch(setCurrentElementId({ type: 'arrow', id: arrow.id }));
     }}
+    onRotationEnd={(e) => {
+      const node = e.target;
+      const rotation = node.rotation();
+      dispatch(editArrow({ id: arrow.id, rotation }));
+    }}
     onDragEnd={(e) => {
       const { x, y } = e.target.position();
       dispatch(
@@ -367,7 +370,7 @@ console.log('video:::',videoWidth,videoHeight)
           ))}
 
           <Transformer ref={transformerRef} 
-          rotateEnabled={false}
+          rotateEnabled={true}
           flipEnabled={false}
           boundBoxFunc={(oldBox, newBox) => {
             if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
