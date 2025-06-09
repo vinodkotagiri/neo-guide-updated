@@ -78,7 +78,15 @@ function Navbar({ from, hideMenu }: NavbarProps) {
          height:((spot.height/videoHeight)*100).toFixed(2),
        })), 
        blurs:blurs.map(blur=>({...blur, blurRadius:((blur.blurRadius/videoWidth)*100).toFixed(2)})), 
-       zooms:zooms.map(zoom=>({...zoom, x:((zoom.x/videoWidth)*100).toFixed(2), y:((zoom.y/videoHeight)*100).toFixed(2)}))
+       zooms:zooms.map(zoom=>(
+        {...zoom, 
+          roi:{
+            x:((zoom.x/videoWidth)*100).toFixed(2), 
+            y:((zoom.y/videoHeight)*100).toFixed(2),
+            width:((zoom.width/videoWidth)*100).toFixed(2),
+            height:((zoom.height/videoHeight)*100).toFixed(2)
+          }
+        }))
       }
 
     exportVideo(payload).then(token => {
