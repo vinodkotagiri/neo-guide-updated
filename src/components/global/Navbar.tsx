@@ -81,10 +81,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
        zooms:zooms.map(zoom=>(
         {...zoom, 
           roi:{
-            x:((zoom.x/videoWidth)*100).toFixed(2), 
-            y:((zoom.y/videoHeight)*100).toFixed(2),
-            width:((zoom.width/videoWidth)*100).toFixed(2),
-            height:((zoom.height/videoHeight)*100).toFixed(2)
+            x:((zoom.roi.x/videoWidth)*100).toFixed(2), 
+            y:((zoom.roi.y/videoHeight)*100).toFixed(2),
+            width:((zoom.roi.width/videoWidth)*100).toFixed(2),
+            height:((zoom.roi.height/videoHeight)*100).toFixed(2)
           }
         }))
       }
