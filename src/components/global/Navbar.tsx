@@ -22,7 +22,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url,user_id, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -45,49 +45,58 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   function handleExport() {
     setLoading(true)
     const payload = {
-       video: url, 
-      videoWidth, 
-      videoHeight, 
-      rectangles:rectangles.map(rect=>({
+      video: url,
+      videoWidth,
+      videoHeight,
+      rectangles: rectangles.map(rect => ({
         ...rect,
-        width:((rect.width/videoWidth)*100).toFixed(2),
-        height:((rect.height/videoHeight)*100).toFixed(2),
-        x:((rect.x/videoWidth)*100).toFixed(2),
-        y:((rect.y/videoHeight)*100).toFixed(2),
-        
+        width: ((rect.width / videoWidth) * 100).toFixed(2),
+        height: ((rect.height / videoHeight) * 100).toFixed(2),
+        x: ((rect.x / videoWidth) * 100).toFixed(2),
+        y: ((rect.y / videoHeight) * 100).toFixed(2),
+
       })),
-       arrows:arrows.map(arrow=>({
-         ...arrow,
-         strokeWidth:((arrow.strokeWidth/videoWidth)*100).toFixed(2),
-         pointerLength:((arrow.pointerLength/videoWidth)*100).toFixed(2),
-         pointerWidth:((arrow.pointerWidth/videoWidth)*100).toFixed(2),
-         x:((arrow.x/videoWidth)*100).toFixed(2),
-         y:((arrow.y/videoHeight)*100).toFixed(2),
-         points:arrow.points.map(point=>((point/videoWidth)*100).toFixed(2))
-       }))
-       , texts:texts.map(text=>({
-         ...text,
-         x:((text.x/videoWidth)*100).toFixed(2),
-         y:((text.y/videoHeight)*100).toFixed(2),
-       })), 
-       spotLights:spotLights.map(spot=>({
-         ...spot,
-         x:((spot.x/videoWidth)*100).toFixed(2),
-         y:((spot.y/videoHeight)*100).toFixed(2),
-         width:((spot.width/videoWidth)*100).toFixed(2),
-         height:((spot.height/videoHeight)*100).toFixed(2),
-       })), 
-       blurs:blurs.map(blur=>({...blur, blurRadius:((blur.blurRadius/videoWidth)*100).toFixed(2)})), 
-       zooms:zooms.map(zoom=>(
-        {...zoom, 
-          roi:{
-            x:((zoom.roi.x/videoWidth)*100).toFixed(2), 
-            y:((zoom.roi.y/videoHeight)*100).toFixed(2),
-            width:((zoom.roi.width/videoWidth)*100).toFixed(2),
-            height:((zoom.roi.height/videoHeight)*100).toFixed(2)
+      arrows: arrows.map(arrow => ({
+        ...arrow,
+        strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+        pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+        pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+        x: ((arrow.x / videoWidth) * 100).toFixed(2),
+        y: ((arrow.y / videoHeight) * 100).toFixed(2),
+        points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+      }))
+      , texts: texts.map(text => ({
+        ...text,
+        x: ((text.x / videoWidth) * 100).toFixed(2),
+        y: ((text.y / videoHeight) * 100).toFixed(2),
+      })),
+      spotLights: spotLights.map(spot => ({
+        ...spot,
+        x: ((spot.x / videoWidth) * 100).toFixed(2),
+        y: ((spot.y / videoHeight) * 100).toFixed(2),
+        width: ((spot.width / videoWidth) * 100).toFixed(2),
+        height: ((spot.height / videoHeight) * 100).toFixed(2),
+      })),
+      blurs: blurs.map(blur => ({
+        ...blur,
+        x: ((blur.x / videoWidth) * 100).toFixed(2),
+        y: ((blur.y / videoHeight) * 100).toFixed(2),
+        width: ((blur.width / videoWidth) * 100).toFixed(2),
+        height: ((blur.height / videoHeight) * 100).toFixed(2),
+        blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+      }
+      )),
+      zooms: zooms.map(zoom => (
+        {
+          ...zoom,
+          roi: {
+            x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+            y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+            width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+            height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
           }
         }))
-      }
+    }
 
     exportVideo(payload).then(token => {
       if (token) {
@@ -155,7 +164,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
     const payload = {
       unique_id: uniqueId,
-      user_id:user_id,
+      user_id: user_id,
       projectname: videoName,
       tstamp: Date.now().toString(),
       video: video,
