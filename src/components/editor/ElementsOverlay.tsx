@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useRef, useState, useEffect } from 'react';
-import { Arrow, Layer, Rect, Group, Stage, Text, Transformer, Circle } from 'react-konva';
+import { Arrow, Layer, Rect, Group, Stage, Text, Transformer } from 'react-konva';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { editArrow, editBlur, editRectangle, editSpotLight, editText, editZoom, setCurrentElementId } from '../../redux/features/elementsSlice';
 import Konva from 'konva';
@@ -112,7 +112,7 @@ function ElementsOverlay() {
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
       {blurs.map((rect) => (
-        <BlurOverlay key={rect.id} rect={rect} played={played} />
+        <BlurOverlay key={rect.id} rect={rect} played={played} scalingX={scalingX} scalingY={scalingY}/>
       ))}
 
       <Stage ref={stageRef} width={stageSize.width} height={stageSize.height} onMouseDown={checkDeselect} >
@@ -162,12 +162,12 @@ function ElementsOverlay() {
               ref={blurRectRef}
               key={rect.id}
               id={rect.id}
-              x={rect.x }
-              y={rect.y }
+              x={rect.x*scalingX }
+              y={rect.y*scalingY }
               fill={'transparent'}
               // stroke={"#000000"}
-              width={rect.width }
-              height={rect.height }
+              width={rect.width*scalingX }
+              height={rect.height*scalingY }
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
               onClick={() => {
@@ -392,17 +392,17 @@ function ElementsOverlay() {
 
 export default ElementsOverlay;
 
-const BlurOverlay = ({ rect, played }) => {
+const BlurOverlay = ({ rect, played,scalingX,scalingY }) => {
   if (rect.startTime <= played && rect.endTime >= played) {
     return (
       <div
         className="blur-overlay"
         style={{
           position: "absolute",
-          top: rect.y,
-          left: rect.x,
-          width: rect.width,
-          height: rect.height,
+          top: rect.y*scalingY,
+          left: rect.x*scalingX,
+          width: rect.width*scalingX,
+          height: rect.height*scalingY,
           backdropFilter: "blur(10px)", // Apply blur effect
           pointerEvents: "none", // Allow interactions through the blur
         }}
