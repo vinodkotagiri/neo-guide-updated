@@ -54,7 +54,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         height: ((rect.height / videoHeight) * 100).toFixed(2),
         x: ((rect.x / videoWidth) * 100).toFixed(2),
         y: ((rect.y / videoHeight) * 100).toFixed(2),
-
+        cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
       })),
       arrows: arrows.map(arrow => ({
         ...arrow,
@@ -76,6 +76,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         y: ((spot.y / videoHeight) * 100).toFixed(2),
         width: ((spot.width / videoWidth) * 100).toFixed(2),
         height: ((spot.height / videoHeight) * 100).toFixed(2),
+        cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
       })),
       blurs: blurs.map(blur => ({
         ...blur,
