@@ -311,7 +311,7 @@ export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Pro
 
 export function exportVideo(payload){
  return new Promise(resolve=>{
-  const url='https://contentinova.effybiz.com/neoguideExport'
+  const url='https://contentinova.com/neoguideExport'
   axios.post(url,payload).then(res=>{
     if(res.data.status=="Success") {
       axios.post(url+'Start',{token:res.data.token})
@@ -326,7 +326,7 @@ export function exportVideo(payload){
 
 export function trackExportProgress(token){
   return new Promise(resolve=>{
-    const url='https://contentinova/neoguideExportProgress'
+    const url='https://contentinova.com/neoguideExportProgress'
     axios.post(url,{token}).then(res=>resolve(res.data)).catch(err=>{
       console.log("error fetching export progress",err)
       resolve(false)
