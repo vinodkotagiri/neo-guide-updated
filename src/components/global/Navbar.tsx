@@ -178,7 +178,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       voice,
       voice_language,
       voiceid,
-      data:const payload = {
+      data : {
         video: url,
         videoWidth,
         videoHeight,
