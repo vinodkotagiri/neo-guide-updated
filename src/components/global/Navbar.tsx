@@ -114,7 +114,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     if (request_id) {
       const interval = setInterval(() => {
         trackExportProgress(request_id).then((res) => {
-          if (res?.status?.toLowerCase() === 'completed') {
+          if (res?.status?.toLowerCase() === 'success') {
             clearInterval(interval);
             setLoading(false)
             const data = res?.video_url;
@@ -188,11 +188,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }
   }
 
-  useEffect(() => {
-    setInterval(() => {
-      saveVideo()
-    }, 10000);
-  }, [])
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     saveVideo()
+  //   }, 1000);
+  // }, [])
 
   return (
     <div className="navbar ">
@@ -206,8 +206,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
               <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
               : <><PiExportBold size={32} color="white" />Export</>}
           </button>} */}
-          {url && savingStatus == true && <span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>}
-          {url && savingStatus == false && <span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>}
+          {/* {url && savingStatus == true && <span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>}
+          {url && savingStatus == false && <span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>} */}
         </div >
 
         <div className="flex gap-4 items-center ">
@@ -331,8 +331,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           </ul>
                         )}
                       </li>
-                      <li>
-                        <a href="#" >
+                      <li onClick={saveVideo}>
+                        <a  >
                           <FaRegSave />
                           <span>Save</span>
                         </a>
