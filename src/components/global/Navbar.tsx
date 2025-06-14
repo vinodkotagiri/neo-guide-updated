@@ -1,18 +1,19 @@
 //@ts-nocheck
-import { setIsArticle, setVideoName } from "../../redux/features/videoSlice"
+import { setIsArticle, setReferenceId, setVideoName } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
 import { IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
 import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { exportOrupdateJSON, exportOrupdateProject, exportVideo, trackExportProgress } from "../../api/axios";
+import { exportOrupdateJSON, exportOrupdateProject, exportVideo, getVersions, trackExportProgress } from "../../api/axios";
 import { MdContentCopy, MdHistory, MdOutlineArticle } from "react-icons/md";
 import { IoChevronDown, IoClose } from "react-icons/io5";
 import { CiExport, CiLogout, CiUser } from "react-icons/ci";
 import { FaRegSave } from "react-icons/fa";
 import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
 import { BsFiletypeGif } from "react-icons/bs";
+import { convertToIST } from "../../helpers";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -26,8 +27,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [savingStatus, setSavingStatus] = useState(null)
   const [uniqueId, setUniqueId] = useState('')
   const [subtitleId, setSubtitleId] = useState('')
   const [articleId, setArticleId] = useState('')
@@ -35,6 +34,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
+  const [versions,setVersions]=useState<{id:string|number, tstamp:string}>([])
   const { rectangles, arrows, texts, spotLights, blurs, zooms } = useAppSelector(state => state.elements)
   useEffect(() => {
     if (token) {
@@ -114,7 +114,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     if (request_id) {
       const interval = setInterval(() => {
         trackExportProgress(request_id).then(async(res) => {
-          if (res?.status?.toLowerCase() === 'success') {
+          if (res?.progress == 100) {
             clearInterval(interval);
             setLoading(false)
             const data = res?.video_url;
@@ -244,11 +244,21 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
   }
 
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     saveVideo()
-  //   }, 1000);
-  // }, [])
+  useEffect(()=>{
+    dispatch(setReferenceId(refId))
+    getVersions(refId).then((result) => {
+      if(result?.versions){
+        setVersions(result.versions)
+      }
+    }).catch((err) => {
+      console.log('err',err)
+      setVersions([])
+    });
+  },[refId])
+
+
+
+
 
   return (
     <div className="navbar ">
@@ -327,36 +337,13 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           <IoChevronDown className={`${open === "Version History" ? 'rotate-180' : ''} transition-transform`} />
                         </div>
                         {open === "Version History" && (
-                          <ul className="m-0 p-0  text-sm     version_history  ">
-                            <li
-                              onClick={() => document.getElementById('my_modal_3')?.showModal()}>
+                          <ul className="m-0 p-0  text-sm ">
+                            {versions?versions.map((version, index) => (  
+                            <li onClick={() => document.getElementById('my_modal_3')?.showModal()}>
                               <MdHistory />
-                              <span>12:49 PM on May 17, 2025</span>
+                              <span>Version {`${index+1} - ${convertToIST(version.tstamp)}`}</span>
                             </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:40 PM on May 17, 2025</span>
-                            </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:30 PM on May 17, 2025</span>
-                            </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:30 PM on May 17, 2025</span>
-                            </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:30 PM on May 17, 2025</span>
-                            </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:30 PM on May 17, 2025</span>
-                            </li>
-                            <li  >
-                              <MdHistory />
-                              <span>12:30 PM on May 17, 2025</span>
-                            </li>
+                            )):<li>No Saved Versions</li>}
                           </ul>
                         )}
                       </li>

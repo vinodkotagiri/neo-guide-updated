@@ -380,10 +380,10 @@ export function getProjectData(reference_id:{reference_id:string}){
   })
 }
 
-export function getVersions(){
+export function getVersions(reference_id:{reference_id:string}):[{id:string|number, tstamp:string}]|false{
   return new Promise(resolve=>{
-  const url="https://contentinova.com/neoguidegetversion"
-    axios.post(url,encrypt({reference_id})).then(res=>{
+  const url="https://contentinova.com/neoguideversions"
+    axios.post(url,reference_id).then(res=>{
      return res.data
     }).catch(err=>{
       console.log("error in export or update json",err)

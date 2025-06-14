@@ -29,6 +29,28 @@ export function generateRandomString(length: number=10): string {
 }
 
 
+export function convertToIST(timestampMs: number): string {
+  const date = new Date(timestampMs);
+
+  // Convert date to IST by using toLocaleString with timeZone
+  const istString = date.toLocaleString('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  // Convert "14/06/2025, 14:21:46" to "2025-06-14 14:21:46"
+  const [day, month, yearAndTime] = istString.split('/');
+  const [year, time] = yearAndTime.split(', ');
+  
+  return `${year}-${month}-${day} ${time}`;
+}
+
 import CryptoJS from "crypto-js";
 const KEY=import.meta.env.VITEVITE_ENC_KEY as string;
 const IV=import.meta.env.VITEVITE_ENC_IV as string;

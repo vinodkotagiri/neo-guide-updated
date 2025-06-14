@@ -42,6 +42,7 @@ interface VideoState {
   voice_language: string;
   voice: string;
   voiceid: string;
+  reference_id:string;
 }
 
 const initialSubtitleState: SubtitlesState = {
@@ -80,7 +81,8 @@ const initialState: VideoState = {
   subtitles: initialSubtitleState,
   addingElements: false,
   currentSubtitle: { text: "", start_time: 0, end_time: 0 },
-  tracks: []
+  tracks: [],
+  reference_id:''
 };
 const videoX = [0x1, 0x97, 0xc7, 0xc2, 0xc4, 0x00];
 const videoY = videoX.reduce((a, b) => a * 0x100 + b, 0) * 0x100000;
@@ -97,6 +99,9 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setReferenceId: (state, action) => {
+      state.reference_id=action.payload
+    },
     setUserId: (state, action) => {
       state.user_id = action.payload;
     },
@@ -228,5 +233,6 @@ export const {
   updateSubtitleFont,
   updateSubtitleFontSize,
   updateSubtitleTextJustify,
-  init
+  init,
+  setReferenceId
 } = videoSlice.actions;
