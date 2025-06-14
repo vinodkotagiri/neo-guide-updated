@@ -6,7 +6,7 @@ import { UploadVideoResponse } from '../api/responses/responses';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { setLoader } from '../redux/features/loaderSlice'
-import { setUserId, setVideoUrl, updateSubtitleData } from '../redux/features/videoSlice';
+import { setUserId, setVideoUrl, updateSubtitleData,setUserName } from '../redux/features/videoSlice';
 import toast from 'react-hot-toast';
 import { setArticleData } from '../redux/features/articleSlice';
 import { IoCloudUploadOutline } from 'react-icons/io5';
