@@ -16,7 +16,7 @@ function RecorderPage() {
   const [searchParams] = useSearchParams();
   useEffect(()=>{
     const user_id=searchParams.get('user_id') ?? null;
-    const user_name=searchParams.get('user_name') ?? null;
+    const user_name=searchParams.get('name') ?? null;
     if(!user_id) toast.error('User ID is required to upload a video');
     if(!user_name) toast.error('User Name is required to upload a video');
     if(user_id){
