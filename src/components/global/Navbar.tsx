@@ -156,10 +156,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     const articlePayload = articleData
     if (subtitlePayload?.length && articlePayload?.length) {
       exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
-        if (res.filename) setSubtitleId(filename)
+        if (res.filename) setSubtitleId(res.filename)
       }).catch(err => console.log(err))
       exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
-        if (res.filename) setArticleId(filename)
+        if (res.filename) setArticleId(res.filename)
       }).catch(err => console.log(err))
     }
 
