@@ -24,7 +24,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id,user_name, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -310,7 +310,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                 <div className="min-h-full bg-[#16151a] menu  p-4 w-75">
                   <h6 className="text-md text-white ">Welcome</h6>
-                  <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4">Suman Chepuri</h3>
+                  <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4 capitalize">{user_name}</h3>
                   <aside className="text-white    mt-4">
                     <ul className="space-y-2">
                       <li onClick={()=>window.location.replace('https://contentinova.com/userdashboard')}>

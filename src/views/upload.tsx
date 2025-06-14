@@ -23,9 +23,10 @@ function UploadView() {
     const user_id=searchParams.get('user_id') ?? null;
     const user_name=searchParams.get('user_name') ?? null;
     if(!user_id) toast.error('User ID is required to upload a video');
+  if(!user_name) toast.error('User Name is required to upload a video');
     if(user_id){
-      dispatch(setUserId(user_id.toString()));
-      dispatch(setUserName(user_name.toString()));
+      dispatch(setUserId(user_id?.toString()));
+      dispatch(setUserName(user_name?.toString()));
     }
 
   },[searchParams])
