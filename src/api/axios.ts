@@ -390,7 +390,6 @@ export function getVersions(reference_id:{reference_id:string}):[{id:string|numb
       resolve(false)
     })
   })
-
 }
 
 export default api;
