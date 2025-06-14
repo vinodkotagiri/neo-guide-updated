@@ -113,12 +113,12 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   async function trackProgress(request_id) {
     if (request_id) {
       const interval = setInterval(() => {
-        trackExportProgress(request_id).then((res) => {
+        trackExportProgress(request_id).then(async(res) => {
           if (res?.status?.toLowerCase() === 'success') {
             clearInterval(interval);
             setLoading(false)
             const data = res?.video_url;
-            downloadVideo(data);
+            await downloadVideo(data);
             if (data?.error) {
               toast.error(data?.error);
               setLoading(false)
