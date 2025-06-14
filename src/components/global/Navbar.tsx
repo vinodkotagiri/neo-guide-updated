@@ -156,7 +156,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     const articlePayload = articleData
     if (subtitlePayload?.length && articlePayload?.length) {
      await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
-        console.log("res",res)
         if (res.file_url) {
           setSubtitleId(res.file_url.split('/').pop())
         }
@@ -235,11 +234,9 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       }
     }
     if (refId) payload['reference_id'] = refId
-    setSavingStatus(true)
-    console.log('articleId && subtitleId && video',articleId, subtitleId , video)
       exportOrupdateProject(payload).then(res => {
         setRefId(res.reference_id)
-      }).catch(err => console.log(err)).finally(() => setSavingStatus(false))
+      }).catch(err => console.log(err))
     }
 
   }
