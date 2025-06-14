@@ -43,7 +43,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   }, [token]);
   const [open, setOpen] = useState<string | null>("Docs");
   function handleExport() {
-    setLoading(true)
     const payload = {
       video: url,
       videoWidth,
@@ -104,10 +103,9 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         setToken(token)
         toast.success('Exporting video, token:')
       } else {
-        setLoading(false)
         toast.error('Something went wrong while exporting video')
       }
-    }).catch(() => setLoading(false))
+    }).catch(() => {})
   }
 
   async function trackProgress(request_id) {
@@ -116,12 +114,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         trackExportProgress(request_id).then(async(res) => {
           if (res?.progress == 100) {
             clearInterval(interval);
-            setLoading(false)
             const data = res?.video_url;
             await downloadVideo(data);
             if (data?.error) {
               toast.error(data?.error);
-              setLoading(false)
               return;
             }
           }
