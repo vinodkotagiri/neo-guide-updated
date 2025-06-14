@@ -177,11 +177,65 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       targetLangName,
       voice,
       voice_language,
-      voiceid
+      voiceid,
+      data:const payload = {
+        video: url,
+        videoWidth,
+        videoHeight,
+        rectangles: rectangles.map(rect => ({
+          ...rect,
+          width: ((rect.width / videoWidth) * 100).toFixed(2),
+          height: ((rect.height / videoHeight) * 100).toFixed(2),
+          x: ((rect.x / videoWidth) * 100).toFixed(2),
+          y: ((rect.y / videoHeight) * 100).toFixed(2),
+          cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+        })),
+        arrows: arrows.map(arrow => ({
+          ...arrow,
+          strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+          pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+          pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+          x: ((arrow.x / videoWidth) * 100).toFixed(2),
+          y: ((arrow.y / videoHeight) * 100).toFixed(2),
+          points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+        }))
+        , texts: texts.map(text => ({
+          ...text,
+          x: ((text.x / videoWidth) * 100).toFixed(2),
+          y: ((text.y / videoHeight) * 100).toFixed(2),
+        })),
+        spotLights: spotLights.map(spot => ({
+          ...spot,
+          x: ((spot.x / videoWidth) * 100).toFixed(2),
+          y: ((spot.y / videoHeight) * 100).toFixed(2),
+          width: ((spot.width / videoWidth) * 100).toFixed(2),
+          height: ((spot.height / videoHeight) * 100).toFixed(2),
+          cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+        })),
+        blurs: blurs.map(blur => ({
+          ...blur,
+          x: ((blur.x / videoWidth) * 100).toFixed(2),
+          y: ((blur.y / videoHeight) * 100).toFixed(2),
+          width: ((blur.width / videoWidth) * 100).toFixed(2),
+          height: ((blur.height / videoHeight) * 100).toFixed(2),
+          blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+        }
+        )),
+        zooms: zooms.map(zoom => (
+          {
+            ...zoom,
+            roi: {
+              x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+              y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+              width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+              height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+            }
+          }))
+      }
     }
     if (refId) payload['reference_id'] = refId
     setSavingStatus(true)
-    if (articleId && subtitleId && video && payload.targetLang && payload.targetLangName && payload.sourceLang && payload.sourceLangName && payload.voiceid && payload.voice && payload.voice_language) {
+    if (articleId && subtitleId && video ) {
       exportOrupdateProject(payload).then(res => {
         setRefId(res.reference_id)
       }).catch(err => console.log(err)).finally(() => setSavingStatus(false))
