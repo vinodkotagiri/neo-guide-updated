@@ -14,6 +14,7 @@ import { FaRegSave } from "react-icons/fa";
 import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
 import { BsFiletypeGif } from "react-icons/bs";
 import { convertToIST } from "../../helpers";
+import { Navigate } from "react-router-dom";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -312,7 +313,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                   <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4">Suman Chepuri</h3>
                   <aside className="text-white    mt-4">
                     <ul className="space-y-2">
-                      <li>
+                      <li onClick={()=>window.location.replace('https://contentinova.com/userdashboard')}>
                         <a href="#" className="flex items-center gap-2 py-1">
                           <CiUser />
                           <span>Profile</span>
@@ -379,7 +380,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           <span>Delete Project</span>
                         </a>
                       </li>
-                      <li>
+                      <li onClick={()=>window.location.replace('https://contentinova.com/login')}>
                         <a href="#"  >
                           <CiLogout />
                           <span>Logout</span>
