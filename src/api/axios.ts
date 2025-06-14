@@ -382,7 +382,7 @@ export function getProjectData(reference_id:{reference_id:string}){
 
 export function getVersions(reference_id:{reference_id:string}):[{id:string|number, tstamp:string}]|false{
   return new Promise(resolve=>{
-  const url="https://contentinova.com/neoguideversions"
+  const url="https://contentinova.com/neoguidegetversion"
     axios.post(url,reference_id).then(res=>{
      return res.data
     }).catch(err=>{
