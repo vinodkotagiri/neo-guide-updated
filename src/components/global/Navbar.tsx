@@ -316,7 +316,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                       <li onClick={()=>window.location.replace('https://contentinova.com/userdashboard')}>
                         <a href="#" className="flex items-center gap-2 py-1">
                           <CiUser />
-                          <span>Profile</span>
+                          <span>Go to Dashboard</span>
                         </a>
                       </li>
                       <li>
@@ -372,18 +372,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         <a  >
                           <FaRegSave />
                           <span>Save</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#"  >
-                          <RiDeleteBin6Line />
-                          <span>Delete Project</span>
-                        </a>
-                      </li>
-                      <li onClick={()=>window.location.replace('https://contentinova.com/login')}>
-                        <a href="#"  >
-                          <CiLogout />
-                          <span>Logout</span>
                         </a>
                       </li>
                     </ul>

@@ -17,6 +17,7 @@ interface SubtitlesState {
 interface VideoState {
   url: string;
   user_id?: string;
+  user_name?:string;
   videoWidth: number;
   videoHeight: number;
   videoName: string;
@@ -57,6 +58,7 @@ const initialSubtitleState: SubtitlesState = {
 const initialState: VideoState = {
   url: "",
   user_id: undefined,
+  user_name:'NeoGuide User',
   sourceLang: 'en',
   sourceLangName: "English",
   targetLang: '',
@@ -99,6 +101,9 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setUserName:(state,action)=>{
+      state.use_name=action.payload
+    },
     setReferenceId: (state, action) => {
       state.reference_id=action.payload
     },
@@ -209,6 +214,7 @@ const videoSlice = createSlice({
 
 export default videoSlice.reducer;
 export const {
+  setUserName,
   setTargetLanguage,setVoice,setVoiceLanguage,setVoiceId,
   setPlayerVideoDimensions,
   setUserId,

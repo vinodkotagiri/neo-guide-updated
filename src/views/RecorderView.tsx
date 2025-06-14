@@ -7,7 +7,7 @@ import Navbar from '../components/global/Navbar';
 import { BsRecordCircle } from 'react-icons/bs';
 import InteractiveScreenRecorder from '../components/InteractiveAnnotationRecorder'
 import toast from 'react-hot-toast';
-import { setUserId } from '../redux/features/videoSlice';
+import { setUserId, setUserName } from '../redux/features/videoSlice';
 
 function RecorderPage() {
   const [startRecording, setStartRecording] = React.useState(false)
@@ -16,9 +16,12 @@ function RecorderPage() {
   const [searchParams] = useSearchParams();
   useEffect(()=>{
     const user_id=searchParams.get('user_id') ?? null;
+    const user_name=searchParams.get('user_name') ?? null;
     if(!user_id) toast.error('User ID is required to upload a video');
     if(user_id){
       dispatch(setUserId(user_id.toString()));
+      dispatch(setUserName(user_name.toString()));
+
     }
 
   },[searchParams])
