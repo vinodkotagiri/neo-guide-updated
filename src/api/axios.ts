@@ -338,7 +338,8 @@ export function exportOrupdateJSON(payload:{json:Array<unknown>,action:"insert"|
   return new Promise(resolve=>{
     const url='https://contentinova.com/neoguidestorejson'
     axios.post(url,payload).then(res=>{
-      if(res.data.filename){
+      console.log('res.data',res.data)
+      if(res.data.file_url){
         resolve(res.data)
       }else{
         resolve(false)
