@@ -11,7 +11,7 @@ function FindAndReplaceComponent({ setShowReplace, subtitle }: { setShowReplace:
   useEffect(() => {
     const contentId = subtitle ? 'subtitle-content' : 'dub-text-content'
     const para = document.getElementsByClassName(contentId);
-    const regExp = new RegExp(findText, 'gi');
+    const regExp = new RegExp(`\\b${findText}`, 'gi');
 
     if (findText !== "") {
       for (const text of para) {
@@ -24,7 +24,7 @@ function FindAndReplaceComponent({ setShowReplace, subtitle }: { setShowReplace:
         text.innerHTML = text.textContent;
       }
     }
-  }, [findText]);
+  }, [findText,subtitle]);
 
   function handleReplace() {
     if (subtitle) {
@@ -50,7 +50,7 @@ function FindAndReplaceComponent({ setShowReplace, subtitle }: { setShowReplace:
       <input className="mt-2  px-2  py-3  text-xs     outline-none rounded-md  border-[#303032]   text-[#a3a3a5]  cursor-pointer dd_bg_op" placeholder='Replace' onChange={(e) => dispatch(setReplaceText(e.target.value))} />
       <div className="flex justify-between gap-2 mb-4">
 
-        <button className="bg-[#212025] cursor-pointer text-[#ffffff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow "  >Cancel</button>
+        <button className="bg-[#212025] cursor-pointer text-[#ffffff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow "  onClick={() => setShowReplace(false)}>Cancel</button>
         <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] py-2 font-semibold text-[14px] rounded-md  border-[#303032]  border  mt-2 grow" onClick={handleReplace}>Replace All</button>
       </div>
     </div>
