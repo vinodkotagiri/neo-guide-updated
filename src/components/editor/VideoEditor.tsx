@@ -18,7 +18,7 @@ const VideoEditor = ({ playerRef }) => {
   const dispatch = useAppDispatch()
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  
+
   const enterFullscreen = () => {
     if (playerRef.current) {
       const iframe = playerRef.current.getInternalPlayer();
@@ -35,7 +35,7 @@ const VideoEditor = ({ playerRef }) => {
   //       if(res){
   //         dispatch(setVideoName(res.projectname))
   //         dispatch(setVideoUrl(res.video))
-          
+
   //       //   {"projectname":"Demo name",
   //       //     "tstamp":"1234567890",
   //       //     "video":"video.mp4",
@@ -75,14 +75,14 @@ const VideoEditor = ({ playerRef }) => {
             <ElementsOverlay />
           </div> : ''}
           <div className="w-full h-full object-fit-contain">
-          <Player playerRef={playerRef} />
+            <Player playerRef={playerRef} />
           </div>
         </div>
         <div className="text-white flex justify-between w-[60%] mt-8">
           <div className="flex gap-3">
-            <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
+            {/* <div onClick={() => playerRef.current?.seekTo(0)} className="cursor-pointer">
               <MdSkipPrevious size={24} />
-            </div>
+            </div> */}
             <div onClick={() => dispatch(setVideoPlaying(!playing))} className="cursor-pointer">
               {!playing ? <MdPlayCircle size={24} /> : <MdPauseCircle size={24} />}
             </div>
@@ -101,9 +101,9 @@ const VideoEditor = ({ playerRef }) => {
       </div>
 
       <div className="w-full h-[35%]  bg_gr">
-      
+
         <TimelineArea playerRef={playerRef} />
-      
+
       </div>
     </div>
   );
