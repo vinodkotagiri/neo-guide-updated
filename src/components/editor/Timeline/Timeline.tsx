@@ -21,6 +21,7 @@ function TimeLine({ duration, currentTime, onSeek, videoUrl }) {
     setTimeMarkers(markers);
   }, [duration]);
 
+
   useEffect(() => {
     if (cursorRef.current) {
       cursorRef.current.style.left = `${currentTime * 10}px`;

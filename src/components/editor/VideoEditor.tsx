@@ -4,20 +4,17 @@ import TimelineArea from "./TimelineArea";
 // import SubtitlesOverlay from "./SubtitlesOverlay";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { MdFullscreen, MdPauseCircle, MdPlayCircle, MdSkipPrevious } from "react-icons/md";
-import { setMuted, setPixelFactor, setVideoName, setVideoPlaying, setVideoUrl } from "../../redux/features/videoSlice";
-import { decrypt, formatTime } from "../../helpers";
+import { MdFullscreen, MdPauseCircle, MdPlayCircle } from "react-icons/md";
+import { setMuted, setPixelFactor, setVideoPlaying } from "../../redux/features/videoSlice";
+import { formatTime } from "../../helpers";
 import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
-import { getProjectData } from "../../api/axios";
 
 const VideoEditor = ({ playerRef }) => {
 
-  const { playing, duration, muted, pixelFactor } = useAppSelector(state => state.video)
+  const { playing, muted, pixelFactor,duration } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+
 
   const enterFullscreen = () => {
     if (playerRef.current) {
@@ -28,31 +25,7 @@ const VideoEditor = ({ playerRef }) => {
     }
   };
   const { addingElements } = useAppSelector(state => state.video)
-  // useEffect(() => {
-  //   const reference_id=searchParams.get('reference_id')
-  //   if(reference_id){
-  //      getProjectData(reference_id).then(res=>{
-  //       if(res){
-  //         dispatch(setVideoName(res.projectname))
-  //         dispatch(setVideoUrl(res.video))
-
-  //       //   {"projectname":"Demo name",
-  //       //     "tstamp":"1234567890",
-  //       //     "video":"video.mp4",
-  //       //     "sourceLang":"en",
-  //       //     "sourceLangName":"English",
-  //       //     "targetLang":"hi",
-  //       //     "targetLangName":"Hindi",
-  //       //     "voice_language":"hi",
-  //       //     "voice":"Nipunn - Deep Hindi voice (Standard)",
-  //       //     "voiceid":"BmblbsReuLUooZ4LL0Rq",
-  //       //     "subtitle":"subtitle.srt",
-  //       //     "article":"article.json"}
-  //       }
-  //      })
-  //   }
-
-  // }, []);
+  
 
   function handleZoomTimeline(operation) {
     if (operation == 'increase') {
@@ -62,6 +35,11 @@ const VideoEditor = ({ playerRef }) => {
       dispatch(setPixelFactor(pixelFactor - 1))
     }
   }
+
+  useEffect(()=>{
+    if(duration<120)
+    dispatch(setPixelFactor(50))
+  },[duration])
 
   return (
     <div className='w-full h-full flex flex-col gap-1 px-2 '>
@@ -100,7 +78,7 @@ const VideoEditor = ({ playerRef }) => {
         </div>
       </div>
 
-      <div className="w-full h-[35%]  bg_gr">
+      <div className="w-full h-[35%]">
 
         <TimelineArea playerRef={playerRef} />
 
