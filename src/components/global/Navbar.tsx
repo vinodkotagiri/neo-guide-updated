@@ -233,6 +233,14 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     if (refId) payload['reference_id'] = refId
       exportOrupdateProject(payload).then(res => {
         setRefId(res.reference_id)
+        getVersions(refId).then((result) => {
+          if(result?.versions){
+            setVersions(result.versions??[])
+          }
+        }).catch((err) => {
+          console.log('err',err)
+          setVersions([])
+        });
       }).catch(err => console.log(err))
     }
 

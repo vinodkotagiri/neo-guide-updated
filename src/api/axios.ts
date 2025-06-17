@@ -1,6 +1,13 @@
 //@ts-nocheck
 import axios from "axios";
-import { ApplyZoomPayload, mergeAudioPayload, mergeAudioProgressPayload, mergeAudioProgressResponse, mergeAudioResponse, UploadVideoPayload } from "./payloads/payloads";
+import {
+  ApplyZoomPayload,
+  mergeAudioPayload,
+  mergeAudioProgressPayload,
+  mergeAudioProgressResponse,
+  mergeAudioResponse,
+  UploadVideoPayload
+} from "./payloads/payloads";
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
@@ -25,9 +32,9 @@ export async function uploadFile(payload: UploadVideoPayload): Promise<UploadVid
       Body: payload.file,
       ContentType: payload.file.type
     };
-    
+
     let response;
-    if (payload.file.type.includes ("video/mp4")) {
+    if (payload.file.type.includes("video/mp4")) {
       response = await s3.upload(params).promise();
     } else {
       const formData = new FormData();
@@ -245,7 +252,7 @@ export async function getLanguages() {
       .get("https://contentinova.com/effybizgetlanguages")
       .then((res) => {
         if (res.data) {
-          resolve(languages) 
+          resolve(languages);
         }
       })
       .catch((error) => {
@@ -270,7 +277,7 @@ export async function getVoiceForLanguage(language_id: text) {
 }
 
 export async function textToSpeech(payload: { voiceid: string; text: string }): Promise<{ audio_url: string | null }> {
-   return new Promise((resolve) => {
+  return new Promise((resolve) => {
     axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
@@ -283,113 +290,137 @@ export async function textToSpeech(payload: { voiceid: string; text: string }): 
   });
 }
 
-export async function mergeAudio(payload:mergeAudioPayload): Promise<mergeAudioResponse> {
+export async function mergeAudio(payload: mergeAudioPayload): Promise<mergeAudioResponse> {
   return new Promise((resolve) => {
     axios
       .post(" https://contentinova.com/mergeaudio", payload)
       .then((res) => {
-        if(res.data.token){
-          axios.post(" https://contentinova.com/mergeaudio_start", { token: res.data.token })
+        if (res.data.token) {
+          axios.post(" https://contentinova.com/mergeaudio_start", { token: res.data.token });
         }
-        resolve(res.data)
+        resolve(res.data);
       })
       .catch(() => resolve(null));
   });
 }
 
-export async function mergeAudioProgress(payload:mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
+export async function mergeAudioProgress(payload: mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
   return new Promise((resolve) => {
     axios
       .post(" https://contentinova.com/mergeaudioprogress", payload)
-      .then((res) =>{
-        console.log('res.data',res.data)
-        resolve(res.data)
+      .then((res) => {
+        console.log("res.data", res.data);
+        resolve(res.data);
       })
       .catch(() => resolve(null));
   });
 }
 
-export function exportVideo(payload){
- return new Promise(resolve=>{
-  const url='https://contentinova.com/neoguideExport'
-  axios.post(url,payload).then(res=>{
-    if(res.data.status=="Success") {
-      axios.post(url+'Start',{token:res.data.token})
-      resolve(res.data.token)
+export function exportVideo(payload) {
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguideExport";
+    axios
+      .post(url, payload)
+      .then((res) => {
+        if (res.data.status == "Success") {
+          axios.post(url + "Start", { token: res.data.token });
+          resolve(res.data.token);
+        }
+      })
+      .catch((err) => {
+        console.log("error in export video", err);
+        resolve(false);
+      });
+  });
+}
+
+export function trackExportProgress(token) {
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguideExportProgress";
+    axios
+      .post(url, { token })
+      .then((res) => resolve(res.data))
+      .catch((err) => {
+        console.log("error fetching export progress", err);
+        resolve(false);
+      });
+  });
+}
+export function exportOrupdateJSON(
+  payload: { json: Array<unknown>; action: "insert" | "update"; filename?: string },
+  file_name: string
+) {
+  if (file_name) payload.filename = file_name;
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguidestorejson";
+    axios
+      .post(url, payload)
+      .then((res) => {
+        console.log("res.data", res.data);
+        if (res.data.file_url) {
+          resolve(res.data);
+        } else {
+          resolve(false);
+        }
+      })
+      .catch((err) => {
+        console.log("error in export or update json", err);
+        resolve(false);
+      });
+  });
+}
+
+export function exportOrupdateProject(payload) {
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguideinsertdata";
+    if (payload.reference_id) axios.post("https://contentinova.com/neoguideversions", payload);
+    else {
+      axios
+        .post(url, payload)
+        .then((res) => {
+          if (res.data.reference_id) {
+            resolve(res.data);
+            axios.post("https://contentinova.com/neoguideversions", payload);
+          } else {
+            resolve(false);
+          }
+        })
+        .catch((err) => {
+          console.log("error in export or update json", err);
+          resolve(false);
+        });
     }
-  }).catch((err)=>{
-  console.log("error in export video",err)
-  resolve( false)
-  })
- })
+  });
 }
 
-export function trackExportProgress(token){
-  return new Promise(resolve=>{
-    const url='https://contentinova.com/neoguideExportProgress'
-    axios.post(url,{token}).then(res=>resolve(res.data)).catch(err=>{
-      console.log("error fetching export progress",err)
-      resolve(false)
-    })
-  })
-}
-export function exportOrupdateJSON(payload:{json:Array<unknown>,action:"insert"|"update",filename?:string},file_name:string){
-  if(file_name) payload.filename=file_name
-  return new Promise(resolve=>{
-    const url='https://contentinova.com/neoguidestorejson'
-    axios.post(url,payload).then(res=>{
-      console.log('res.data',res.data)
-      if(res.data.file_url){
-        resolve(res.data)
-      }else{
-        resolve(false)
-      }
-    }).catch(err=>{
-      console.log("error in export or update json",err)
-      resolve(false)
-    })
-  })
-
+export function getProjectData(reference_id: { reference_id: string }) {
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguidegetdata";
+    axios
+      .post(url, { reference_id })
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log("error in export or update json", err);
+        resolve(false);
+      });
+  });
 }
 
-export function exportOrupdateProject(payload){
-  return new Promise(resolve=>{
-    const url='https://contentinova.com/neoguideinsertdata'
-    axios.post(url,payload).then(res=>{
-      if(res.data.reference_id){
-        resolve(res.data)
-      }else{
-        resolve(false)
-      }
-    }).catch(err=>{
-      console.log("error in export or update json",err)
-      resolve(false)
-    })
-  })
-}
-
-export function getProjectData(reference_id:{reference_id:string}){
-  return new Promise(resolve=>{
-    const url='https://contentinova.com/neoguidegetdata'
-    axios.post(url,{reference_id}).then(res=>{
-     return res.data
-    }).catch(err=>{
-      console.log("error in export or update json",err)
-      resolve(false)
-    })
-  })
-}
-
-export function getVersions(reference_id:{reference_id:string}):[{id:string|number, tstamp:string}]|false{
-  return new Promise(resolve=>{
-  const url="https://contentinova.com/neoguidegetversion"
-    axios.post(url,reference_id).then(res=>{
-     return res.data
-    }).catch(err=>{
-      console.log("error in export or update json",err)
-      resolve(false)
-    })
-  })
+export function getVersions(reference_id: { reference_id: string }): [{ id: string | number; tstamp: string }] | false {
+  return new Promise((resolve) => {
+    const url = "https://contentinova.com/neoguidegetversion";
+    axios
+      .post(url, reference_id)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log("error in export or update json", err);
+        resolve(false);
+      });
+  });
 }
 
 export default api;
