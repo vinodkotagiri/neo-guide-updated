@@ -6,7 +6,7 @@ import { IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
 import { PiExportBold } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { exportOrupdateJSON, exportOrupdateProject, exportVideo, getVersions, trackExportProgress } from "../../api/axios";
+import { exportOrupdateJSON, exportOrupdateProject, exportVideo, getVersionData, getVersions, trackExportProgress } from "../../api/axios";
 import { MdContentCopy, MdHistory, MdOutlineArticle } from "react-icons/md";
 import { IoChevronDown, IoClose } from "react-icons/io5";
 import { CiExport, CiLogout, CiUser } from "react-icons/ci";
@@ -24,7 +24,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, user_id,user_name, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -32,10 +32,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   const [subtitleId, setSubtitleId] = useState('')
   const [articleId, setArticleId] = useState('')
   const [refId, setRefId] = useState('')
+  const [selectedVersion,setSelectedVersion]=useState({index:0,text:''})
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
-  const [versions,setVersions]=useState<{id:string|number, tstamp:string}>([])
+  const [versions, setVersions] = useState<{ id: string | number, tstamp: string }>([])
   const { rectangles, arrows, texts, spotLights, blurs, zooms } = useAppSelector(state => state.elements)
   useEffect(() => {
     if (token) {
@@ -106,13 +107,21 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       } else {
         toast.error('Something went wrong while exporting video')
       }
-    }).catch(() => {})
+    }).catch(() => { })
   }
 
+  function handleRestoreVersion(){
+    if(selectedVersion?.index){
+      await getVersionData(selectedVersion.index).then((res)=>{
+        console.log('restored version:',res);
+        toast.success(`Version restored Successfully: ${selectedVersion.text}`)
+      })
+    }
+  }
   async function trackProgress(request_id) {
     if (request_id) {
       const interval = setInterval(() => {
-        trackExportProgress(request_id).then(async(res) => {
+        trackExportProgress(request_id).then(async (res) => {
           if (res?.progress == 100) {
             clearInterval(interval);
             const data = res?.video_url;
@@ -151,117 +160,189 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     const video = url ? url.split('/').pop() : ''
     const subtitlePayload = subtitles.data
     const articlePayload = articleData
-    if (subtitlePayload?.length && articlePayload?.length) {
-     await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
-        if (res.file_url) {
-          setSubtitleId(res.file_url.split('/').pop())
-        }
-      }).catch(err => console.log(err))
-      await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
-        if (res.file_url) setArticleId(res.file_url.split('/').pop())
-      }).catch(err => console.log(err))
-    const payload = {
-      unique_id: uniqueId,
-      user_id: user_id,
-      projectname: videoName,
-      tstamp: Date.now().toString(),
-      video: video,
-      subtitle: subtitleId,
-      article: articleId,
-      sourceLang,
-      sourceLangName,
-      targetLang,
-      targetLangName,
-      voice,
-      voice_language,
-      voiceid,
-      data : {
-        video: url,
-        videoWidth,
-        videoHeight,
-        rectangles: rectangles.map(rect => ({
-          ...rect,
-          width: ((rect.width / videoWidth) * 100).toFixed(2),
-          height: ((rect.height / videoHeight) * 100).toFixed(2),
-          x: ((rect.x / videoWidth) * 100).toFixed(2),
-          y: ((rect.y / videoHeight) * 100).toFixed(2),
-          cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-        })),
-        arrows: arrows.map(arrow => ({
-          ...arrow,
-          strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
-          pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
-          pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
-          x: ((arrow.x / videoWidth) * 100).toFixed(2),
-          y: ((arrow.y / videoHeight) * 100).toFixed(2),
-          points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
-        }))
-        , texts: texts.map(text => ({
-          ...text,
-          x: ((text.x / videoWidth) * 100).toFixed(2),
-          y: ((text.y / videoHeight) * 100).toFixed(2),
-        })),
-        spotLights: spotLights.map(spot => ({
-          ...spot,
-          x: ((spot.x / videoWidth) * 100).toFixed(2),
-          y: ((spot.y / videoHeight) * 100).toFixed(2),
-          width: ((spot.width / videoWidth) * 100).toFixed(2),
-          height: ((spot.height / videoHeight) * 100).toFixed(2),
-          cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-        })),
-        blurs: blurs.map(blur => ({
-          ...blur,
-          x: ((blur.x / videoWidth) * 100).toFixed(2),
-          y: ((blur.y / videoHeight) * 100).toFixed(2),
-          width: ((blur.width / videoWidth) * 100).toFixed(2),
-          height: ((blur.height / videoHeight) * 100).toFixed(2),
-          blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
-        }
-        )),
-        zooms: zooms.map(zoom => (
-          {
-            ...zoom,
-            roi: {
-              x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
-              y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
-              width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
-              height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
-            }
-          }))
-      }
-    }
-      if(refId) payload['reference_id'] = refId
-      exportOrupdateProject(payload).then(res => {
-        if(res.reference_id){
-          payload['reference_id'] = res.reference_id
-        }
-        setRefId(res.reference_id)
-        getVersions(res.reference_id).then((result) => {
-          console.log('versions data',result)
-          if(result?.versions){
-            setVersions(result.versions??[])
+    let payload = {}
+    if (!refId) {
+      if (subtitlePayload?.length && articlePayload?.length) {
+        await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
+          if (res.file_url) {
+            setSubtitleId(res.file_url.split('/').pop())
           }
-        }).catch((err) => {
-          console.log('err',err)
-          setVersions([])
-        });
-      }).catch(err => console.log(err))
+        }).catch(err => console.log(err))
+        await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
+          if (res.file_url) setArticleId(res.file_url.split('/').pop())
+        }).catch(err => console.log(err))
+        payload = {
+          unique_id: uniqueId,
+          user_id: user_id,
+          projectname: videoName,
+          tstamp: Date.now().toString(),
+          video: video,
+          subtitle: subtitleId,
+          article: articleId,
+          sourceLang,
+          sourceLangName,
+          targetLang,
+          targetLangName,
+          voice,
+          voice_language,
+          voiceid,
+          data: {
+            video: url,
+            videoWidth,
+            videoHeight,
+            rectangles: rectangles.map(rect => ({
+              ...rect,
+              width: ((rect.width / videoWidth) * 100).toFixed(2),
+              height: ((rect.height / videoHeight) * 100).toFixed(2),
+              x: ((rect.x / videoWidth) * 100).toFixed(2),
+              y: ((rect.y / videoHeight) * 100).toFixed(2),
+              cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+            })),
+            arrows: arrows.map(arrow => ({
+              ...arrow,
+              strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+              pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+              pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+              x: ((arrow.x / videoWidth) * 100).toFixed(2),
+              y: ((arrow.y / videoHeight) * 100).toFixed(2),
+              points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+            }))
+            , texts: texts.map(text => ({
+              ...text,
+              x: ((text.x / videoWidth) * 100).toFixed(2),
+              y: ((text.y / videoHeight) * 100).toFixed(2),
+            })),
+            spotLights: spotLights.map(spot => ({
+              ...spot,
+              x: ((spot.x / videoWidth) * 100).toFixed(2),
+              y: ((spot.y / videoHeight) * 100).toFixed(2),
+              width: ((spot.width / videoWidth) * 100).toFixed(2),
+              height: ((spot.height / videoHeight) * 100).toFixed(2),
+              cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+            })),
+            blurs: blurs.map(blur => ({
+              ...blur,
+              x: ((blur.x / videoWidth) * 100).toFixed(2),
+              y: ((blur.y / videoHeight) * 100).toFixed(2),
+              width: ((blur.width / videoWidth) * 100).toFixed(2),
+              height: ((blur.height / videoHeight) * 100).toFixed(2),
+              blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+            }
+            )),
+            zooms: zooms.map(zoom => (
+              {
+                ...zoom,
+                roi: {
+                  x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+                  y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+                  width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+                  height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+                }
+              }))
+          }
+        }
+        exportOrupdateProject(payload).then(res => {
+          setRefId(res.reference_id)
+          console.log("Got reference ID");
+        }).catch(err => console.log(err))
+      }
+    } else {
+      payload = {
+        reference_id: refId,
+        unique_id: uniqueId,
+        user_id: user_id,
+        projectname: videoName,
+        tstamp: Date.now().toString(),
+        video: video,
+        subtitle: subtitleId,
+        article: articleId,
+        sourceLang,
+        sourceLangName,
+        targetLang,
+        targetLangName,
+        voice,
+        voice_language,
+        voiceid,
+        data: {
+          video: url,
+          videoWidth,
+          videoHeight,
+          rectangles: rectangles.map(rect => ({
+            ...rect,
+            width: ((rect.width / videoWidth) * 100).toFixed(2),
+            height: ((rect.height / videoHeight) * 100).toFixed(2),
+            x: ((rect.x / videoWidth) * 100).toFixed(2),
+            y: ((rect.y / videoHeight) * 100).toFixed(2),
+            cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+          })),
+          arrows: arrows.map(arrow => ({
+            ...arrow,
+            strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+            pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+            pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+            x: ((arrow.x / videoWidth) * 100).toFixed(2),
+            y: ((arrow.y / videoHeight) * 100).toFixed(2),
+            points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+          }))
+          , texts: texts.map(text => ({
+            ...text,
+            x: ((text.x / videoWidth) * 100).toFixed(2),
+            y: ((text.y / videoHeight) * 100).toFixed(2),
+          })),
+          spotLights: spotLights.map(spot => ({
+            ...spot,
+            x: ((spot.x / videoWidth) * 100).toFixed(2),
+            y: ((spot.y / videoHeight) * 100).toFixed(2),
+            width: ((spot.width / videoWidth) * 100).toFixed(2),
+            height: ((spot.height / videoHeight) * 100).toFixed(2),
+            cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+          })),
+          blurs: blurs.map(blur => ({
+            ...blur,
+            x: ((blur.x / videoWidth) * 100).toFixed(2),
+            y: ((blur.y / videoHeight) * 100).toFixed(2),
+            width: ((blur.width / videoWidth) * 100).toFixed(2),
+            height: ((blur.height / videoHeight) * 100).toFixed(2),
+            blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+          }
+          )),
+          zooms: zooms.map(zoom => (
+            {
+              ...zoom,
+              roi: {
+                x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+                y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+                width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+                height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+              }
+            }))
+        }
+      }
+      exportOrupdateProject(payload).then(() => {
+          getVersions(refId).then((result) => {
+            console.log('versions data in else', result)
+            if (result?.versions) {
+              setVersions(result.versions ?? [])
+            }
+          }).catch((err) => {
+            console.log('err', err)
+            setVersions([])
+          });
+        }).catch(err => console.log(err))
     }
-
   }
 
-  useEffect(()=>{
-    dispatch(setReferenceId(refId))
+  useEffect(() => {
     getVersions(refId).then((result) => {
-      console.log('versions data',result)
-      if(result?.versions){
+      console.log('versions data', result)
+      if (result?.versions) {
         setVersions(result.versions)
       }
     }).catch((err) => {
-      console.log('err',err)
+      console.log('err', err)
       setVersions([])
     });
-  },[refId])
+  }, [refId])
 
 
 
@@ -326,7 +407,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                   <h3 className="text-2xl text-white border-b-[1px] border-[#303032] pb-4 capitalize">{user_name}</h3>
                   <aside className="text-white    mt-4">
                     <ul className="space-y-2">
-                      <li onClick={()=>window.location.replace('https://contentinova.com/userdashboard')}>
+                      <li onClick={() => window.location.replace('https://contentinova.com/userdashboard')}>
                         <a href="#" className="flex items-center gap-2 py-1">
                           <CiUser />
                           <span>Go to Dashboard</span>
@@ -345,12 +426,15 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         </div>
                         {open === "Version History" && (
                           <ul className="m-0 p-0  text-sm ">
-                            {versions?versions.map((version, index) => (  
-                            <li onClick={() => document.getElementById('my_modal_3')?.showModal()}>
-                              <MdHistory />
-                              <span>Version {`${index+1} - ${convertToIST(version.tstamp)}`}</span>
-                            </li>
-                            )):<li>No Saved Versions</li>}
+                            {versions ? versions.map((version, index) => (
+                              <li onClick={() => {
+                                setSelectedVersion({text:`${index + 1} - ${convertToIST(version.tstamp)}`, index:version.id})
+                                document.getElementById('my_modal_3')?.showModal()}}>
+                                <MdHistory />
+                                Hello
+                                <span>Version {`${index + 1} - ${convertToIST(version.tstamp)}`}</span>
+                              </li>
+                            )) : <li>No Saved Versions</li>}
                           </ul>
                         )}
                       </li>
@@ -404,16 +488,16 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                 </div>
 
 
-                <p className="py-4 text-white">12:49 PM on May 17, 2025</p>
+                <p className="py-4 text-white">{selectedVersion.text}</p>
                 <div className="flex gap-2 items-center justify-end">
 
 
                   <button className=" cursor-pointer text-[#777] p-3 font-semibold text-[14px] rounded-md  " >Cancel</button>
-                  <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] p-3 font-semibold text-[14px] rounded-md" >Restore Version</button>
+                  <button className="bg-[#422ad5] cursor-pointer text-[#ffffff] p-3 font-semibold text-[14px] rounded-md" onClick={handleRestoreVersion} >Restore Version</button>
                 </div>
               </form>
             </div>
-          </dialog>
+          </dialog>resolve(false)
         </div>
       </div >
     </div >

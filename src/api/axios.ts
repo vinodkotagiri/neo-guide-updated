@@ -425,4 +425,13 @@ export function getVersions(reference_id: { reference_id: string }): [{ id: stri
   });
 }
 
+export function getVersionData(index:{index:"string"|number}){
+  return new Promise((resolve) => {
+    axios.post("https://contentinova.com/neoguidegetversion",{index}).then(res=>resolve(res.data)).catch(err=>{
+      console.log('resolve(false)',err);
+      resolve(false)
+    })
+  })
+}
+
 export default api;
