@@ -372,9 +372,9 @@ export function exportOrupdateJSON(
 
 export function exportOrupdateProject(payload) {
   return new Promise((resolve) => {
-    const url = "https://contentinova.com/neoguideinsertdata";
-    if (payload.reference_id) axios.post("https://contentinova.com/neoguideversions", payload);
-    else {
+    // const url = "https://contentinova.com/neoguideinsertdata";
+    // if (payload.reference_id) axios.post("https://contentinova.com/neoguideversions", payload);
+    // else {
       axios
         .post(url, payload)
         .then((res) => {
@@ -389,7 +389,7 @@ export function exportOrupdateProject(payload) {
           console.log("error in export or update json", err);
           resolve(false);
         });
-    }
+    // }
   });
 }
 
