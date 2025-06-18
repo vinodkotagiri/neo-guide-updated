@@ -376,11 +376,11 @@ export function exportOrupdateProject(payload) {
     // if (payload.reference_id) axios.post("https://contentinova.com/neoguideversions", payload);
     // else {
       axios
-        .post(url, payload)
+        .post("https://contentinova.com/neoguideversions", payload)
         .then((res) => {
           if (res.data.reference_id) {
             resolve(res.data);
-            axios.post("https://contentinova.com/neoguideversions", payload);
+            // axios.post("https://contentinova.com/neoguideversions", payload);
           } else {
             resolve(false);
           }
