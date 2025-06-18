@@ -110,7 +110,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }).catch(() => { })
   }
 
-  function handleRestoreVersion(){
+  async function handleRestoreVersion(){
     if(selectedVersion?.index){
       await getVersionData(selectedVersion.index).then((res)=>{
         console.log('restored version:',res);
