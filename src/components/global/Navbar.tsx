@@ -234,6 +234,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       exportOrupdateProject(payload).then(res => {
         setRefId(res.reference_id)
         getVersions(refId).then((result) => {
+          console.log('versions data',result)
           if(result?.versions){
             setVersions(result.versions??[])
           }
@@ -249,6 +250,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   useEffect(()=>{
     dispatch(setReferenceId(refId))
     getVersions(refId).then((result) => {
+      console.log('versions data',result)
       if(result?.versions){
         setVersions(result.versions)
       }

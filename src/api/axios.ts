@@ -372,15 +372,17 @@ export function exportOrupdateJSON(
 
 export function exportOrupdateProject(payload) {
   return new Promise((resolve) => {
-    // const url = "https://contentinova.com/neoguideinsertdata";
-    // if (payload.reference_id) axios.post("https://contentinova.com/neoguideversions", payload);
-    // else {
+    if (payload.reference_id) {
+      axios.post("https://contentinova.com/neoguideversions", payload)
+      resolve(true);
+    };
       axios
-        .post("https://contentinova.com/neoguideversions", payload)
-        .then((res) => {
-          if (res.data.reference_id) {
+      .post("https://contentinova.com/neoguideinsertdata", payload)
+      .then((res) => {
+        if (res.data.reference_id) {
+          axios
+          .post("https://contentinova.com/neoguideversions", payload)
             resolve(res.data);
-            axios.post("https://contentinova.com/neoguideinsertdata", payload);
           } else {
             resolve(false);
           }
