@@ -230,10 +230,13 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           }))
       }
     }
-    if (refId) payload['reference_id'] = refId
+      if(refId) payload['reference_id'] = refId
       exportOrupdateProject(payload).then(res => {
+        if(res.reference_id){
+          payload['reference_id'] = res.reference_id
+        }
         setRefId(res.reference_id)
-        getVersions(refId).then((result) => {
+        getVersions(res.reference_id).then((result) => {
           console.log('versions data',result)
           if(result?.versions){
             setVersions(result.versions??[])

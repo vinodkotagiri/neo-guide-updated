@@ -381,7 +381,7 @@ export function exportOrupdateProject(payload) {
       .then((res) => {
         if (res.data.reference_id) {
           axios
-          .post("https://contentinova.com/neoguideversions", payload)
+          .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
             resolve(res.data);
           } else {
             resolve(false);
@@ -412,7 +412,7 @@ export function getProjectData(reference_id: { reference_id: string }) {
 
 export function getVersions(reference_id: { reference_id: string }): [{ id: string | number; tstamp: string }] | false {
   return new Promise((resolve) => {
-    const url = "https://contentinova.com/neoguideversion";
+    const url = "https://contentinova.com/neoguidegetversion";
     axios
       .post(url, reference_id)
       .then((res) => {
