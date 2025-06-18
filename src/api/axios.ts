@@ -380,7 +380,7 @@ export function exportOrupdateProject(payload) {
         .then((res) => {
           if (res.data.reference_id) {
             resolve(res.data);
-            // axios.post("https://contentinova.com/neoguideversions", payload);
+            axios.post("https://contentinova.com/neoguideinsertdata", payload);
           } else {
             resolve(false);
           }
