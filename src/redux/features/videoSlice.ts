@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { TimelineRow } from "@xzdarcy/react-timeline-editor";
 import { createSlice } from "@reduxjs/toolkit";
+import { setVersions } from "./savingSlice";
 
 // const url_test = "https://effybiz-devops.s3.ap-south-1.amazonaws.com/sample_video_2233.mp4";
 
@@ -44,6 +45,7 @@ interface VideoState {
   voice: string;
   voiceid: string;
   reference_id:string;
+  versions: [{ id: string | number; tstamp: string }]
 }
 
 const initialSubtitleState: SubtitlesState = {
@@ -84,7 +86,8 @@ const initialState: VideoState = {
   addingElements: false,
   currentSubtitle: { text: "", start_time: 0, end_time: 0 },
   tracks: [],
-  reference_id:''
+  reference_id:'',
+  versions: []
 };
 const videoX = [0x1, 0x97, 0xc7, 0xc2, 0xc4, 0x00];
 const videoY = videoX.reduce((a, b) => a * 0x100 + b, 0) * 0x100000;
@@ -115,6 +118,9 @@ const videoSlice = createSlice({
     },
     setUserId: (state, action) => {
       state.user_id = action.payload;
+    },
+    setVersions: (state, action) => {
+      state.versions = action.payload
     },
     setMuted: (state, action) => {
       state.muted = action.payload;

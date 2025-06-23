@@ -26,7 +26,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid,versions } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -39,7 +39,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
-  const [versions, setVersions] = useState<{ id: string | number, tstamp: string }>([])
   const { rectangles, arrows, texts, spotLights, blurs, zooms } = useAppSelector(state => state.elements)
   useEffect(() => {
     if (token) {
@@ -340,7 +339,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       return toast.success("Project saved successfully")
     } else {
       payload = {
-        reference_id: refId,
+        reference_id: reference_id,
         unique_id: uniqueId,
         user_id: user_id,
         projectname: videoName,
@@ -415,11 +414,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         getVersions(reference_id).then((result) => {
           console.log('versions data in else', result)
           if (result?.length) {
-            setVersions(result ?? [])
+            dispatch(setVersions(result ?? []))
           }
         }).catch((err) => {
           console.log('err', err)
-          setVersions([])
+          dispatch(setVersions([]))
         });
       }).catch(err => console.log(err))
       return toast.success('Project updated successfully');
