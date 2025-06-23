@@ -100,7 +100,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
           }
         }))
-        
+
     }
 
     exportVideo(payload).then(token => {
@@ -431,12 +431,12 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       console.log('err', err)
       setVersions([])
     });
-    dispatch(setReferenceId({reference_id:refId}))
+    dispatch(setReferenceId({ reference_id: refId }))
   }, [refId])
 
 
 
-
+  console.log("Versions:::", versions)
 
   return (
     <div className="navbar ">
@@ -445,15 +445,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           <a href="#"><img src={logo} alt="logo" className="w-6 shrink-0" /></a>
           {!hideMenu && <input type="text" onChange={(e) => dispatch(setVideoName(e.target.value))} value={videoName ?? "untitled project name"} className="text-[#a3a3a3] border-1 border-[#4b4b4b]   rounded-md px-2 py-1 w-[350px]" />
           }
-          {/* {url && <button className="btn btn-ghost hover:bg-transparent text-white" onClick={handleExport} disabled={loading}>
-            {loading ?
-              <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Exporting</span>
-              : <><PiExportBold size={32} color="white" />Export</>}
-          </button>} */}
-          {/* {url && savingStatus == true && <span className="flex items-center gap-2 text-slate-600 animate-pulse"><IoMdCloudUpload size={18} color="gray" />saving...</span>}
-          {url && savingStatus == false && <span className="flex items-center gap-2 text-green-800 "><IoMdCloudDone size={18} color="green" />saved</span>} */}
         </div >
-
         <div className="flex gap-4 items-center ">
           {from == 'editor' && <div className="w-full items-center justify-center flex gap-2">
             <div className="nav-custom-btn">
@@ -516,14 +508,13 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         </div>
                         {open === "Version History" && (
                           <ul className="m-0 p-0  text-sm ">
-                            {versions?.length ? versions.map((version, index) => (
+                            {versions?.length ? versions.map((version) => (
                               <li onClick={() => {
-                                setSelectedVersion({ text: `${index + 1} - ${convertToIST(version.tstamp)}`, index: version.id })
+                                setSelectedVersion({ text: `${version.id } - ${convertToIST(version.tstamp)}`, index: version.id })
                                 document.getElementById('my_modal_3')?.showModal()
                               }}>
                                 <MdHistory />
-                                Hello
-                                <span>Version {`${index + 1} - ${convertToIST(version.tstamp)}`}</span>
+                                <span>Version {`${version.id } - ${convertToIST(version.tstamp)}`}</span>
                               </li>
                             )) : <li>No Saved Versions</li>}
                           </ul>

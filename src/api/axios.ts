@@ -414,8 +414,9 @@ export function getVersions(reference_id: { reference_id: string }): [{ id: stri
   return new Promise((resolve) => {
     const url = "https://contentinova.com/neoguidegetversion";
     axios
-      .post(url, reference_id)
+      .post(url, {reference_id})
       .then((res) => {
+        console.log("Got versions::",res.data)
         return res.data;
       })
       .catch((err) => {
@@ -427,7 +428,10 @@ export function getVersions(reference_id: { reference_id: string }): [{ id: stri
 
 export function getVersionData(index:{index:"string"|number}){
   return new Promise((resolve) => {
-    axios.post("https://contentinova.com/neoguidegetversion",{index}).then(res=>resolve(res.data)).catch(err=>{
+    axios.post("https://contentinova.com/neoguidegetversion",{index}).then(res=>{
+     
+      resolve(res.data)
+    }).catch(err=>{
       console.log('resolve(false)',err);
       resolve(false)
     })
