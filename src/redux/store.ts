@@ -12,7 +12,7 @@ export const store = configureStore({
     elements:elementsReducer,
     saving:savingReducer
   },
-  devTools: import.meta.env.NODE_ENV !== "production"
+  // devTools: import.meta.env.NODE_ENV !== "production"
 });
 
 export type RootState = ReturnType<typeof store.getState>;

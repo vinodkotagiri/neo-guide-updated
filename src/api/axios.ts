@@ -11,6 +11,8 @@ import {
 import { UploadVideoResponse } from "./responses/responses";
 import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
+import { store } from "../redux/store";
+import { setReferenceId, setVersions } from "../redux/features/videoSlice";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
@@ -382,6 +384,12 @@ export function exportOrupdateProject(payload) {
         if (res.data.reference_id) {
           axios
           .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
+          store.dispatch(setReferenceId(res.data.reference_id));
+          getVersions({reference_id:res.data.reference_id}).then((result) => {
+            if (result) {
+              store.dispatch(setVersions(result));
+            }
+          })
             resolve(res.data);
           } else {
             resolve(false);
@@ -417,7 +425,7 @@ export function getVersions(reference_id: { reference_id: string }): [{ id: stri
       .post(url, {reference_id})
       .then((res) => {
         console.log("Got versions::",res.data)
-        return res.data;
+        resolve(res.data);
       })
       .catch((err) => {
         console.log("error in export or update json", err);

@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { setIsArticle, setReferenceId, setSourceLang, setVideoName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage } from "../../redux/features/videoSlice"
+import { setIsArticle, setReferenceId, setSourceLang, setSourceLangName, setTargetLanguage, setVideoName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage, updateSubtitleData } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
 import { IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
@@ -17,6 +17,7 @@ import { convertToIST } from "../../helpers";
 import { Navigate } from "react-router-dom";
 import { setArticleData } from "../../redux/features/articleSlice";
 import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom } from "../../redux/features/elementsSlice";
+import { setVersions } from "../../redux/features/videoSlice";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -120,16 +121,15 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           console.log('restored version:', res);
           dispatch(setSourceLang(res?.sourceLang));
           dispatch(setSourceLangName(res?.sourceLangName));
-          dispatch(setTargetLang(res?.targetLang));
-          dispatch(setTargetLangName(res?.targetLangName));
+          dispatch(setTargetLanguage(res?.targetLang));
           dispatch(setVoiceLanguage(res?.voice_language));
           dispatch(setVoiceId(res?.voiceid));
           dispatch(setVoice(res?.voice));
-          dispatch(setSubtitles(res?.subtitles));
-          dispatch(setArticleData(res?.article));
+          // dispatch(updateSubtitleData(res?.subtitles));
+          // dispatch(setArticleData(res?.article));
           const elements = typeof res?.elements == 'string' ? JSON.parse(res?.elements) : res?.elements
-          const videoUrl = elements?.videoUrl;
-          dispatch(setVideoUrl(videoUrl));
+          // const videoUrl = elements?.videoUrl;
+          // dispatch(setVideoUrl(videoUrl));
           const videoWidth = parseInt(elements?.videoWidth);
           const videoHeight = parseInt(elements?.videoHeight);
 
@@ -141,7 +141,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             y: (parseFloat(rect.y) * videoHeight) / 100,
             cornerRadius: rect.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
           })) : []
-          forEach(rectangles, (rect) => {
+          rectangles.forEach((rect) => {
             dispatch(addRectangle(rect));
           })
           const arrows = elements.arrows ? elements?.arrows.map(arrow => ({
@@ -153,15 +153,15 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             y: (parseFloat(arrow.y) * videoHeight) / 100,
             points: arrow.points.map(point => (parseFloat(point) * videoWidth) / 100)
           })) : []
-          forEach(arrows, (arrow) => {
+          arrows.forEach((arrow) => {
             dispatch(addArrow(arrow));
           })
-          const texts = elemtents?.texts ? elements?.texts.map(text => ({
+          const texts = elements?.texts ? elements?.texts.map(text => ({
             ...text,
             x: (parseFloat(text.x) * videoWidth) / 100,
             y: (parseFloat(text.y) * videoHeight) / 100
           })) : []
-          forEach(texts, (text) => {
+          texts.forEach((text) => {
             dispatch(addText(text));
           })
           const spotLights = elements?.spotLights ? elements?.spotLights.map(spot => ({
@@ -172,7 +172,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             height: (parseFloat(spot.height) * videoHeight) / 100,
             cornerRadius: spot.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
           })) : []
-          forEach(spotLights, (spot) => {
+          spotLights.forEach((spot) => {
             dispatch(addSpotLight(spot));
           })
           const blurs = elements?.blurs ? elements?.blurs.map(blur => ({
@@ -183,7 +183,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             height: (parseFloat(blur.height) * videoHeight) / 100,
             blurRadius: (parseFloat(blur.blurRadius) * videoWidth) / 100
           })) : []
-          forEach(blurs, (blur) => {
+          blurs.forEach((blur) => {
             dispatch(addBlur(blur));
           })
           const zooms = elements?.zooms ? elements.zooms.map(zoom => ({
@@ -195,7 +195,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
               height: (parseFloat(zoom.roi.height) * videoHeight) / 100
             }
           })) : []
-          forEach(zooms, (zoom) => {
+          zooms.forEach((zoom) => {
             dispatch(addZoom(zoom));
           })
 
@@ -510,9 +510,9 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           </div>
                           <IoChevronDown className={`${open === "Version History" ? 'rotate-180' : ''} transition-transform`} />
                         </div>
-                        {open === "Version History"  && (
+                        {open === "Version History" && (
                           <ul className="p-0 m-0 flex items-center justify-center flex-col text-xs italic">
-                            {versions?.length ?versions.map((version) => (
+                            {versions?.length ? versions.map((version) => (
                               <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-center justify-center " onClick={() => {
                                 setSelectedVersion({ text: `${version.id} - ${convertToIST(version.tstamp)}`, index: version.id })
                                 document.getElementById('my_modal_3')?.showModal()
@@ -520,7 +520,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                                 <MdHistory />
                                 <span>Version {`${version.id} - ${convertToIST(version.tstamp)}`}</span>
                               </li>
-                            )): <li className='text-center'>No versions found</li>}
+                            )) : <li className='text-center'>No versions found</li>}
                           </ul>
                         )}
                       </li>
