@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { setIsArticle, setReferenceId, setVideoName } from "../../redux/features/videoSlice"
+import { setIsArticle, setReferenceId, setSourceLang, setVideoName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage } from "../../redux/features/videoSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import logo from '../../assets/images/neo-logo.png'
 import { IoMdCloudDone, IoMdCloudUpload } from "react-icons/io";
@@ -15,6 +15,8 @@ import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
 import { BsFiletypeGif } from "react-icons/bs";
 import { convertToIST } from "../../helpers";
 import { Navigate } from "react-router-dom";
+import { setArticleData } from "../../redux/features/articleSlice";
+import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom } from "../../redux/features/elementsSlice";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -32,7 +34,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   const [subtitleId, setSubtitleId] = useState('')
   const [articleId, setArticleId] = useState('')
   const [refId, setRefId] = useState('')
-  const [selectedVersion,setSelectedVersion]=useState({index:0,text:''})
+  const [selectedVersion, setSelectedVersion] = useState({ index: 0, text: '' })
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
@@ -98,6 +100,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
           }
         }))
+        
     }
 
     exportVideo(payload).then(token => {
@@ -110,12 +113,98 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }).catch(() => { })
   }
 
-  async function handleRestoreVersion(){
-    if(selectedVersion?.index){
-      await getVersionData(selectedVersion.index).then((res)=>{
-        console.log('restored version:',res);
-        toast.success(`Version restored Successfully: ${selectedVersion.text}`)
-      })
+  async function handleRestoreVersion() {
+    try {
+      if (selectedVersion?.index) {
+        await getVersionData(selectedVersion.index).then((res) => {
+          console.log('restored version:', res);
+          dispatch(setSourceLang(res?.sourceLang));
+          dispatch(setSourceLangName(res?.sourceLangName));
+          dispatch(setTargetLang(res?.targetLang));
+          dispatch(setTargetLangName(res?.targetLangName));
+          dispatch(setVoiceLanguage(res?.voice_language));
+          dispatch(setVoiceId(res?.voiceid));
+          dispatch(setVoice(res?.voice));
+          dispatch(setSubtitles(res?.subtitles));
+          dispatch(setArticleData(res?.article));
+          const elements = typeof res?.elements == 'string' ? JSON.parse(res?.elements) : res?.elements
+          const videoUrl = elements?.videoUrl;
+          dispatch(setVideoUrl(videoUrl));
+          const videoWidth = parseInt(elements?.videoWidth);
+          const videoHeight = parseInt(elements?.videoHeight);
+
+          const rectangles = elements?.rectangles ? elements?.rectangles.map(rect => ({
+            ...rect,
+            width: (parseFloat(rect.width) * videoWidth) / 100,
+            height: (parseFloat(rect.height) * videoHeight) / 100,
+            x: (parseFloat(rect.x) * videoWidth) / 100,
+            y: (parseFloat(rect.y) * videoHeight) / 100,
+            cornerRadius: rect.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
+          })) : []
+          forEach(rectangles, (rect) => {
+            dispatch(addRectangle(rect));
+          })
+          const arrows = elements.arrows ? elements?.arrows.map(arrow => ({
+            ...arrow,
+            strokeWidth: (parseFloat(arrow.strokeWidth) * videoWidth) / 100,
+            pointerLength: (parseFloat(arrow.pointerLength) * videoWidth) / 100,
+            pointerWidth: (parseFloat(arrow.pointerWidth) * videoWidth) / 100,
+            x: (parseFloat(arrow.x) * videoWidth) / 100,
+            y: (parseFloat(arrow.y) * videoHeight) / 100,
+            points: arrow.points.map(point => (parseFloat(point) * videoWidth) / 100)
+          })) : []
+          forEach(arrows, (arrow) => {
+            dispatch(addArrow(arrow));
+          })
+          const texts = elemtents?.texts ? elements?.texts.map(text => ({
+            ...text,
+            x: (parseFloat(text.x) * videoWidth) / 100,
+            y: (parseFloat(text.y) * videoHeight) / 100
+          })) : []
+          forEach(texts, (text) => {
+            dispatch(addText(text));
+          })
+          const spotLights = elements?.spotLights ? elements?.spotLights.map(spot => ({
+            ...spot,
+            x: (parseFloat(spot.x) * videoWidth) / 100,
+            y: (parseFloat(spot.y) * videoHeight) / 100,
+            width: (parseFloat(spot.width) * videoWidth) / 100,
+            height: (parseFloat(spot.height) * videoHeight) / 100,
+            cornerRadius: spot.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
+          })) : []
+          forEach(spotLights, (spot) => {
+            dispatch(addSpotLight(spot));
+          })
+          const blurs = elements?.blurs ? elements?.blurs.map(blur => ({
+            ...blur,
+            x: (parseFloat(blur.x) * videoWidth) / 100,
+            y: (parseFloat(blur.y) * videoHeight) / 100,
+            width: (parseFloat(blur.width) * videoWidth) / 100,
+            height: (parseFloat(blur.height) * videoHeight) / 100,
+            blurRadius: (parseFloat(blur.blurRadius) * videoWidth) / 100
+          })) : []
+          forEach(blurs, (blur) => {
+            dispatch(addBlur(blur));
+          })
+          const zooms = elements?.zooms ? elements.zooms.map(zoom => ({
+            ...zoom,
+            roi: {
+              x: (parseFloat(zoom.roi.x) * videoWidth) / 100,
+              y: (parseFloat(zoom.roi.y) * videoHeight) / 100,
+              width: (parseFloat(zoom.roi.width) * videoWidth) / 100,
+              height: (parseFloat(zoom.roi.height) * videoHeight) / 100
+            }
+          })) : []
+          forEach(zooms, (zoom) => {
+            dispatch(addZoom(zoom));
+          })
+
+          toast.success(`Version restored Successfully: ${selectedVersion.text}`)
+        })
+      }
+    } catch (error) {
+      console.log("error restoring version", error);
+      return toast.error("Error restoring version")
     }
   }
   async function trackProgress(request_id) {
@@ -319,29 +408,30 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         }
       }
       exportOrupdateProject(payload).then(() => {
-          getVersions(refId).then((result) => {
-            console.log('versions data in else', result)
-            if (result?.versions) {
-              setVersions(result.versions ?? [])
-            }
-          }).catch((err) => {
-            console.log('err', err)
-            setVersions([])
-          });
-        }).catch(err => console.log(err))
+        getVersions(refId).then((result) => {
+          console.log('versions data in else', result)
+          if (result?.length) {
+            setVersions(result ?? [])
+          }
+        }).catch((err) => {
+          console.log('err', err)
+          setVersions([])
+        });
+      }).catch(err => console.log(err))
     }
   }
 
   useEffect(() => {
     getVersions(refId).then((result) => {
       console.log('versions data', result)
-      if (result?.versions) {
-        setVersions(result.versions)
+      if (result?.length) {
+        setVersions(result)
       }
     }).catch((err) => {
       console.log('err', err)
       setVersions([])
     });
+    dispatch(setReferenceId({reference_id:refId}))
   }, [refId])
 
 
@@ -426,10 +516,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         </div>
                         {open === "Version History" && (
                           <ul className="m-0 p-0  text-sm ">
-                            {versions ? versions.map((version, index) => (
+                            {versions?.length ? versions.map((version, index) => (
                               <li onClick={() => {
-                                setSelectedVersion({text:`${index + 1} - ${convertToIST(version.tstamp)}`, index:version.id})
-                                document.getElementById('my_modal_3')?.showModal()}}>
+                                setSelectedVersion({ text: `${index + 1} - ${convertToIST(version.tstamp)}`, index: version.id })
+                                document.getElementById('my_modal_3')?.showModal()
+                              }}>
                                 <MdHistory />
                                 Hello
                                 <span>Version {`${index + 1} - ${convertToIST(version.tstamp)}`}</span>
