@@ -26,15 +26,16 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
   const [uniqueId, setUniqueId] = useState('')
   const [subtitleId, setSubtitleId] = useState('')
   const [articleId, setArticleId] = useState('')
-  const [refId, setRefId] = useState('')
+
   const [selectedVersion, setSelectedVersion] = useState({ index: 0, text: '' })
+
   function handleVideoArticleSwitch() {
     dispatch(setIsArticle(!isArticle))
   }
@@ -207,6 +208,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       return toast.error("Error restoring version")
     }
   }
+
   async function trackProgress(request_id) {
     if (request_id) {
       const interval = setInterval(() => {
@@ -250,7 +252,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     const subtitlePayload = subtitles.data
     const articlePayload = articleData
     let payload = {}
-    if (!refId) {
+    if (!reference_id) {
       if (subtitlePayload?.length && articlePayload?.length) {
         await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
           if (res.file_url) {
@@ -331,10 +333,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           }
         }
         exportOrupdateProject(payload).then(res => {
-          setRefId(res.reference_id)
-          console.log("Got reference ID");
+          console.log("Got reference ID", res.reference_id);
+          dispatch(setReferenceId(res.reference_id))
         }).catch(err => console.log(err))
       }
+      return toast.success("Project saved successfully")
     } else {
       payload = {
         reference_id: refId,
@@ -407,8 +410,9 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             }))
         }
       }
-      exportOrupdateProject(payload).then(() => {
-        getVersions(refId).then((result) => {
+      exportOrupdateProject(payload).then((res) => {
+        console.log("Updated Project:", res)
+        getVersions(reference_id).then((result) => {
           console.log('versions data in else', result)
           if (result?.length) {
             setVersions(result ?? [])
@@ -418,25 +422,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           setVersions([])
         });
       }).catch(err => console.log(err))
+      return toast.success('Project updated successfully');
     }
   }
 
-  useEffect(() => {
-    getVersions(refId).then((result) => {
-      console.log('versions data', result)
-      if (result?.length) {
-        setVersions(result)
-      }
-    }).catch((err) => {
-      console.log('err', err)
-      setVersions([])
-    });
-    dispatch(setReferenceId({ reference_id: refId }))
-  }, [refId])
 
-
-
-  console.log("Versions:::", versions)
 
   return (
     <div className="navbar ">
@@ -508,15 +498,15 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                         </div>
                         {open === "Version History" && (
                           <ul className="m-0 p-0  text-sm ">
-                            {versions?.length ? versions.map((version) => (
+                            {versions?.length && versions.map((version) => (
                               <li onClick={() => {
-                                setSelectedVersion({ text: `${version.id } - ${convertToIST(version.tstamp)}`, index: version.id })
+                                setSelectedVersion({ text: `${version.id} - ${convertToIST(version.tstamp)}`, index: version.id })
                                 document.getElementById('my_modal_3')?.showModal()
                               }}>
                                 <MdHistory />
-                                <span>Version {`${version.id } - ${convertToIST(version.tstamp)}`}</span>
+                                <span>Version {`${version.id} - ${convertToIST(version.tstamp)}`}</span>
                               </li>
-                            )) : <li>No Saved Versions</li>}
+                            ))}
                           </ul>
                         )}
                       </li>
