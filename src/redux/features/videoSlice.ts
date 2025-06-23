@@ -101,6 +101,12 @@ const videoSlice = createSlice({
   name: "video",
   initialState,
   reducers: {
+    setSourceLang: (state, action) => {
+      state.sourceLang = action.payload;
+    },
+    setSourceLangName: (state, action) => {
+      state.sourceLangName = action.payload;
+    },
     setUserName:(state,action)=>{
       state.use_name=action.payload
     },
@@ -221,6 +227,8 @@ export const {
   handleReplaceSubtitleText,
   setPixelFactor,
   setVideoName,
+  setSourceLang,
+  setSourceLangName,
   setMuted,
   setCurrentPlayTime,
   setLocked,

@@ -307,7 +307,7 @@ export async function mergeAudio(payload: mergeAudioPayload): Promise<mergeAudio
 export async function mergeAudioProgress(payload: mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
   return new Promise((resolve) => {
     axios
-      .post(" https://contentinova.com/mergeaudioprogress", payload)
+      .post(" https://contentinova.com/mergeaudio_progress", payload)
       .then((res) => {
         console.log("res.data", res.data);
         resolve(res.data);
