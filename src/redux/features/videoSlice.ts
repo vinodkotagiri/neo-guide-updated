@@ -87,7 +87,16 @@ const initialState: VideoState = {
   currentSubtitle: { text: "", start_time: 0, end_time: 0 },
   tracks: [],
   reference_id:'',
-  versions: []
+  versions: [
+    // {
+    //     "id": 31,
+    //     "tstamp": "1750678424514"
+    // },
+    // {
+    //     "id": 30,
+    //     "tstamp": "1750678309548"
+    // }
+]
 };
 const videoX = [0x1, 0x97, 0xc7, 0xc2, 0xc4, 0x00];
 const videoY = videoX.reduce((a, b) => a * 0x100 + b, 0) * 0x100000;

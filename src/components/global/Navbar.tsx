@@ -26,7 +26,7 @@ interface NavbarProps {
 
 
 function Navbar({ from, hideMenu }: NavbarProps) {
-  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid,versions } = useAppSelector(state => state.video)
+  const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid, versions } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
@@ -333,8 +333,13 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         }
         exportOrupdateProject(payload).then(res => {
           console.log("Got reference ID", res.reference_id);
-          dispatch(setReferenceId(res.reference_id))
-        }).catch(err => console.log(err))
+          if (res.reference_id) {
+            dispatch(setReferenceId(res.reference_id))
+          }
+        }).catch(err => {
+          console.log(err)
+          return toast.error("Error in saving project")
+        })
       }
       return toast.success("Project saved successfully")
     } else {
@@ -409,23 +414,33 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             }))
         }
       }
-      exportOrupdateProject(payload).then((res) => {
+      exportOrupdateProject(payload).then(async (res) => {
         console.log("Updated Project:", res)
-        getVersions(reference_id).then((result) => {
-          console.log('versions data in else', result)
-          if (result?.length) {
-            dispatch(setVersions(result ?? []))
-          }
-        }).catch((err) => {
-          console.log('err', err)
-          dispatch(setVersions([]))
-        });
+        await updateVersions(reference_id)
+        console.log("GOT VERSIONS:", versions)
       }).catch(err => console.log(err))
       return toast.success('Project updated successfully');
     }
   }
+  useEffect(() => {
+    (async () => {
+      if (reference_id) {
+        await updateVersions(reference_id);
+      }
+    })()
+  }, [reference_id])
 
-
+  async function updateVersions(refId: string) {
+    getVersions(refId).then((result) => {
+      console.log('versions data in else useEffect', result)
+      if (result?.length) {
+        dispatch(setVersions(result))
+      }
+    }).catch((err) => {
+      console.log('err', err)
+      dispatch(setVersions([]))
+    });
+  }
 
   return (
     <div className="navbar ">
@@ -495,17 +510,17 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           </div>
                           <IoChevronDown className={`${open === "Version History" ? 'rotate-180' : ''} transition-transform`} />
                         </div>
-                        {open === "Version History" && (
-                          <ul className="m-0 p-0  text-sm ">
-                            {versions?.length && versions.map((version) => (
-                              <li onClick={() => {
+                        {open === "Version History"  && (
+                          <ul className="p-0 m-0 flex items-center justify-center flex-col text-xs italic">
+                            {versions?.length ?versions.map((version) => (
+                              <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-center justify-center " onClick={() => {
                                 setSelectedVersion({ text: `${version.id} - ${convertToIST(version.tstamp)}`, index: version.id })
                                 document.getElementById('my_modal_3')?.showModal()
                               }}>
                                 <MdHistory />
                                 <span>Version {`${version.id} - ${convertToIST(version.tstamp)}`}</span>
                               </li>
-                            ))}
+                            )): <li className='text-center'>No versions found</li>}
                           </ul>
                         )}
                       </li>
@@ -568,7 +583,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                 </div>
               </form>
             </div>
-          </dialog>resolve(false)
+          </dialog>
         </div>
       </div >
     </div >
