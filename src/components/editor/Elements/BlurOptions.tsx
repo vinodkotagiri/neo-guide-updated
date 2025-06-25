@@ -66,20 +66,20 @@ const BlurOptions = ({ playerRef }) => {
   }, [currentElementId])
 
   return (
-    <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative '>
+    <div className='w-full  pb-4 pt-3 px-3 flex flex-col gap-3 relative '>
       <div className='border-b-[#303032] border-b flex items-center pb-2 justify-between'>
-        <div className='flex   text-[#ffffff] text-[14px]'>
+        <div className='flex text-[#ffffff] text-[18px]'>
           Blur
         </div>
         <div className='flex items-center gap-4' >
-          <button onClick={handleAddNewBlur} className=' text-[#d9d9d9] cursor-pointer  text-[14px]'>
-            <FaPlus />
+          <button onClick={handleAddNewBlur} className=' text-[#d9d9d9] cursor-pointer  text-[15px] flex items-center flex-row gap-2 add_new_btn'>
+            <FaPlus /> Add New
           </button>
         </div>
 
       </div>
       <div className=' w-full flex' style={blurs.length == 0 ? {} : { display: 'none' }}>
-        <button className='cursor-pointer bg-[#422ad5]  rounded-lg text-white mx-auto px-3 py-2 mt-4 flex items-center gap-2' onClick={handleAddNewBlur} ><FaPlus /> Add New Blur</button>
+        <button className='cursor-pointer bg-[#422ad5]  rounded-lg text-white mx-auto px-3 py-2 mt-4 flex items-center gap-2 add_btn_bg' onClick={handleAddNewBlur} ><FaPlus /> Add New Blur</button>
       </div>
 
       {/* TIMES */}

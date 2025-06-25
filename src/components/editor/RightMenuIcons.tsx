@@ -23,7 +23,8 @@ export default RightMenuIcons
 
 function MenuIconButton({ label, icon, setRightActiveArea, val, rightActiveArea }: { label: string, icon: React.ReactNode, setRightActiveArea: any, val: number, rightActiveArea: number }) {
   return (
-    <button style={rightActiveArea == val ? { backgroundColor: '#212025', color: '#ffffff' } : {}} className='      h-[64px] flex flex-col w-full justify-center items-center border-t-[1px] border-[#303032] p-2 text-[12px] cursor-pointer text-[#77767b] hover:text-white' onClick={() => setRightActiveArea(val)}>
+    <button className={`side_menu ${rightActiveArea === val ? 'sidemenu_active' : ''}`}
+      onClick={() => setRightActiveArea(val)}>
       {icon}
       <small>{label}</small>
     </button>

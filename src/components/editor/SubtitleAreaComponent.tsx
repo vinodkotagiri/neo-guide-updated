@@ -193,7 +193,7 @@ function SubtitleAreaComponent({ playerRef }) {
           }
         };
         audio.onerror = () => setActiveAudioIndex(null);
-        audio.oncanplay = () => {};
+        audio.oncanplay = () => { };
       }
     });
 
@@ -215,7 +215,7 @@ function SubtitleAreaComponent({ playerRef }) {
       <SubtitleHeader
         selectedVoiceID={selectedVoiceID}
         setSelectedVoiceID={setSelectedVoiceID}
-        setSubAudioUrl={() => {}}
+        setSubAudioUrl={() => { }}
       />
 
       <motion.div className="flex flex-col gap-1 p-2 h-[93%] overflow-auto">
@@ -227,7 +227,7 @@ function SubtitleAreaComponent({ playerRef }) {
           subtitles.data.map((item, index) => (
             <motion.div
               data-subtitle-index={index}
-              className="flex h-auto items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md"
+              className="flex py-1 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md"
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{
@@ -240,7 +240,7 @@ function SubtitleAreaComponent({ playerRef }) {
               }}
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}
             >
-              <div className="flex flex-col h-full items-center justify-center px-2 gap-1">
+              <div className="flex flex-col h-full items-center justify-center px-2 ">
                 <div className="text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
                 <div className="text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
               </div>

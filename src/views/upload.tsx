@@ -20,7 +20,6 @@ function UploadView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user_id } = useAppSelector(state => state.video)
-
   useEffect(() => {
     const user_id = searchParams.get('user_id') ?? null;
     const user_name = searchParams.get('name') ?? null;
@@ -101,8 +100,8 @@ function UploadView() {
               >
                 <div className="flex flex-col items-center justify-center">
                   <IoCloudUploadOutline className="h-10 w-10 text-[#422AD5] mb-4" />
-                  <p className="mb-1 text-[#999]">
-                    Drag & drop your files here or choose files
+                  <p className="mb-1 text-[#999] ">
+                    Choose file
                   </p>
                   <input
                     type="file"
