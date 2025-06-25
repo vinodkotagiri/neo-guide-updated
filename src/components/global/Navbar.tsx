@@ -53,12 +53,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       video: url,
       videoWidth,
       videoHeight,
-      data:{
         rectangles: rectangles.map(rect => ({
         ...rect,
         width:  parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
         height:  parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
-        x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
         x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
         y: parseInt(((rect.y / videoHeight) * 100).toFixed(2)),
         cornerRadius: rect.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
@@ -105,8 +103,12 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           }
         }))
       }
-
-    }
+      if(rectangles.length==0) delete payload.rectangles
+      if(arrows.length==0) delete payload.arrows
+      if(texts.length==0) delete payload.texts
+      if(spotLights.length==0) delete payload.spotLights
+      if(blurs.length==0) delete payload.blurs
+      if(zooms.length==0) delete payload.zooms
 
     exportVideo(payload).then(token => {
       if (token) {
@@ -536,12 +538,12 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
                           </ul>
                         )}
                       </li>
-                      <li>
+                      {/* <li>
                         <a href="#"  >
                           <MdContentCopy />
                           <span>Make a copy</span>
                         </a>
-                      </li>
+                      </li> */}
                       {/* Docs */}
                       <li>
                         <div
@@ -555,10 +557,10 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
                           <IoChevronDown className={`${open === "Docs" ? 'rotate-180' : ''} transition-transform`} />
                         </div>
                         {open === "Docs" && (
-                          <ul className="ml-4 mt-1 space-y-1 text-sm text-gray-300">
-                            <li onClick={handleExport} className="cursor-pointer"><RiFileVideoLine />  Video </li>
-                            <li><MdOutlineArticle />  Article</li>
-                            <li><BsFiletypeGif /> Gif</li>
+                          <ul className="ml-4 mt-1 space-y-1 text-xs text-gray-300 p-0 m-0 flex items-start justify-center flex-col ">
+                            <li onClick={handleExport} className="cursor-pointer px-4 p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" > Video </li>
+                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" >Article</li>
+                            <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full px-4 justify-center italic" >Gif</li>
 
                           </ul>
                         )}
