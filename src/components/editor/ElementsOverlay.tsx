@@ -375,7 +375,7 @@ function ElementsOverlay() {
           ))}
 
           <Transformer ref={transformerRef}
-            rotateEnabled={true}
+            rotateEnabled={selectedId && arrows.some(blur => blur.id === selectedId) ? true : false}
             flipEnabled={false}
             boundBoxFunc={(oldBox, newBox) => {
               if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
