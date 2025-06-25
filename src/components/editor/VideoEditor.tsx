@@ -39,6 +39,8 @@ const VideoEditor = ({ playerRef }) => {
   useEffect(()=>{
     if(duration<120)
     dispatch(setPixelFactor(50))
+  else
+    dispatch(setPixelFactor(8))
   },[duration])
 
   return (
