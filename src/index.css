@@ -83,13 +83,14 @@
   font-weight: 500;
   padding: 10px;
   gap: 5px;
-  padding: 5px 20px;
+  padding: 8px 20px;
   background-color: rgba(50, 50, 50, 1);
   border-radius: 28px;
 }
 
 .nav-custom-btn button.active {
-  background-color: oklch(45% 0.24 277.023);
+  background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
+
   border-radius: 28px;
 }
 
@@ -276,10 +277,12 @@
   color: #ffffff;
   font-weight: 400;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   background-color: oklch(45% 0.24 277.023);
   border-radius: 28px;
-  padding: 3px 6px;
+  padding: 8px 10px;
+  width: 118px;
+  height: 36px;
 }
 
 .change_voice .flag_user {
@@ -417,4 +420,41 @@
 .user_menu li a label {
   cursor: pointer;
   display: block;
+}
+
+.side_menu {
+  height: 64px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #303032;
+  padding: 0.5rem;
+  font-size: 14px;
+  flex-direction: column;
+  color: #ccc;
+  gap: 0px;
+  cursor: pointer;
+}
+
+.sidemenu_active {
+  color: #fff;
+  background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
+
+
+}
+
+.add_btn_bg {
+  background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
+
+  font-size: 14px;
+}
+
+.add_new_btn {
+  font-size: 14px;
+  border-radius: 50px;
+  padding: 3px 8px;
+  color: #fff;
+  background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
+
 }

@@ -261,7 +261,7 @@ function SubtitleAreaComponent({ playerRef }) {
       <SubtitleHeader
         selectedVoiceID={selectedVoiceID}
         setSelectedVoiceID={setSelectedVoiceID}
-        setSubAudioUrl={() => {}}
+        setSubAudioUrl={() => { }}
       />
 
       <motion.div
@@ -275,7 +275,7 @@ function SubtitleAreaComponent({ playerRef }) {
         ) : (
           subtitles.data.map((item, index) => (
             <motion.div
-              className="flex h-24 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md"
+              className="flex py-1 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md"
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -287,7 +287,7 @@ function SubtitleAreaComponent({ playerRef }) {
               }
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}
             >
-              <div className="flex flex-col h-full items-center justify-center px-2 gap-1">
+              <div className="flex flex-col h-full items-center justify-center px-2">
                 <div className="text-[#ccc] text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
                 <div className="text-[#ccc] text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
               </div>
@@ -304,13 +304,13 @@ function SubtitleAreaComponent({ playerRef }) {
                   <div className="loader" />
                 ) : activeAudioIndex === index && audioRefs.current[index] && !audioRefs.current[index].paused ? (
                   <IoPauseOutline
-                  size={24}
-                  className="text-[#ccc] cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleAudio(index, item);
-                  }}
-                />
+                    size={24}
+                    className="text-[#ccc] cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAudio(index, item);
+                    }}
+                  />
                 ) : (
                   <IoPlayOutline
                     size={24}

@@ -17,7 +17,7 @@ import ZoomOptions from './Elements/ZoomOptions'
 const EditorSider = ({ playerRef }) => {
   const [rightActiveArea, setRightActiveArea] = useState(2)
   const { currentPlayTime } = useAppSelector(state => state.video)
-  const { rectangles, blurs, texts, arrows, spotLights,zooms, currentElement, currentElementId } = useAppSelector(state => state.elements)
+  const { rectangles, blurs, texts, arrows, spotLights, zooms, currentElement, currentElementId } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   function handleAddShape(shape: string) {
     if (shape == 'rectangle') {
@@ -51,7 +51,7 @@ const EditorSider = ({ playerRef }) => {
         endTime: currentPlayTime + 5
       }
       dispatch(addBlur(blurData))
-    dispatch(setCurrentElement({id: blurData.id,type:'blur'}))
+      dispatch(setCurrentElement({ id: blurData.id, type: 'blur' }))
     }
     if (shape == 'text') {
       dispatch(setAddingElements(true))
@@ -116,7 +116,7 @@ const EditorSider = ({ playerRef }) => {
         easing_factor: 0.2,
         start_time: currentPlayTime,
         end_time: currentPlayTime + 5,
-        roi:{x:100, y:100, width:100, height:100}
+        roi: { x: 100, y: 100, width: 100, height: 100 }
       }
       dispatch(addZoom(zoomData))
       dispatch(setCurrentElement('zoom'))
@@ -174,7 +174,7 @@ const EditorSider = ({ playerRef }) => {
       </div> */}
       <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
         {rightActiveArea == 1 && <DubAreaComponent />}
-        {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef}/>}
+        {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef} />}
         {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
         {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
         {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
@@ -182,7 +182,7 @@ const EditorSider = ({ playerRef }) => {
         {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
         {rightActiveArea == 9 && <ZoomOptions playerRef={playerRef} />}
       </div>
-      <div className='w-[56px] h-full border-[#303032] border-l'>
+      <div className='w-[60px] h-full border-[#303032] border-l'>
         <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />
       </div>
 

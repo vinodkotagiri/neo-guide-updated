@@ -24,7 +24,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
   const [mergeToken, setMergeToken] = useState('')
   const [loading, setLoading] = useState(false)
   const [showReplace, setShowReplace] = useState(false)
-  const dispatch=useDispatch()
+  const dispatch = useDispatch()
   useEffect(() => {
     setLanguageList(elvenLanguages)
     setSelectedLanguage(elvenLanguages[0].language_id)
@@ -35,24 +35,24 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
   }, [])
 
   useEffect(() => {
-    if (selectedLanguage){
+    if (selectedLanguage) {
       setVoiceList(elvenVoices.find(voice => voice.language_id == selectedLanguage)?.voices)
       setSelectedVoice(voiceList[0].voiceid)
       setSelectedVoiceID(voiceList[0].voiceid)
       setAudioUrl(voiceList[0].preview)
-      dispatch(setTargetLanguage({targetLang:selectedLanguage.substr(0,2),targetLangName:selectedLanguage}))
+      dispatch(setTargetLanguage({ targetLang: selectedLanguage.substr(0, 2), targetLangName: selectedLanguage }))
     }
   }, [selectedLanguage])
-console.log('selectedVoiceID',selectedVoiceID)
+  console.log('selectedVoiceID', selectedVoiceID)
 
-useEffect(()=>{
-  if (selectedVoiceID){
-    const voice = voiceList?.find(voice => voice.voiceid == selectedVoiceID)
-    dispatch(setVoice(voice.voice))
-    dispatch(setVoiceId(selectedVoiceID))
-    dispatch(setVoiceLanguage(voice.language_id))
-  }
-},[selectedVoiceID])
+  useEffect(() => {
+    if (selectedVoiceID) {
+      const voice = voiceList?.find(voice => voice.voiceid == selectedVoiceID)
+      dispatch(setVoice(voice.voice))
+      dispatch(setVoiceId(selectedVoiceID))
+      dispatch(setVoiceLanguage(voice.language_id))
+    }
+  }, [selectedVoiceID])
   function handleLanguageChange(e) {
     setSelectedLanguage(e.target.value)
   }
@@ -182,7 +182,7 @@ useEffect(()=>{
             <MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)} />
           </div>
           <button className='generate_button ' onClick={handleGenerateSpeech}>
-            {loading ? <span className="font-light"><span className="loading loading-dots loading-xl"></span>&emsp;Generating</span>
+            {loading ? <span className="font-light"><span className="loading loading-dots loading-sm"></span>&emsp;Generating</span>
               : <>Generate Speech</>}
           </button>
 

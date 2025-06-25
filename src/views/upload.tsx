@@ -6,7 +6,7 @@ import { UploadVideoResponse } from '../api/responses/responses';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { setLoader } from '../redux/features/loaderSlice'
-import { setUserId, setVideoUrl, updateSubtitleData,setUserName } from '../redux/features/videoSlice';
+import { setUserId, setVideoUrl, updateSubtitleData, setUserName } from '../redux/features/videoSlice';
 import toast from 'react-hot-toast';
 import { setArticleData } from '../redux/features/articleSlice';
 import { IoCloudUploadOutline } from 'react-icons/io5';
@@ -18,19 +18,19 @@ function UploadView() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const {user_id}=useAppSelector(state => state.video)
-  useEffect(()=>{
-    const user_id=searchParams.get('user_id') ?? null;
-    const user_name=searchParams.get('name') ?? null;
-    if(!user_id) toast.error('User ID is required to upload a video');
-  // if(!user_name) toast.error('User Name is required to upload a video');
-    if(user_id){
+  const { user_id } = useAppSelector(state => state.video)
+  useEffect(() => {
+    const user_id = searchParams.get('user_id') ?? null;
+    const user_name = searchParams.get('name') ?? null;
+    if (!user_id) toast.error('User ID is required to upload a video');
+    // if(!user_name) toast.error('User Name is required to upload a video');
+    if (user_id) {
       dispatch(setUserId(user_id?.toString()));
-      if(user_name)
-      dispatch(setUserName(user_name?.toString()));
+      if (user_name)
+        dispatch(setUserName(user_name?.toString()));
     }
 
-  },[searchParams])
+  }, [searchParams])
   async function handleUploadFile() {
     window.localStorage.clear();
     dispatch(setArticleData([]));
@@ -83,7 +83,7 @@ function UploadView() {
                 <div className="flex flex-col items-center justify-center">
                   <IoCloudUploadOutline className="h-10 w-10 text-[#422AD5] mb-4" />
                   <p className="mb-1 text-[#999] ">
-                    Drag & drop your files here or  choose files
+                    Choose file
                   </p>
                   <input
                     type="file"
