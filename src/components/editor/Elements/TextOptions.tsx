@@ -34,6 +34,10 @@ const TextOptions = ({ playerRef }) => {
 
   useEffect(() => {
     setActiveId(currentElementId)
+    const currentRect = texts.find(rect => rect.id === currentElementId)
+    if(currentRect){
+      setFontSize(currentRect.fontSize)
+    }
   }, [currentElementId])
 
 
@@ -49,6 +53,7 @@ const TextOptions = ({ playerRef }) => {
     setStartTime(currentPlayTime)
     setEndTime(currentPlayTime + 5)
     dispatch(setAddingElements(true))
+    dispatch(setCurrentElementId({ id: null, type: null }))
     const textData: TextElementState = {
       id: Date.now().toString(),
       x: 0,
@@ -69,6 +74,7 @@ const TextOptions = ({ playerRef }) => {
 
   useEffect(() => {
     const currentRect = texts.find(rect => rect.id === currentElementId)
+    console.log('currentRect', currentRect)
     if (currentRect) {
       setStartTime(currentRect.startTime)
       setEndTime(currentRect.endTime)
@@ -79,16 +85,18 @@ const TextOptions = ({ playerRef }) => {
       setBackgroundColor(currentRect.backgroundColor)
       setJustify(currentRect.justify)
     }
-  }, [texts, currentElementId])
+  }, [ currentElementId])
 
   useEffect(() => {
     if (currentElementId && currentElement == 'text') {
       dispatch(editText({ id: currentElementId, startTime: startTime, endTime: endTime, text, font, fontSize, fontColor, backgroundColor, justify }))
     }
-  }, [startTime, endTime, currentElementId, text, font, fontColor, backgroundColor, justify, fontSize])
+  }, [startTime, endTime, text, font, fontColor, backgroundColor, justify, fontSize, currentElement,dispatch])
 
 
-
+ const textSizes = [
+  8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 54, 60, 66, 72
+];
 
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative'>
@@ -135,7 +143,7 @@ const TextOptions = ({ playerRef }) => {
               </>
               }
             </div>
-            <select className="select select-bordered flex-1 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" onChange={(e) => setFont(e.target.value)}>
+            <select className="select select-bordered flex-1 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" value={font} onChange={(e) => setFont(e.target.value)}>
               <option value={'Open Sans'}>Open Sans</option>
               <option value={'Alegreya'}>Alegreya</option>
               <option value={'Arial'}>Arial</option>
@@ -146,26 +154,13 @@ const TextOptions = ({ playerRef }) => {
               <option value={'Oswald'}>Oswald</option>
               <option value={'Raleway'}>Raleway</option>
             </select>
-            <select className="select select-bordered w-18 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" defaultValue={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))}>
-              <option value='38'>46</option>
-              <option value='38'>44</option>
-              <option value='38'>42</option>
-              <option value='38'>40</option>
-              <option value='38'>38</option>
-              <option value='36'>36</option>
-              <option value='32'>32</option>
-              <option value='30'>30</option>
-              <option value='28'>28</option>
-              <option value='26'>26</option>
-              <option value='24'>24</option>
-              <option value='22'>22</option>
-              <option value='20'>20</option>
-              <option value='18'>18</option>
-              <option value='16'>16</option>
-              <option value='14'>14</option>
-              <option value='12'>12</option>
-              <option value='10'>10</option>
-              <option value='8'>8</option>
+            <select className="select select-bordered w-18 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" value={fontSize||defa} onChange={(e) => setFontSize(parseInt(e.target.value))}>
+              {textSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+              
             </select>
             <div className="w-10 h-10 flex items-center justify-center border border-[#303032] cursor-pointer relative" onClick={() => colorInputRef.current?.click()}>
               <RiFontColor size={18} className="z-10  text-[#a3a3a5]" />
@@ -173,6 +168,8 @@ const TextOptions = ({ playerRef }) => {
                 type="color"
                 ref={colorInputRef}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                value={fontColor}
+                style={{ backgroundColor: fontColor }}
                 onChange={(e) => setFontColor(e.target.value)}
               />
             </div>

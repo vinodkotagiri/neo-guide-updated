@@ -103,6 +103,9 @@ const elementsSlice = createSlice({
   name: "elements",
   initialState: INITIAL_STATE,
   reducers: {
+    resetElements() {
+      return INITIAL_STATE
+    },
     setCurrentElementId(state, action) {
       state.currentElementId = action.payload.id;
       state.currentElement = action.payload.type;
@@ -221,6 +224,7 @@ const elementsSlice = createSlice({
 export default elementsSlice.reducer;
 export const {
   setCurrentElementId,
+  resetElements,
   addRectangle,
   addZoom,
   editZoom,

@@ -106,7 +106,42 @@ function ElementsOverlay() {
       }
     }
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played, zooms]);
-
+// Cursor event handlers for elements
+  const addCursorEvents = (node, type) => {
+    node.on('mouseover', () => {
+      if (stageRef.current) {
+        stageRef.current.container().style.cursor = 'pointer';
+      }
+    });
+    node.on('mouseout', () => {
+      if (stageRef.current) {
+        stageRef.current.container().style.cursor = 'default';
+      }
+    });
+    node.on('dragstart', () => {
+      if (stageRef.current) {
+        stageRef.current.container().style.cursor = 'grabbing';
+      }
+    });
+    node.on('dragend', () => {
+      if (stageRef.current) {
+        stageRef.current.container().style.cursor = 'pointer';
+      }
+    });
+    // Only add transform cursor for non-text elements (texts can't resize)
+    if (type !== 'text') {
+      node.on('transformstart', () => {
+        if (stageRef.current) {
+          stageRef.current.container().style.cursor = 'move';
+        }
+      });
+      node.on('transformend', () => {
+        if (stageRef.current) {
+          stageRef.current.container().style.cursor = 'pointer';
+        }
+      });
+    }
+  };
 
 
   return (
@@ -155,6 +190,7 @@ function ElementsOverlay() {
                 // Update rectangle size in Redux store
                 dispatch(editRectangle({ id: rect.id, width: newWidth, height: newHeight }));
               }}
+              onMount={(node) => addCursorEvents(node, 'rectangle')}
             />
           ))}
           {blurs.map((rect) => (
@@ -194,6 +230,7 @@ function ElementsOverlay() {
                 dispatch(editBlur({ id: rect.id, width: newWidth, height: newHeight }));
 
               }}
+              onMount={(node) => addCursorEvents(node, 'blur')}
             />
           ))}
           {texts.map((textElement) => (
@@ -226,6 +263,7 @@ function ElementsOverlay() {
                 const newFontSize = node.fontSize() * scaleX / scalingX;
                 dispatch(editText({ id: textElement.id, fontSize: newFontSize }));
               }}
+              onMount={(node) => addCursorEvents(node, 'text')}
             />
           ))}
           {arrows.map((arrow) => (
@@ -284,6 +322,7 @@ function ElementsOverlay() {
                   })
                 );
               }}
+              onMount={(node) => addCursorEvents(node, 'arrow')}
             />
           ))}
 
@@ -337,6 +376,7 @@ function ElementsOverlay() {
                     })
                   );
                 }}
+                onMount={(node) => addCursorEvents(node, 'spotlight')}
               />
             </Group>
           ))}
@@ -371,12 +411,14 @@ function ElementsOverlay() {
                 const newHeight = node.height() * scaleY / scalingY;
                 dispatch(editZoom({ id: zoom.id, roi: { ...zoom.roi, width: newWidth, height: newHeight } }));
               }}
+              onMount={(node) => addCursorEvents(node, 'zoom')}
             />
           ))}
 
           <Transformer ref={transformerRef}
-            rotateEnabled={true}
+            rotateEnabled={selectedId && arrows.some(blur => blur.id === selectedId) ? true : false}
             flipEnabled={false}
+            enabledAnchors={selectedId && texts.some(text => text.id === selectedId) ? [] : ['top-left', 'top-right', 'bottom-left', 'bottom-right']}
             boundBoxFunc={(oldBox, newBox) => {
               if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
                 return oldBox;

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import SubtitleHeader from './SubtitleHeader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { getSecondsFromTime } from '../../helpers';
@@ -19,24 +19,17 @@ import { IoPauseOutline, IoPlayOutline } from 'react-icons/io5';
 function SubtitleAreaComponent({ playerRef }) {
   const { subtitles, played, url, retries } = useAppSelector((state) => state.video);
   const { percentage, status } = useAppSelector((state) => state.loader);
-  const [currentIdx, setCurrentIdx] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(-1);
   const [reqId, setReqId] = useState('');
   const dispatch = useAppDispatch();
-  const { currentPlayTime } = useAppSelector((state) => state.video);
   const containerRef = useRef(null);
 
   const [selectedVoiceID, setSelectedVoiceID] = useState('');
   const [loading, setLoading] = useState(false);
-  const [audioUrls, setAudioUrls] = useState([]); // Store audio URLs for each subtitle
+  const [audioUrls, setAudioUrls] = useState([]);
   const [activeAudioIndex, setActiveAudioIndex] = useState(null);
-  const audioRefs = useRef([]); // References to audio elements
+  const audioRefs = useRef([]);
 
-  const spring = useSpring(0, {
-    stiffness: 100,
-    damping: 20,
-  });
-
-  // Clear audio URLs and stop playback when selectedVoiceID changes
   useEffect(() => {
     setAudioUrls([]);
     setActiveAudioIndex(null);
@@ -48,29 +41,32 @@ function SubtitleAreaComponent({ playerRef }) {
     });
   }, [selectedVoiceID]);
 
-  // Update current subtitle index based on video play time
   useEffect(() => {
     const idx = subtitles.data.findIndex((subtitle) => {
-      return (
-        getSecondsFromTime(subtitle.start_time) - 1 <= currentPlayTime &&
-        getSecondsFromTime(subtitle.end_time) - 1 >= currentPlayTime
-      );
+      const startSeconds = getSecondsFromTime(subtitle.start_time);
+      const endSeconds = getSecondsFromTime(subtitle.end_time);
+      return startSeconds <= played && endSeconds >= played;
     });
-    if (currentIdx !== idx) setCurrentIdx(idx);
-  }, [currentPlayTime]);
+    if (idx !== currentIdx) {
+      setCurrentIdx(idx);
+    }
+  }, [played]);
 
-  // Scroll to the current subtitle
+  // ✅ Auto-scroll to current subtitle
   useEffect(() => {
     if (currentIdx >= 0 && containerRef.current) {
-      const subtitleHeight = 96;
-      const containerHeight = containerRef.current.clientHeight;
-      const targetScroll =
-        currentIdx * subtitleHeight - containerHeight / 2 + subtitleHeight / 2;
-      spring.set(Math.max(0, targetScroll));
+      const currentEl = containerRef.current.querySelector(
+        `[data-subtitle-index="${currentIdx}"]`
+      );
+      if (currentEl) {
+        currentEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
     }
   }, [currentIdx]);
 
-  // Fetch subtitles if none exist and retries are available
   useEffect(() => {
     if (!subtitles.data.length && retries < 3) {
       getSubtitles({ target_language: 'en', video_path: url })
@@ -88,7 +84,6 @@ function SubtitleAreaComponent({ playerRef }) {
     }
   }, []);
 
-  // Poll for subtitle data when request ID is available
   useEffect(() => {
     if (reqId) {
       getArticleData(reqId);
@@ -121,14 +116,12 @@ function SubtitleAreaComponent({ playerRef }) {
     }
   }
 
-  // Determine if a subtitle is active based on video play time
   function isActiveStyle(start, end) {
     const startSeconds = getSecondsFromTime(start);
     const endSeconds = getSecondsFromTime(end);
     return startSeconds <= played && endSeconds >= played;
   }
 
-  // Toggle audio playback for a subtitle
   const toggleAudio = async (index, item) => {
     if (!selectedVoiceID) {
       toast.error('No Voice is selected');
@@ -137,12 +130,10 @@ function SubtitleAreaComponent({ playerRef }) {
 
     const audio = audioRefs.current[index];
     if (!audio) {
-      console.error(`Audio element not found for index ${index}`);
       toast.error('Audio element not initialized');
       return;
     }
 
-    // Pause any currently playing audio
     if (activeAudioIndex !== null && activeAudioIndex !== index) {
       const prevAudio = audioRefs.current[activeAudioIndex];
       if (prevAudio && !prevAudio.paused) {
@@ -151,15 +142,10 @@ function SubtitleAreaComponent({ playerRef }) {
       }
     }
 
-    // If audio URL exists, toggle play/pause
     if (audioUrls[index]) {
-      console.log(`Playing audio for index ${index}, URL: ${audioUrls[index]}`);
       if (audio.paused) {
-        audio.volume = 1.0; // Ensure volume is set
-        audio.play().catch((err) => {
-          console.error(`Error playing audio for index ${index}:`, err);
-          // toast.error('Error playing audio');
-        });
+        audio.volume = 1.0;
+        audio.play().catch(console.error);
         setActiveAudioIndex(index);
       } else {
         audio.pause();
@@ -168,80 +154,49 @@ function SubtitleAreaComponent({ playerRef }) {
       return;
     }
 
-    // Fetch audio if not already fetched
     setLoading(true);
-    const data = {
-      voiceid: selectedVoiceID,
-      text: item.text,
-    };
-
     try {
-      const audio_url = await textToSpeech(data);
-      console.log('audio_url', audio_url);
+      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text });
       if (audio_url) {
-        console.log(`Received audio URL for index ${index}: ${audio_url}`);
-        // Test the audio URL
-        // const testAudio = new Audio(audio_url);
-        // testAudio.play().catch((err) => {
-        //   console.error(`Test audio failed for URL ${audio_url}:`, err);
-        //   toast.error('Invalid or inaccessible audio URL');
-        // });
-
-        // Update audio URLs array
         setAudioUrls((prev) => {
           const newUrls = [...prev];
           newUrls[index] = audio_url;
           return newUrls;
         });
 
-        // Set audio source and play
         audio.src = audio_url;
-        audio.volume = 1.0; // Ensure volume is set
-        audio.play().catch((err) => {
-          console.error(`Error playing audio for index ${index}:`, err);
-          toast.error('Error playing audio');
-        });
+        audio.volume = 1.0;
+        audio.play().catch(console.error);
         setActiveAudioIndex(index);
       } else {
-        console.error('No audio_url received from textToSpeech API');
         toast.error('Failed to generate audio');
       }
     } catch (err) {
-      console.error('Error generating audio preview:', err);
+      console.error(err);
       toast.error('Error generating audio preview');
     } finally {
       setLoading(false);
     }
   };
 
-  // Initialize audio references and handle audio events
   useEffect(() => {
-    // Initialize audio elements for each subtitle
     audioRefs.current = subtitles.data.map(
       (_, index) => audioRefs.current[index] || new Audio()
     );
 
-    // Set up event listeners
     subtitles.data.forEach((_, index) => {
       const audio = audioRefs.current[index];
       if (audio) {
         audio.onended = () => {
           if (activeAudioIndex === index) {
-            console.log(`Audio ended for index ${index}`);
-            setActiveAudioIndex(null); // Reset active index to show play button
+            setActiveAudioIndex(null);
           }
         };
-        audio.onerror = () => {
-          // console.error(`Audio error for index ${index}:`, audio.error);
-          setActiveAudioIndex(null);
-        };
-        audio.oncanplay = () => {
-          console.log(`Audio ready to play for index ${index}`);
-        };
+        audio.onerror = () => setActiveAudioIndex(null);
+        audio.oncanplay = () => { };
       }
     });
 
-    // Cleanup on unmount
     return () => {
       audioRefs.current.forEach((audio, index) => {
         if (audio) {
@@ -250,7 +205,6 @@ function SubtitleAreaComponent({ playerRef }) {
           audio.onended = null;
           audio.onerror = null;
           audio.oncanplay = null;
-          console.log(`Cleaned up audio for index ${index}`);
         }
       });
     };
@@ -264,10 +218,7 @@ function SubtitleAreaComponent({ playerRef }) {
         setSubAudioUrl={() => { }}
       />
 
-      <motion.div
-        className="flex flex-col gap-1 p-2 h-[93%] overflow-auto"
-        style={{ translateY: -spring }}
-      >
+      <motion.div className="flex flex-col gap-1 p-2 h-[93%] overflow-auto">
         {!subtitles.data.length ? (
           <div className="w-full h-full overflow-auto relative">
             <LocalLoader progress={percentage} text={status} />
@@ -275,25 +226,27 @@ function SubtitleAreaComponent({ playerRef }) {
         ) : (
           subtitles.data.map((item, index) => (
             <motion.div
+              data-subtitle-index={index}
               className="flex py-1 items-center justify-between gap-1 cursor-pointer bg-[#212025] rounded-md"
               key={index}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              style={
-                currentIdx === index && isActiveStyle(item.start_time, item.end_time)
-                  ? { color: '#ffffff', backgroundColor: '#422AD5' }
-                  : {}
-              }
+              animate={{
+                opacity: isActiveStyle(item.start_time, item.end_time) ? 1 : 0.7,
+                backgroundColor: isActiveStyle(item.start_time, item.end_time)
+                  ? '#422AD5'
+                  : '#212025',
+                color: isActiveStyle(item.start_time, item.end_time) ? '#ffffff' : '#ccc',
+                transition: { duration: 0.3 },
+              }}
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}
             >
-              <div className="flex flex-col h-full items-center justify-center px-2">
-                <div className="text-[#ccc] text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
-                <div className="text-[#ccc] text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
+              <div className="flex flex-col h-full items-center justify-center px-2 ">
+                <div className="text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
+                <div className="text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
               </div>
 
               <p
-                className="w-full h-auto p-2 py-3 text-[#ccc] subtitle-content text-[0.8rem] outline-0"
+                className="w-full h-auto p-2 py-3 subtitle-content text-[0.8rem] outline-0"
                 dangerouslySetInnerHTML={{ __html: item.text }}
                 contentEditable
               />

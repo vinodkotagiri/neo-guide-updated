@@ -418,18 +418,17 @@ export function getProjectData(reference_id: { reference_id: string }) {
   });
 }
 
-export function getVersions(reference_id: { reference_id: string }): [{ id: string | number; tstamp: string }] | false {
+export function getVersions(reference_id: { reference_id: string }):Promise< [{ id: string | number; tstamp: string }] | []> {
   return new Promise((resolve) => {
     const url = "https://contentinova.com/neoguidegetversion";
     axios
-      .post(url, {reference_id})
+      .post(url, reference_id)
       .then((res) => {
-        console.log("Got versions::",res.data)
         resolve(res.data);
       })
       .catch((err) => {
         console.log("error in export or update json", err);
-        resolve(false);
+        resolve([]);
       });
   });
 }

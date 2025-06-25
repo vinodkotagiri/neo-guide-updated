@@ -16,8 +16,9 @@ import { BsFiletypeGif } from "react-icons/bs";
 import { convertToIST } from "../../helpers";
 import { Navigate } from "react-router-dom";
 import { setArticleData } from "../../redux/features/articleSlice";
-import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom } from "../../redux/features/elementsSlice";
+import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, resetElements } from "../../redux/features/elementsSlice";
 import { setVersions } from "../../redux/features/videoSlice";
+import { setLoader } from "../../redux/features/loaderSlice";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -52,57 +53,62 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       video: url,
       videoWidth,
       videoHeight,
-      rectangles: rectangles.map(rect => ({
+        rectangles: rectangles.map(rect => ({
         ...rect,
-        width: ((rect.width / videoWidth) * 100).toFixed(2),
-        height: ((rect.height / videoHeight) * 100).toFixed(2),
-        x: ((rect.x / videoWidth) * 100).toFixed(2),
-        y: ((rect.y / videoHeight) * 100).toFixed(2),
-        cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+        width:  parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
+        height:  parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
+        x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
+        y: parseInt(((rect.y / videoHeight) * 100).toFixed(2)),
+        cornerRadius: rect.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
       })),
       arrows: arrows.map(arrow => ({
         ...arrow,
-        strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
-        pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
-        pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
-        x: ((arrow.x / videoWidth) * 100).toFixed(2),
-        y: ((arrow.y / videoHeight) * 100).toFixed(2),
-        points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+        strokeWidth:  parseInt(((arrow.strokeWidth / videoWidth) * 100).toFixed(2)),
+        pointerLength:  parseInt(((arrow.pointerLength / videoWidth) * 100).toFixed(2)),
+        pointerWidth:  parseInt(((arrow.pointerWidth / videoWidth) * 100).toFixed(2)),
+        x:  parseInt(((arrow.x / videoWidth) * 100).toFixed(2)),
+        y:  parseInt(((arrow.y / videoHeight) * 100).toFixed(2)),
+        points: arrow.points.map(point => ( parseInt((point / videoWidth) * 100).toFixed(2)))
       }))
       , texts: texts.map(text => ({
         ...text,
-        x: ((text.x / videoWidth) * 100).toFixed(2),
-        y: ((text.y / videoHeight) * 100).toFixed(2),
+        x:  parseInt(((text.x / videoWidth) * 100).toFixed(2)),
+        y:  parseInt(((text.y / videoHeight) * 100).toFixed(2)),
       })),
       spotLights: spotLights.map(spot => ({
         ...spot,
-        x: ((spot.x / videoWidth) * 100).toFixed(2),
-        y: ((spot.y / videoHeight) * 100).toFixed(2),
-        width: ((spot.width / videoWidth) * 100).toFixed(2),
-        height: ((spot.height / videoHeight) * 100).toFixed(2),
-        cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+        x:  parseInt(((spot.x / videoWidth) * 100).toFixed(2)),
+        y:  parseInt(((spot.y / videoHeight) * 100).toFixed(2)),
+        width:  parseInt(((spot.width / videoWidth) * 100).toFixed(2)),
+        height:  parseInt(((spot.height / videoHeight) * 100).toFixed(2)),
+        cornerRadius: spot.cornerRadius.map(radius => ( parseInt((radius / videoWidth) * 100).toFixed(2)))
       })),
       blurs: blurs.map(blur => ({
         ...blur,
-        x: ((blur.x / videoWidth) * 100).toFixed(2),
-        y: ((blur.y / videoHeight) * 100).toFixed(2),
-        width: ((blur.width / videoWidth) * 100).toFixed(2),
-        height: ((blur.height / videoHeight) * 100).toFixed(2),
-        blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+        x:  parseInt(((blur.x / videoWidth) * 100).toFixed(2)),
+        y:  parseInt(((blur.y / videoHeight) * 100).toFixed(2)),
+        width:  parseInt(((blur.width / videoWidth) * 100).toFixed(2)),
+        height:  parseInt(((blur.height / videoHeight) * 100).toFixed(2)),
+        blurRadius:  parseInt(((blur.blurRadius / videoWidth) * 100).toFixed(2))
       }
       )),
       zooms: zooms.map(zoom => (
         {
           ...zoom,
           roi: {
-            x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
-            y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
-            width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
-            height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+            x:  parseInt(((zoom.roi.x / videoWidth) * 100).toFixed(2)),
+            y:  parseInt(((zoom.roi.y / videoHeight) * 100).toFixed(2)),
+            width:  parseInt(((zoom.roi.width / videoWidth) * 100).toFixed(2)),
+            height:  parseInt(((zoom.roi.height / videoHeight) * 100).toFixed(2))
           }
         }))
-
-    }
+      }
+      if(rectangles.length==0) delete payload.rectangles
+      if(arrows.length==0) delete payload.arrows
+      if(texts.length==0) delete payload.texts
+      if(spotLights.length==0) delete payload.spotLights
+      if(blurs.length==0) delete payload.blurs
+      if(zooms.length==0) delete payload.zooms
 
     exportVideo(payload).then(token => {
       if (token) {
@@ -132,56 +138,56 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           // dispatch(setVideoUrl(videoUrl));
           const videoWidth = parseInt(elements?.videoWidth);
           const videoHeight = parseInt(elements?.videoHeight);
-
+          dispatch(resetElements())
           const rectangles = elements?.rectangles ? elements?.rectangles.map(rect => ({
             ...rect,
-            width: (parseFloat(rect.width) * videoWidth) / 100,
-            height: (parseFloat(rect.height) * videoHeight) / 100,
-            x: (parseFloat(rect.x) * videoWidth) / 100,
-            y: (parseFloat(rect.y) * videoHeight) / 100,
-            cornerRadius: rect.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
+            width: parseInt((parseFloat(rect.width) * videoWidth) / 100),
+            height: parseInt((parseFloat(rect.height) * videoHeight) / 100),
+            x: (parseInt(parseFloat(rect.x) * videoWidth) / 100),
+            y: parseInt((parseFloat(rect.y) * videoHeight) / 100),
+            cornerRadius: rect.cornerRadius.map(radius => parseInt((parseFloat(radius) * videoWidth) / 100))
           })) : []
           rectangles.forEach((rect) => {
             dispatch(addRectangle(rect));
           })
           const arrows = elements.arrows ? elements?.arrows.map(arrow => ({
             ...arrow,
-            strokeWidth: (parseFloat(arrow.strokeWidth) * videoWidth) / 100,
-            pointerLength: (parseFloat(arrow.pointerLength) * videoWidth) / 100,
-            pointerWidth: (parseFloat(arrow.pointerWidth) * videoWidth) / 100,
-            x: (parseFloat(arrow.x) * videoWidth) / 100,
-            y: (parseFloat(arrow.y) * videoHeight) / 100,
-            points: arrow.points.map(point => (parseFloat(point) * videoWidth) / 100)
+            strokeWidth: parseInt((parseFloat(arrow.strokeWidth) * videoWidth) / 100),
+            pointerLength: parseInt((parseFloat(arrow.pointerLength) * videoWidth) / 100),
+            pointerWidth: parseInt((parseFloat(arrow.pointerWidth) * videoWidth) / 100),
+            x: parseInt((parseFloat(arrow.x) * videoWidth) / 100),
+            y: parseInt((parseFloat(arrow.y) * videoHeight) / 100),
+            points: arrow.points.map(point => parseInt((parseFloat(point) * videoWidth) / 100))
           })) : []
           arrows.forEach((arrow) => {
             dispatch(addArrow(arrow));
           })
           const texts = elements?.texts ? elements?.texts.map(text => ({
             ...text,
-            x: (parseFloat(text.x) * videoWidth) / 100,
-            y: (parseFloat(text.y) * videoHeight) / 100
+            x: parseInt((parseFloat(text.x) * videoWidth) / 100),
+            y: parseInt((parseFloat(text.y) * videoHeight) / 100)
           })) : []
           texts.forEach((text) => {
             dispatch(addText(text));
           })
           const spotLights = elements?.spotLights ? elements?.spotLights.map(spot => ({
             ...spot,
-            x: (parseFloat(spot.x) * videoWidth) / 100,
-            y: (parseFloat(spot.y) * videoHeight) / 100,
-            width: (parseFloat(spot.width) * videoWidth) / 100,
-            height: (parseFloat(spot.height) * videoHeight) / 100,
-            cornerRadius: spot.cornerRadius.map(radius => (parseFloat(radius) * videoWidth) / 100)
+            x: parseInt((parseFloat(spot.x) * videoWidth) / 100),
+            y: parseInt((parseFloat(spot.y) * videoHeight) / 100),
+            width: parseInt((parseFloat(spot.width) * videoWidth) / 100),
+            height: parseInt((parseFloat(spot.height) * videoHeight) / 100),
+            cornerRadius: spot.cornerRadius.map(radius => parseInt((parseFloat(radius) * videoWidth) / 100))
           })) : []
           spotLights.forEach((spot) => {
             dispatch(addSpotLight(spot));
           })
           const blurs = elements?.blurs ? elements?.blurs.map(blur => ({
             ...blur,
-            x: (parseFloat(blur.x) * videoWidth) / 100,
-            y: (parseFloat(blur.y) * videoHeight) / 100,
-            width: (parseFloat(blur.width) * videoWidth) / 100,
-            height: (parseFloat(blur.height) * videoHeight) / 100,
-            blurRadius: (parseFloat(blur.blurRadius) * videoWidth) / 100
+            x: parseInt((parseFloat(blur.x) * videoWidth) / 100),
+            y: parseInt((parseFloat(blur.y) * videoHeight) / 100),
+            width: parseInt((parseFloat(blur.width) * videoWidth) / 100),
+            height: parseInt((parseFloat(blur.height) * videoHeight) / 100),
+            blurRadius: parseInt((parseFloat(blur.blurRadius) * videoWidth) / 100)
           })) : []
           blurs.forEach((blur) => {
             dispatch(addBlur(blur));
@@ -189,10 +195,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           const zooms = elements?.zooms ? elements.zooms.map(zoom => ({
             ...zoom,
             roi: {
-              x: (parseFloat(zoom.roi.x) * videoWidth) / 100,
-              y: (parseFloat(zoom.roi.y) * videoHeight) / 100,
-              width: (parseFloat(zoom.roi.width) * videoWidth) / 100,
-              height: (parseFloat(zoom.roi.height) * videoHeight) / 100
+              x: parseInt((parseFloat(zoom.roi.x) * videoWidth) / 100),
+              y: parseInt((parseFloat(zoom.roi.y) * videoHeight) / 100),
+              width: parseInt((parseFloat(zoom.roi.width) * videoWidth) / 100),
+              height: parseInt((parseFloat(zoom.roi.height) * videoHeight) / 100)
             }
           })) : []
           zooms.forEach((zoom) => {
@@ -244,6 +250,10 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   };
 
   const saveVideo = async () => {
+    try{
+if(!articleData.length) return toast.error('Article data not loaded yet!');
+    if(!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
+    dispatch(setLoader({ loading: true, status: 'please wait while we save the video' }));
     if (!uniqueId) {
       setUniqueId(Date.now().toString())
     }
@@ -332,16 +342,16 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           }
         }
         exportOrupdateProject(payload).then(res => {
-          console.log("Got reference ID", res.reference_id);
           if (res.reference_id) {
             dispatch(setReferenceId(res.reference_id))
+            return toast.success("Project saved successfully")
           }
         }).catch(err => {
           console.log(err)
           return toast.error("Error in saving project")
         })
       }
-      return toast.success("Project saved successfully")
+      
     } else {
       payload = {
         reference_id: reference_id,
@@ -414,14 +424,19 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             }))
         }
       }
-      exportOrupdateProject(payload).then(async (res) => {
-        console.log("Updated Project:", res)
+      exportOrupdateProject(payload).then(async () => {
         await updateVersions(reference_id)
-        console.log("GOT VERSIONS:", versions)
+        return toast.success('Project updated successfully');
       }).catch(err => console.log(err))
-      return toast.success('Project updated successfully');
+    }
+    }catch(err){
+      console.log(err);
+      toast.error("Error saving video")
+    }finally{
+      dispatch(setLoader({ loading: false }))
     }
   }
+
   useEffect(() => {
     (async () => {
       if (reference_id) {
@@ -432,7 +447,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
   async function updateVersions(refId: string) {
     getVersions(refId).then((result) => {
-      console.log('versions data in else useEffect', result)
       if (result?.length) {
         dispatch(setVersions(result))
       }
@@ -524,12 +538,12 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           </ul>
                         )}
                       </li>
-                      <li>
+                      {/* <li>
                         <a href="#"  >
                           <MdContentCopy />
                           <span>Make a copy</span>
                         </a>
-                      </li>
+                      </li> */}
                       {/* Docs */}
                       <li>
                         <div
@@ -543,16 +557,16 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                           <IoChevronDown className={`${open === "Docs" ? 'rotate-180' : ''} transition-transform`} />
                         </div>
                         {open === "Docs" && (
-                          <ul className="ml-4 mt-1 space-y-1 text-sm text-gray-300">
-                            <li onClick={handleExport} className="cursor-pointer"><RiFileVideoLine />  Video </li>
-                            <li><MdOutlineArticle />  Article</li>
-                            <li><BsFiletypeGif /> Gif</li>
+                          <ul className="ml-4 mt-1 space-y-1 text-xs text-gray-300 p-0 m-0 flex items-start justify-center flex-col ">
+                            <li onClick={handleExport} className="cursor-pointer px-4 p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" > Video </li>
+                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" >Article</li>
+                            <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full px-4 justify-center italic" >Gif</li>
 
                           </ul>
                         )}
                       </li>
                       <li onClick={saveVideo}>
-                        <a  >
+                        <a >
                           <FaRegSave />
                           <span>Save</span>
                         </a>

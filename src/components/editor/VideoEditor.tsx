@@ -5,16 +5,29 @@ import TimelineArea from "./TimelineArea";
 import ElementsOverlay from "./ElementsOverlay";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { MdFullscreen, MdPauseCircle, MdPlayCircle } from "react-icons/md";
-import { setMuted, setPixelFactor, setVideoPlaying } from "../../redux/features/videoSlice";
+import { setMuted, setPixelFactor, setReferenceId, setVersions, setVideoPlaying } from "../../redux/features/videoSlice";
 import { formatTime } from "../../helpers";
 import { BsVolumeMute, BsVolumeUpFill } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+import { getVersions } from "../../api/axios";
 
 const VideoEditor = ({ playerRef }) => {
 
   const { playing, muted, pixelFactor,duration } = useAppSelector(state => state.video)
   const dispatch = useAppDispatch()
-
+ const [searchParams] = useSearchParams();
+  useEffect(()=>{
+    const reference_id = searchParams.get('reference_id') ?? null;
+    if(reference_id){
+      dispatch(setReferenceId(reference_id));
+      getVersions({reference_id}).then((result) => {
+        if (result) {
+          dispatch(setVersions(result));
+        }
+      })
+    }
+  },[dispatch,searchParams])
 
   const enterFullscreen = () => {
     if (playerRef.current) {
@@ -39,6 +52,8 @@ const VideoEditor = ({ playerRef }) => {
   useEffect(()=>{
     if(duration<120)
     dispatch(setPixelFactor(50))
+  else
+    dispatch(setPixelFactor(8))
   },[duration])
 
   return (
