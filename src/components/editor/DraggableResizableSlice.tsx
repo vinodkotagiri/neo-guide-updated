@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { 
-  editArrow, 
-  editBlur, 
-  editRectangle, 
-  editSpotLight, 
-  editText, 
-  editZoom, 
-  setCurrentElementId 
+import {
+  editArrow,
+  editBlur,
+  editRectangle,
+  editSpotLight,
+  editText,
+  editZoom,
+  setCurrentElementId
 } from '../../redux/features/elementsSlice';
 
 // Define prop types
@@ -38,21 +38,21 @@ const DraggableResizableSlice = ({
   const [isResizingRight, setIsResizingRight] = useState(false);
   const [lastX, setLastX] = useState(0);
   const [sliceStyle, setSliceStyle] = useState({ left: 0, width: 0 });
-  
+
   const dispatch = useAppDispatch();
   const { pixelFactor } = useAppSelector(state => state.video);
-  
+
   const scrollSpeed = 5;
-  const minWidth = 5;
+  const minWidth = 1;
   const edgeThreshold = 50;
 
   // Initialize slice position
   useEffect(() => {
     if (!shape) return;
-    
+
     const startTime = shape.startTime ?? shape.start_time ?? 0;
     const endTime = shape.endTime ?? shape.end_time ?? 0;
-    
+
     if (startTime !== undefined && endTime !== undefined) {
       const width = (endTime - startTime) * pixelFactor;
       const left = startTime * pixelFactor;
@@ -63,7 +63,7 @@ const DraggableResizableSlice = ({
   // Update Redux store
   useEffect(() => {
     if (!shape?.id) return;
-    
+
     const startTime = sliceStyle.left / pixelFactor;
     const endTime = (sliceStyle.left + sliceStyle.width) / pixelFactor;
 
@@ -81,7 +81,7 @@ const DraggableResizableSlice = ({
       try {
         dispatch(action({
           id: shape.id,
-          ...(shapeType === 'zoom' 
+          ...(shapeType === 'zoom'
             ? { start_time: startTime, end_time: endTime }
             : { startTime, endTime })
         }));
@@ -153,7 +153,7 @@ const DraggableResizableSlice = ({
       }
 
       setSliceStyle({ left: newLeft, width: newWidth });
-      
+
       // Auto-scroll logic
       if (wrapperRef.current && sliceRef.current) {
         const wrapperRect = wrapperRef.current.getBoundingClientRect();
@@ -169,7 +169,7 @@ const DraggableResizableSlice = ({
           wrapperRef.current.scrollLeft += scrollSpeed;
         }
       }
-      
+
       setLastX(e.clientX);
     } catch (error) {
       console.error('Error in mouse move handling:', error);
@@ -192,10 +192,10 @@ const DraggableResizableSlice = ({
     <div
       className="h-full absolute cursor-grab select-none flex items-center justify-center capitalize text-xs rounded-sm border-l-2 border-slate-200 border-r-2"
       ref={sliceRef}
-      style={{ 
-        left: sliceStyle.left, 
-        width: sliceStyle.width, 
-        backgroundColor: color 
+      style={{
+        left: sliceStyle.left,
+        width: sliceStyle.width,
+        backgroundColor: color
       }}
       onMouseDown={handleMouseDown}
       onClick={onShapeClick}
@@ -205,7 +205,7 @@ const DraggableResizableSlice = ({
           {label} <span>{Number(sliceStyle.width / pixelFactor).toFixed(2)}s</span>
         </p>
       )}
-      <div 
+      <div
         className="resize-handle left rounded-l-sm"
         style={{
           position: 'absolute',
@@ -216,7 +216,7 @@ const DraggableResizableSlice = ({
           cursor: 'ew-resize',
         }}
       />
-      <div 
+      <div
         className="resize-handle right rounded-r-sm"
         style={{
           position: 'absolute',
