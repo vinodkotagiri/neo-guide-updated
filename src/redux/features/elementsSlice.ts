@@ -35,10 +35,18 @@ export interface TextElementState {
   font: string;
   fontSize: number;
   fontColor: string;
-  backgroundColor: string;
+  backgroundColor?: string;
+  backgroundGradientStartColor?: string;
+  backgroundGradientEndColor?: string;
+  gradientDirection?: 'horizontal' | 'vertical' | 'diagonal';
   justify: string;
   startTime: number;
   endTime: number;
+  rotation?: number;
+  width?: number;
+  height?: number;
+  boundsX?: number;
+  boundsY?: number;
 }
 
 export interface ArrowElementState {

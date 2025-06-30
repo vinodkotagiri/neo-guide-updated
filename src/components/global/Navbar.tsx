@@ -124,7 +124,6 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     try {
       if (selectedVersion?.index) {
         await getVersionData(selectedVersion.index).then((res) => {
-          console.log('restored version:', res);
           dispatch(setSourceLang(res?.sourceLang));
           dispatch(setSourceLangName(res?.sourceLangName));
           dispatch(setTargetLanguage(res?.targetLang));
@@ -208,8 +207,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           toast.success(`Version restored Successfully: ${selectedVersion.text}`)
         })
       }
-    } catch (error) {
-      console.log("error restoring version", error);
+    } catch (e) {
+      console.log(e)
       return toast.error("Error restoring version")
     }
   }

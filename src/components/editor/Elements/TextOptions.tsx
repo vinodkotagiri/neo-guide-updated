@@ -8,6 +8,7 @@ import { setAddingElements } from '../../../redux/features/videoSlice'
 import { CiTextAlignJustify } from 'react-icons/ci'
 import { RiFontColor } from 'react-icons/ri'
 import { FaPlus, FaRegTrashAlt } from 'react-icons/fa'
+import { TbBackground } from 'react-icons/tb'
 
 const TextOptions = ({ playerRef }) => {
   const { currentElementId, texts, currentElement } = useAppSelector(state => state.elements)
@@ -18,8 +19,9 @@ const TextOptions = ({ playerRef }) => {
   const [fontSize, setFontSize] = useState(24);
   const [fontColor, setFontColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('#000000');
-  const [justify, setJustify] = useState('left');
-  const [openTextDD, setOpenTextDD] = useState(false);
+  const [justify, setJustify] = useState('center');
+  const [rotation, setRotation] = useState(0);
+  // const [openTextDD, setOpenTextDD] = useState(false);
 
   const colorInputRef = useRef(null);
   const [startTime, setStartTime] = useState(0)
@@ -35,7 +37,7 @@ const TextOptions = ({ playerRef }) => {
   useEffect(() => {
     setActiveId(currentElementId)
     const currentRect = texts.find(rect => rect.id === currentElementId)
-    if(currentRect){
+    if (currentRect) {
       setFontSize(currentRect.fontSize)
     }
   }, [currentElementId])
@@ -74,7 +76,6 @@ const TextOptions = ({ playerRef }) => {
 
   useEffect(() => {
     const currentRect = texts.find(rect => rect.id === currentElementId)
-    console.log('currentRect', currentRect)
     if (currentRect) {
       setStartTime(currentRect.startTime)
       setEndTime(currentRect.endTime)
@@ -85,18 +86,18 @@ const TextOptions = ({ playerRef }) => {
       setBackgroundColor(currentRect.backgroundColor)
       setJustify(currentRect.justify)
     }
-  }, [ currentElementId])
+  }, [currentElementId])
 
   useEffect(() => {
     if (currentElementId && currentElement == 'text') {
-      dispatch(editText({ id: currentElementId, startTime: startTime, endTime: endTime, text, font, fontSize, fontColor, backgroundColor, justify }))
+      dispatch(editText({ id: currentElementId, startTime: startTime, endTime: endTime, text, font, fontSize, fontColor, backgroundColor, justify, rotation }))
     }
-  }, [startTime, endTime, text, font, fontColor, backgroundColor, justify, fontSize, currentElement,dispatch])
+  }, [startTime, endTime, text, font, fontColor, backgroundColor, rotation, justify, fontSize, currentElement, dispatch])
 
 
- const textSizes = [
-  8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 54, 60, 66, 72
-];
+  const textSizes = [
+    8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 54, 60, 66, 72
+  ];
 
   return (
     <div className='w-full  pb-4 pt-2 px-2 flex flex-col gap-3 relative'>
@@ -119,30 +120,14 @@ const TextOptions = ({ playerRef }) => {
       </div>
       <div className='border-b-[#303032] border-b flex flex-col gap-3 ' style={texts.length == 0 ? { display: 'none' } : {}}>
         <div className='px-3 flex flex-col gap-3'>
-          <div className='w-full'>
-            <input className='input   bg-transparent border-[#303032] w-full  text-[#a3a3a5]  shadow-none ' value={text} onChange={(e) => setText(e.target.value)} />
+          <div className='w-full'
+            style={{ backgroundColor: backgroundColor, fontFamily: font, textAlign: justify }}
+          >
+            <input className='input bg-transparent border-[#303032] w-full shadow-none ' value={text}
+              style={{ color: fontColor }}
+              onChange={(e) => setText(e.target.value)} />
           </div>
           <div className='flex w-full  gap-1'>
-
-            <div className='w-10 h-10 flex items-center justify-center border-[1px] border-[#303032] cursor-pointer relative' onClick={() => setOpenTextDD(!openTextDD)}>
-              <CiTextAlignJustify size={18} className='text-[#a3a3a5]' />
-              {openTextDD && <><div className='  flex items-center justify-center border-[1px] border-[#303032] cursor-pointer absolute -bottom-11 left-0 bg-[#212025] gap-0  py-0'>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('left')}>
-                  <MdOutlineFormatAlignLeft size={20} className='text-[#a3a3a5]' />
-                </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('right')}>
-                  <MdOutlineFormatAlignRight size={20} className='text-[#a3a3a5]' />
-                </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('center')}>
-                  <MdOutlineFormatAlignCenter size={20} className='text-[#a3a3a5]' />
-                </button>
-                <button className=' cursor-pointer inline-block p-2   hover:bg-[#000000] rounded-md' onClick={() => setJustify('justify')}>
-                  <MdOutlineFormatAlignJustify size={20} className='text-[#a3a3a5]' />
-                </button>
-              </div>
-              </>
-              }
-            </div>
             <select className="select select-bordered flex-1 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" value={font} onChange={(e) => setFont(e.target.value)}>
               <option value={'Open Sans'}>Open Sans</option>
               <option value={'Alegreya'}>Alegreya</option>
@@ -154,15 +139,17 @@ const TextOptions = ({ playerRef }) => {
               <option value={'Oswald'}>Oswald</option>
               <option value={'Raleway'}>Raleway</option>
             </select>
-            <select className="select select-bordered w-18 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" value={fontSize||defa} onChange={(e) => setFontSize(parseInt(e.target.value))}>
+            <select className="select select-bordered w-18 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline:none focus:outline-none text-[#a3a3a5]" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))}>
               {textSizes.map((size) => (
                 <option key={size} value={size}>
                   {size}
                 </option>
               ))}
-              
+
             </select>
-            <div className="w-10 h-10 flex items-center justify-center border border-[#303032] cursor-pointer relative" onClick={() => colorInputRef.current?.click()}>
+            <div className="w-10 h-10 flex items-center justify-center border border-[#303032] cursor-pointer relative" onClick={() => colorInputRef.current?.click()}
+              style={{ backgroundColor: fontColor }}
+              >
               <RiFontColor size={18} className="z-10  text-[#a3a3a5]" />
               <input
                 type="color"
@@ -173,7 +160,29 @@ const TextOptions = ({ playerRef }) => {
                 onChange={(e) => setFontColor(e.target.value)}
               />
             </div>
+            <div className="w-10 h-10 flex items-center justify-center border border-[#303032] cursor-pointer relative" onClick={() => colorInputRef.current?.click()}
+              style={{ backgroundColor: backgroundColor }}
+              >
+              <TbBackground size={18} className="z-10  text-[#a3a3a5]" />
+              <input
+                type="color"
+                ref={colorInputRef}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                value={fontColor}
+                style={{ backgroundColor: backgroundColor }}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+              />
+            </div>
 
+          </div>
+          <div className='flex items-center gap-3'>
+            <input className='range range-neutral cursor-pointer' type='range' min={-360} max={360} step={1} value={rotation} onChange={(e) => setRotation(e.target.value)} />
+            <input
+              type='number'
+              className='h-6 w-18 pl-2 border-1 rounded-md cursor-pointer' placeholder='360' min={-360} max={360}
+              step={1}
+              onChange={(e) => setRotation(e.target.value)}
+              value={rotation} />
           </div>
         </div>
 

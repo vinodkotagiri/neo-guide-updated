@@ -204,7 +204,6 @@ export async function articleStep(payload: {
     api
       .post("/flsk/article_step", payload)
       .then((res) => {
-        console.log("res", res);
         resolve(res.data);
       })
       .catch((error) => {
@@ -311,7 +310,6 @@ export async function mergeAudioProgress(payload: mergeAudioProgressPayload): Pr
     axios
       .post(" https://contentinova.com/mergeaudio_progress", payload)
       .then((res) => {
-        console.log("res.data", res.data);
         resolve(res.data);
       })
       .catch(() => resolve(null));
@@ -358,7 +356,6 @@ export function exportOrupdateJSON(
     axios
       .post(url, payload)
       .then((res) => {
-        console.log("res.data", res.data);
         if (res.data.file_url) {
           resolve(res.data);
         } else {
@@ -439,7 +436,7 @@ export function getVersionData(index:{index:"string"|number}){
      
       resolve(res.data)
     }).catch(err=>{
-      console.log('resolve(false)',err);
+      console.log("error in export or update json", err);
       resolve(false)
     })
   })

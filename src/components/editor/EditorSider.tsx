@@ -62,9 +62,10 @@ const EditorSider = ({ playerRef }) => {
         text: 'Hello world',
         font: 'Open Sans',
         fontSize: 24,
-        backgroundColor: 'green',
-        justify: 'left',
-        fontColor: 'red',
+        backgroundColor: 'transparent',
+        justify: 'center',
+        fontColor: '#000000',
+        rotation: 0,
         startTime: currentPlayTime,
         endTime: currentPlayTime + 5
       }

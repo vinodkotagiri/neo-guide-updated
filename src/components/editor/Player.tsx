@@ -134,36 +134,7 @@ function Player({ playerRef }) {
         const clampedX = Math.max(-maxXOffset, Math.min(maxXOffset, xOffset));
         const clampedY = Math.max(-maxYOffset, Math.min(maxYOffset, yOffset));
 
-        // Logging for debugging
-        console.log({
-          containerWidth,
-          containerHeight,
-          rawRoiX: activeZoom.roi?.x,
-          rawRoiY: activeZoom.roi?.y,
-          normalizedRoiX: roiX,
-          normalizedRoiY: roiY,
-          roiWidth,
-          roiHeight,
-          roiPixelWidth,
-          roiPixelHeight,
-          roiLeft,
-          roiTop,
-          roiRight,
-          roiBottom,
-          currentZoom,
-          scaledWidth,
-          scaledHeight,
-          scaledRoiLeft,
-          scaledRoiTop,
-          scaledRoiRight,
-          scaledRoiBottom,
-          xOffset,
-          yOffset,
-          clampedX,
-          clampedY,
-          transformOrigin: `${roiXPercent}% ${roiYPercent}%`,
-          zoomApplied: currentZoom !== 1,
-        });
+   
 
         return {
           scale: currentZoom,

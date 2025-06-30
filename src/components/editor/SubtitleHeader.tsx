@@ -43,7 +43,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
       dispatch(setTargetLanguage({ targetLang: selectedLanguage.substr(0, 2), targetLangName: selectedLanguage }))
     }
   }, [selectedLanguage])
-  console.log('selectedVoiceID', selectedVoiceID)
+
 
   useEffect(() => {
     if (selectedVoiceID) {
@@ -127,7 +127,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
     }
     if (payload.voices.length) {
       await mergeAudio(payload).then(res => setMergeToken(res?.token ?? '')).catch(err => {
-        console.log('error merging audio', err)
+       
         setLoading(false)
         return toast.error('Error in merging audio')
       })
@@ -137,7 +137,7 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
   }
   useEffect(() => {
     if (mergeToken) {
-      console.log("got mergeToken", mergeToken)
+
       getMergeVideo(mergeToken);
     }
   }, [mergeToken]);
@@ -157,7 +157,6 @@ function SubtitleHeader({ selectedVoiceID, setSelectedVoiceID, setSubAudioUrl })
             setLoading(false)
           }
         }).catch(err => {
-          console.log(err)
           setLoading(false)
         })
       }, 5000);
