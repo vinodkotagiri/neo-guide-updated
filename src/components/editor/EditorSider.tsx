@@ -11,7 +11,7 @@ import ArrowOptions from './Elements/ArrowOptions'
 import SpotlightOptions from './Elements/SpotlightOptions'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { setAddingElements } from '../../redux/features/videoSlice'
-import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, setCurrentElement, ZoomElementState } from '../../redux/features/elementsSlice'
+import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, setCurrentElement, TextElementState, ZoomElementState } from '../../redux/features/elementsSlice'
 import ZoomOptions from './Elements/ZoomOptions'
 
 const EditorSider = ({ playerRef }) => {
@@ -63,8 +63,12 @@ const EditorSider = ({ playerRef }) => {
         font: 'Open Sans',
         fontSize: 24,
         backgroundColor: 'transparent',
+        backgroundGradientStartColor: 'transparent',
+        backgroundGradientEndColor: 'transparent',
+        gradientDirection: 'horizontal',
         justify: 'center',
-        fontColor: '#000000',
+        fontColor: '#ffffff',
+        backgroundType: 'solid',
         rotation: 0,
         startTime: currentPlayTime,
         endTime: currentPlayTime + 5

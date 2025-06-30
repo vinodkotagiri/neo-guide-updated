@@ -234,7 +234,6 @@ function ElementsOverlay() {
             />
           ))}
           {texts.map((textElement) => {
-
             return (
               <Group
                 key={textElement.id}
@@ -252,9 +251,8 @@ function ElementsOverlay() {
                 }}
                 onDragEnd={(e) => {
                   const { x, y } = e.target.position();
-                  // Adjust x, y to account for offset
-                  const newX = (x / scalingX) - (textElement.width || 100) / 2;
-                  const newY = (y / scalingY) - (textElement.height || textElement.fontSize) / 2;
+                  const newX = x / scalingX - (textElement.width || 100) / 2;
+                  const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
                   dispatch(editText({ id: textElement.id, x: newX, y: newY }));
                 }}
                 onTransformEnd={(e) => {
@@ -265,8 +263,8 @@ function ElementsOverlay() {
                   node.scaleX(1);
                   node.scaleY(1);
                   const newFontSize = textElement.fontSize * Math.max(scaleX, scaleY);
-                  const newWidth = (node.width() * scaleX) / scalingX;
-                  const newHeight = (node.height() * scaleY) / scalingY;
+                  const newWidth = node.width() * scaleX / scalingX;
+                  const newHeight = node.height() * scaleY / scalingY;
                   const boundsX = -newWidth / 2;
                   const boundsY = node.getClientRect().y / scalingY;
                   dispatch(
@@ -286,46 +284,89 @@ function ElementsOverlay() {
                 {(textElement.backgroundColor || (textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor)) && (
                   <Rect
                     ref={(node) => {
-                    if (node) {
-                      const textNode = node.getStage()?.findOne(`#text-${textElement.id}`);
-                      if (textNode) {
-                        const textWidth = textNode.getTextWidth();
-                        node.width(textWidth);
+                      if (node) {
+                        const textNode = node.getStage()?.findOne(`#text-${textElement.id}`);
+                        if (textNode) {
+                          const textWidth = textNode.getTextWidth();
+                          node.width(textWidth);
+                        }
                       }
+                    }}
+                    x={textElement.boundsX * scalingX || 0}
+                    y={textElement.boundsY * scalingY || 0}
+                    width={textElement.width * scalingX || 100 * scalingX} // Use stored width
+                    height={textElement.height * scalingY || textElement.fontSize}
+                    cornerRadius={4}
+                    fill={
+                      textElement.backgroundType==='gradient'
+                        ? undefined
+                        : textElement.backgroundColor
                     }
-                  }}
-                  x={textElement.boundsX * scalingX || 0}
-                  y={textElement.boundsY * scalingY || 0}
-                  height={textElement.height * scalingY || textElement.fontSize}
-                  cornerRadius={4}
-                  fill={
-                    textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor
-                      ? undefined
-                      : textElement.backgroundColor
-                  }
-                  fillLinearGradientStartPoint={
-                    textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor
-                      ? textElement.gradientDirection === 'vertical'
-                        ? { x: 0, y: -(textElement.height * scalingY || textElement.fontSize) / 2 }
-                        : textElement.gradientDirection === 'diagonal'
-                        ? { x: -(textElement.width * scalingX || textNode?.getTextWidth() || 100) / 2, y: -(textElement.height * scalingY || textElement.fontSize) / 2 }
-                        : { x: -(textElement.width * scalingX || textNode?.getTextWidth() || 100) / 2, y: 0 } // Horizontal
-                      : undefined
-                  }
-                  fillLinearGradientEndPoint={
-                    textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor
-                      ? textElement.gradientDirection === 'vertical'
-                        ? { x: 0, y: (textElement.height * scalingY || textElement.fontSize) / 2 }
-                        : textElement.gradientDirection === 'diagonal'
-                        ? { x: (textElement.width * scalingX || textNode?.getTextWidth() || 100) / 2, y: (textElement.height * scalingY || textElement.fontSize) / 2 }
-                        : { x: (textElement.width * scalingX || textNode?.getTextWidth() || 100) / 2, y: 0 } // Horizontal
-                      : undefined
-                  }
-                  fillLinearGradientColorStops={
-                    textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor
-                      ? [0, textElement.backgroundGradientStartColor, 1, textElement.backgroundGradientEndColor]
-                      : undefined
-                  }/>
+                    // LINEAR GRADIENT (horizontal, vertical, diagonal)
+                    fillLinearGradientStartPoint={
+                      textElement.gradientDirection === 'horizontal'
+                        ? { x: 0, y: 0 }
+                        : textElement.gradientDirection === 'vertical'
+                          ? { x: 0, y: 0 }
+                          : textElement.gradientDirection === 'diagonal'
+                            ? { x: 0, y: 0 }
+                            : undefined
+                    }
+                    fillLinearGradientEndPoint={
+                      textElement.gradientDirection === 'horizontal'
+                        ? { x: (textElement.width || 100) * scalingX, y: 0 }
+                        : textElement.gradientDirection === 'vertical'
+                          ? { x: 0, y: (textElement.height || textElement.fontSize) * scalingY }
+                          : textElement.gradientDirection === 'diagonal'
+                            ? {
+                              x: (textElement.width || 100) * scalingX,
+                              y: (textElement.height || textElement.fontSize) * scalingY,
+                            }
+                            : undefined
+                    }
+                    fillLinearGradientColorStops={
+                      (textElement.gradientDirection === 'horizontal' ||
+                        textElement.gradientDirection === 'vertical' ||
+                        textElement.gradientDirection === 'diagonal') &&
+                        textElement.backgroundGradientStartColor &&
+                        textElement.backgroundGradientEndColor
+                        ? [0, textElement.backgroundGradientStartColor, 1, textElement.backgroundGradientEndColor]
+                        : undefined
+                    }
+
+                    // RADIAL GRADIENT
+                    fillRadialGradientStartPoint={
+                      textElement.gradientDirection === 'radial' ? {
+                        x: (textElement.width || 100) * scalingX / 2,
+                        y: (textElement.height || textElement.fontSize) * scalingY / 2
+                      } : undefined
+                    }
+                    fillRadialGradientEndPoint={
+                      textElement.gradientDirection === 'radial' ? {
+                        x: (textElement.width || 100) * scalingX / 2,
+                        y: (textElement.height || textElement.fontSize) * scalingY / 2
+                      } : undefined
+                    }
+                    fillRadialGradientStartRadius={
+                      textElement.gradientDirection === 'radial' ? 0 : undefined
+                    }
+                    fillRadialGradientEndRadius={
+                      textElement.gradientDirection === 'radial'
+                        ? Math.sqrt(
+                          Math.pow((textElement.width || 100) * scalingX / 2, 2) +
+                          Math.pow((textElement.height || textElement.fontSize) * scalingY / 2, 2)
+                        )
+                        : undefined
+                    }
+                    fillRadialGradientColorStops={
+                      textElement.gradientDirection === 'radial' &&
+                        textElement.backgroundGradientStartColor &&
+                        textElement.backgroundGradientEndColor
+                        ? [0, textElement.backgroundGradientStartColor, 1, textElement.backgroundGradientEndColor]
+                        : undefined
+                    }
+
+                  />
                 )}
                 <Text
                   id={`text-${textElement.id}`}
@@ -334,6 +375,7 @@ function ElementsOverlay() {
                   fontSize={textElement.fontSize}
                   fill={textElement.fontColor}
                   align="center"
+                  verticalAlign='middle'
                   rotation={0} // Rotation handled by Group
                   onMount={(node) => {
                     if (node && (textElement.width === undefined || textElement.height === undefined || textElement.boundsX === undefined)) {
