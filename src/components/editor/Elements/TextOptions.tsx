@@ -46,7 +46,7 @@ const TextOptions = ({ playerRef }) => {
     if (currentText) {
       setText(currentText.text || '');
       setFont(currentText.font || 'Open Sans');
-      setFontSize(currentText.fontSize || 24);
+      setFontSize(currentText.fontSize);
       setFontColor(currentText.fontColor || '#000000');
       setJustify(currentText.justify || 'center');
       setRotation(currentText.rotation || 0);
@@ -57,23 +57,8 @@ const TextOptions = ({ playerRef }) => {
       setGradientDirection(currentText.gradientDirection || 'horizontal');
       setBackgroundGradientStartColor(currentText.backgroundGradientStartColor || '#000000');
       setBackgroundGradientEndColor(currentText.backgroundGradientEndColor || '#000000');
-    } else {
-      // Reset to defaults when no text is selected
-      setText('');
-      setFont('Open Sans');
-      setFontSize(24);
-      setFontColor('#000000');
-      setBackgroundType('solid');
-      setBackgroundColor('transparent');
-      setGradientDirection('horizontal');
-      setBackgroundGradientStartColor(undefined);
-      setBackgroundGradientEndColor(undefined);
-      setJustify('center');
-      setRotation(0);
-      setStartTime(currentPlayTime);
-      setEndTime(currentPlayTime + 5);
     }
-  }, [currentElementId, texts, currentPlayTime]);
+  }, [currentElementId, texts, currentPlayTime, currentElement, texts.find((t) => t.id === currentElementId)?.fontSize]);
 
   // Update Redux when properties change
   useEffect(() => {
@@ -162,12 +147,14 @@ const getBackgroundStyle = () => {
       rotation,
       startTime,
       endTime,
+        backgroundHeight: 0,
+        backgroundWidth: 0
     };
     dispatch(addText(textData));
     dispatch(setCurrentElement('text'));
   }
 
-  const textSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 54, 60, 66, 72];
+  const textSizes = Array.from({ length: 200 - 8 + 1 }, (_, index) => 8 + index);
 
   return (
     <div className="w-full pb-4 pt-2 px-2 flex flex-col gap-3 relative text-[#a3a3a5]">
@@ -190,7 +177,7 @@ const getBackgroundStyle = () => {
       </div>
 
       {/* Text Options (when texts exist) */}
-      <div className="border-b border-[#303032] flex flex-col gap-3" style={texts.length === 0 ? { display: 'none' } : {}}>
+      {currentElement === 'text' && <div className="border-b border-[#303032] flex flex-col gap-3" style={texts.length === 0 ? { display: 'none' } : {}}>
         <div className="px-3 flex flex-col gap-3" >
           {/* Text Input */}
           <input
@@ -392,7 +379,7 @@ const getBackgroundStyle = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 };

@@ -249,36 +249,68 @@ function ElementsOverlay() {
                   setSelectedId(textElement.id);
                   dispatch(setCurrentElementId({ type: 'text', id: textElement.id }));
                 }}
-                onDragEnd={(e) => {
-                  const { x, y } = e.target.position();
-                  const newX = x / scalingX - (textElement.width || 100) / 2;
-                  const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
-                  dispatch(editText({ id: textElement.id, x: newX, y: newY }));
-                }}
-                onTransformEnd={(e) => {
-                  const node = e.target;
-                  const scaleX = node.scaleX();
-                  const scaleY = node.scaleY();
-                  const rotation = node.rotation();
-                  node.scaleX(1);
-                  node.scaleY(1);
-                  const newFontSize = textElement.fontSize * Math.max(scaleX, scaleY);
-                  const newWidth = node.width() * scaleX / scalingX;
-                  const newHeight = node.height() * scaleY / scalingY;
-                  const boundsX = -newWidth / 2;
-                  const boundsY = node.getClientRect().y / scalingY;
-                  dispatch(
-                    editText({
-                      id: textElement.id,
-                      rotation,
-                      fontSize: newFontSize,
-                      width: newWidth,
-                      height: newHeight,
-                      boundsX,
-                      boundsY,
-                    })
-                  );
-                }}
+                // onDragEnd={(e) => {
+                //   const { x, y } = e.target.position();
+                //   const newX = x / scalingX - (textElement.width || 100) / 2;
+                //   const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                //   dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                // }}
+               onTransformEnd={(e) => {
+  const node = e.target;
+  const currentScaleX = node.scaleX();
+  const currentScaleY = node.scaleY();
+  const rotation = node.rotation();
+
+  // Calculate new absolute dimensions and font size
+  // Assume textElement.width and textElement.height from your state are the
+  // base (unscaled) dimensions for the current state of the text.
+  const newWidth = textElement.width * currentScaleX;
+  const newHeight = textElement.height * currentScaleY;
+
+  // For font size, use the maximum of the two scales to ensure proportional scaling
+  const newFontSize = textElement.fontSize * Math.max(currentScaleX, currentScaleY);
+  const roundedFontSize = Math.round(newFontSize); // Or parseFloat((newFontSize).toFixed(1));
+
+  // Get the new position of the Konva node after the transform
+  const newX = node.x();
+  const newY = node.y();
+
+  // --- Calculate backgroundWidth and backgroundHeight ---
+  // If the background is tied to the text element's new dimensions,
+  // then newWidth and newHeight are your background dimensions.
+  // If the background has a separate, constant scaling factor or padding,
+  // you'd apply that here.
+  // For simplicity, let's assume background matches text element's new dimensions.
+  const backgroundWidth = newWidth; // Assuming background width scales with text width
+  const backgroundHeight = newHeight; // Assuming background height scales with text height
+
+  // Reset the Konva node's scale and position to reflect the new dimensions
+  // This is crucial: set the actual visual node's properties based on the calculated values
+  // so it's ready for the *next* transformation.
+  node.scaleX(1);
+  node.scaleY(1);
+  node.x(newX);
+  node.y(newY);
+
+  // Dispatch the action to update your Redux state
+  dispatch(
+    editText({
+      id: textElement.id,
+      rotation,
+      fontSize: roundedFontSize,
+      width: newWidth,
+      height: newHeight,
+      x: newX,
+      y: newY,
+      backgroundWidth: backgroundWidth, // Dispatch background width
+      backgroundHeight: backgroundHeight, // Dispatch background height
+      // If you are using boundsX and boundsY for internal text layout,
+      // you might need to re-evaluate them based on newWidth/Height.
+      // boundsX: -newWidth / 2, // Example if origin is center
+      // boundsY: (some_calculation_based_on_new_height_or_node_getClientRect_y),
+    })
+  );
+}}
                 onMount={(node) => addCursorEvents(node, 'text')}
               >
                 {(textElement.backgroundColor || (textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor)) && (
@@ -544,7 +576,7 @@ function ElementsOverlay() {
           <Transformer ref={transformerRef}
             rotateEnabled={selectedId && arrows.some(arrow => arrow.id === selectedId) || selectedId && texts.some(text => text.id === selectedId) ? true : false}
             flipEnabled={false}
-            enabledAnchors={selectedId && texts.some(text => text.id === selectedId) ? [] : ['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+            enabledAnchors={selectedId && texts.some(text => text.id === selectedId) ? ['bottom-center', 'middle-right', 'bottom-right'] : ['top-left', 'top-right', 'bottom-left', 'bottom-right']}
             boundBoxFunc={(oldBox, newBox) => {
               if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
                 return oldBox;
