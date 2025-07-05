@@ -182,7 +182,7 @@ const getBackgroundStyle = () => {
           {/* Text Input */}
           <input
             className="input bg-transparent border-[#303032] w-full shadow-none text-[#ffffff] px-2 py-1 rounded-md"
-            style={{...getBackgroundStyle(), fontFamily: font, textAlign: 'center', color: fontColor }}
+            style={{ fontFamily: font, textAlign: 'center', color:" #ffffff" }}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter text"
@@ -327,8 +327,9 @@ const getBackgroundStyle = () => {
 
           {/* Rotation */}
           <div className="flex items-center gap-3">
+            <label>Rotation</label>
             <input
-              className="range range-neutral cursor-pointer"
+              className="range range-secondary cursor-pointer"
               type="range"
               min={-360}
               max={360}
@@ -344,7 +345,7 @@ const getBackgroundStyle = () => {
               max={360}
               step={1}
               onChange={(e) => setRotation(Number(e.target.value))}
-              value={rotation}
+              value={(rotation).toFixed(0)}
             />
           </div>
         </div>

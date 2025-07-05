@@ -48,76 +48,91 @@ function Navbar({ from, hideMenu }: NavbarProps) {
     }
   }, [token]);
   const [open, setOpen] = useState<string | null>("Docs");
-  function handleExport() {
-    const payload = {
-      video: url,
-      videoWidth,
-      videoHeight,
-        rectangles: rectangles.map(rect => ({
-        ...rect,
-        width:  parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
-        height:  parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
-        x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
-        y: parseInt(((rect.y / videoHeight) * 100).toFixed(2)),
-        cornerRadius: rect.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
-      })),
-      arrows: arrows.map(arrow => ({
-        ...arrow,
-        strokeWidth:  parseInt(((arrow.strokeWidth / videoWidth) * 100).toFixed(2)),
-        pointerLength:  parseInt(((arrow.pointerLength / videoWidth) * 100).toFixed(2)),
-        pointerWidth:  parseInt(((arrow.pointerWidth / videoWidth) * 100).toFixed(2)),
-        x:  parseInt(((arrow.x / videoWidth) * 100).toFixed(2)),
-        y:  parseInt(((arrow.y / videoHeight) * 100).toFixed(2)),
-        points: arrow.points.map(point => ( parseInt((point / videoWidth) * 100).toFixed(2)))
-      }))
-      , texts: texts.map(text => ({
-        ...text,
-        x:  parseInt(((text.x / videoWidth) * 100).toFixed(2)),
-        y:  parseInt(((text.y / videoHeight) * 100).toFixed(2)),
-      })),
-      spotLights: spotLights.map(spot => ({
-        ...spot,
-        x:  parseInt(((spot.x / videoWidth) * 100).toFixed(2)),
-        y:  parseInt(((spot.y / videoHeight) * 100).toFixed(2)),
-        width:  parseInt(((spot.width / videoWidth) * 100).toFixed(2)),
-        height:  parseInt(((spot.height / videoHeight) * 100).toFixed(2)),
-        cornerRadius: spot.cornerRadius.map(radius => ( parseInt((radius / videoWidth) * 100).toFixed(2)))
-      })),
-      blurs: blurs.map(blur => ({
-        ...blur,
-        x:  parseInt(((blur.x / videoWidth) * 100).toFixed(2)),
-        y:  parseInt(((blur.y / videoHeight) * 100).toFixed(2)),
-        width:  parseInt(((blur.width / videoWidth) * 100).toFixed(2)),
-        height:  parseInt(((blur.height / videoHeight) * 100).toFixed(2)),
-        blurRadius:  parseInt(((blur.blurRadius / videoWidth) * 100).toFixed(2))
-      }
-      )),
-      zooms: zooms.map(zoom => (
-        {
-          ...zoom,
-          roi: {
-            x:  parseInt(((zoom.roi.x / videoWidth) * 100).toFixed(2)),
-            y:  parseInt(((zoom.roi.y / videoHeight) * 100).toFixed(2)),
-            width:  parseInt(((zoom.roi.width / videoWidth) * 100).toFixed(2)),
-            height:  parseInt(((zoom.roi.height / videoHeight) * 100).toFixed(2))
-          }
+  async function handleExport() {
+    try{
+      if(!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
+      if(!articleData.length) return toast.error('Article data not loaded yet!');
+      
+      dispatch(setLoader({ loading: true, status: 'please wait while we export the video' }));
+      const payload = {
+        video: url,
+        videoWidth,
+        videoHeight,
+          rectangles: rectangles.map(rect => ({
+          ...rect,
+          width:  parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
+          height:  parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
+          x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
+          y: parseInt(((rect.y / videoHeight) * 100).toFixed(2)),
+          cornerRadius: rect.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
+        })),
+        arrows: arrows.map(arrow => ({
+          ...arrow,
+          strokeWidth:  parseInt(((arrow.strokeWidth / videoWidth) * 100).toFixed(2)),
+          pointerLength:  parseInt(((arrow.pointerLength / videoWidth) * 100).toFixed(2)),
+          pointerWidth:  parseInt(((arrow.pointerWidth / videoWidth) * 100).toFixed(2)),
+          x:  parseInt(((arrow.x / videoWidth) * 100).toFixed(2)),
+          y:  parseInt(((arrow.y / videoHeight) * 100).toFixed(2)),
+          points: arrow.points.map(point => ( parseInt((point / videoWidth) * 100).toFixed(2)))
         }))
-      }
-      if(rectangles.length==0) delete payload.rectangles
-      if(arrows.length==0) delete payload.arrows
-      if(texts.length==0) delete payload.texts
-      if(spotLights.length==0) delete payload.spotLights
-      if(blurs.length==0) delete payload.blurs
-      if(zooms.length==0) delete payload.zooms
+        , texts: texts.map(text => ({
+          ...text,
+          x:  parseInt(((text.x / videoWidth) * 100).toFixed(2)),
+          y:  parseInt(((text.y / videoHeight) * 100).toFixed(2)),
+        })),
+        spotLights: spotLights.map(spot => ({
+          ...spot,
+          x:  parseInt(((spot.x / videoWidth) * 100).toFixed(2)),
+          y:  parseInt(((spot.y / videoHeight) * 100).toFixed(2)),
+          width:  parseInt(((spot.width / videoWidth) * 100).toFixed(2)),
+          height:  parseInt(((spot.height / videoHeight) * 100).toFixed(2)),
+          cornerRadius: spot.cornerRadius.map(radius => ( parseInt((radius / videoWidth) * 100).toFixed(2)))
+        })),
+        blurs: blurs.map(blur => ({
+          ...blur,
+          x:  parseInt(((blur.x / videoWidth) * 100).toFixed(2)),
+          y:  parseInt(((blur.y / videoHeight) * 100).toFixed(2)),
+          width:  parseInt(((blur.width / videoWidth) * 100).toFixed(2)),
+          height:  parseInt(((blur.height / videoHeight) * 100).toFixed(2)),
+          blurRadius:  parseInt(((blur.blurRadius / videoWidth) * 100).toFixed(2))
+        }
+        )),
+        zooms: zooms.map(zoom => (
+          {
+            ...zoom,
+            roi: {
+              x:  parseInt(((zoom.roi.x / videoWidth) * 100).toFixed(2)),
+              y:  parseInt(((zoom.roi.y / videoHeight) * 100).toFixed(2)),
+              width:  parseInt(((zoom.roi.width / videoWidth) * 100).toFixed(2)),
+              height:  parseInt(((zoom.roi.height / videoHeight) * 100).toFixed(2))
+            }
+          }))
+        }
+        if(rectangles.length==0) delete payload.rectangles
+        if(arrows.length==0) delete payload.arrows
+        if(texts.length==0) delete payload.texts
+        if(spotLights.length==0) delete payload.spotLights
+        if(blurs.length==0) delete payload.blurs
+        if(zooms.length==0) delete payload.zooms
+        if(!(payload.arrows||payload.rectangles||payload.texts||payload.spotLights||payload.blurs||payload.zooms)) {
+          return toast.error('No elements found!');
+        }
 
-    exportVideo(payload).then(token => {
-      if (token) {
-        setToken(token)
-        toast.success('Exporting video, token:')
-      } else {
-        toast.error('Something went wrong while exporting video')
-      }
-    }).catch(() => { })
+      await exportVideo(payload).then(token => {
+        if (token) {
+          setToken(token)
+          toast.success('Please wait while we export the video');
+        } else {
+          toast.error('Something went wrong while exporting video')
+        }
+      })
+    
+    }catch(err){
+      console.log(err);
+      return toast.error("error in export video")
+    }finally{
+      dispatch(setLoader({ loading: false }));
+    }
   }
 
   async function handleRestoreVersion() {
@@ -215,14 +230,22 @@ function Navbar({ from, hideMenu }: NavbarProps) {
 
   async function trackProgress(request_id) {
     if (request_id) {
+      dispatch(setLoader({ loading: true, status: 'please wait while we download the file' }));
       const interval = setInterval(() => {
         trackExportProgress(request_id).then(async (res) => {
+          if(res?.status?.toLowerCase() == 'failed') {
+            clearInterval(interval);
+            dispatch(setLoader({ loading: false, status: '' }));
+            return toast.error(res?.message);
+          }
           if (res?.progress == 100) {
             clearInterval(interval);
             const data = res?.video_url;
+            dispatch(setLoader({ loading: false, status: '' }));
             await downloadVideo(data);
             if (data?.error) {
               toast.error(data?.error);
+              dispatch(setLoader({ loading: false, status: '' }));
               return;
             }
           }

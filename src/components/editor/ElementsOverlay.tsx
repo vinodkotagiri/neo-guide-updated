@@ -238,13 +238,27 @@ function ElementsOverlay() {
               <Group
                 key={textElement.id}
                 id={textElement.id}
-                x={(textElement.x + (textElement.width || 100) / 2) * scalingX} // Center x
-                y={(textElement.y + (textElement.height || textElement.fontSize) / 2) * scalingY} // Center y
+                x={textElement.x  * scalingX} // Center x
+                y={textElement.y  * scalingY} // Center y
                 offsetX={(textElement.width || 100) * scalingX / 2} // Rotation around center
                 offsetY={(textElement.height || textElement.fontSize) * scalingY / 2}
                 draggable
                 rotation={textElement.rotation}
                 visible={textElement.startTime <= played && textElement.endTime >= played}
+                onDragStart={(e) => {
+                  const { x, y } = e.target.position();
+                  const newX = x / scalingX - (textElement.width || 100) / 2;
+                  const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                  dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                }}
+                onDragEnd={
+                  (e) => {
+                    const { x, y } = e.target.position();
+                    const newX = x / scalingX - (textElement.width || 100) / 2;
+                    const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                    dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                  }
+                }
                 onClick={() => {
                   setSelectedId(textElement.id);
                   dispatch(setCurrentElementId({ type: 'text', id: textElement.id }));
@@ -255,62 +269,62 @@ function ElementsOverlay() {
                 //   const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
                 //   dispatch(editText({ id: textElement.id, x: newX, y: newY }));
                 // }}
-               onTransformEnd={(e) => {
-  const node = e.target;
-  const currentScaleX = node.scaleX();
-  const currentScaleY = node.scaleY();
-  const rotation = node.rotation();
+                onTransformEnd={(e) => {
+                  const node = e.target;
+                  const currentScaleX = node.scaleX();
+                  const currentScaleY = node.scaleY();
+                  const rotation = node.rotation();
 
-  // Calculate new absolute dimensions and font size
-  // Assume textElement.width and textElement.height from your state are the
-  // base (unscaled) dimensions for the current state of the text.
-  const newWidth = textElement.width * currentScaleX;
-  const newHeight = textElement.height * currentScaleY;
+                  // Calculate new absolute dimensions and font size
+                  // Assume textElement.width and textElement.height from your state are the
+                  // base (unscaled) dimensions for the current state of the text.
+                  const newWidth = textElement.width * currentScaleX;
+                  const newHeight = textElement.height * currentScaleY;
 
-  // For font size, use the maximum of the two scales to ensure proportional scaling
-  const newFontSize = textElement.fontSize * Math.max(currentScaleX, currentScaleY);
-  const roundedFontSize = Math.round(newFontSize); // Or parseFloat((newFontSize).toFixed(1));
+                  // For font size, use the maximum of the two scales to ensure proportional scaling
+                  const newFontSize = textElement.fontSize * Math.max(currentScaleX, currentScaleY);
+                  const roundedFontSize = Math.round(newFontSize); // Or parseFloat((newFontSize).toFixed(1));
 
-  // Get the new position of the Konva node after the transform
-  const newX = node.x();
-  const newY = node.y();
+                  // Get the new position of the Konva node after the transform
+                  const newX = node.x();
+                  const newY = node.y();
 
-  // --- Calculate backgroundWidth and backgroundHeight ---
-  // If the background is tied to the text element's new dimensions,
-  // then newWidth and newHeight are your background dimensions.
-  // If the background has a separate, constant scaling factor or padding,
-  // you'd apply that here.
-  // For simplicity, let's assume background matches text element's new dimensions.
-  const backgroundWidth = newWidth; // Assuming background width scales with text width
-  const backgroundHeight = newHeight; // Assuming background height scales with text height
+                  // --- Calculate backgroundWidth and backgroundHeight ---
+                  // If the background is tied to the text element's new dimensions,
+                  // then newWidth and newHeight are your background dimensions.
+                  // If the background has a separate, constant scaling factor or padding,
+                  // you'd apply that here.
+                  // For simplicity, let's assume background matches text element's new dimensions.
+                  const backgroundWidth = newWidth; // Assuming background width scales with text width
+                  const backgroundHeight = newHeight; // Assuming background height scales with text height
 
-  // Reset the Konva node's scale and position to reflect the new dimensions
-  // This is crucial: set the actual visual node's properties based on the calculated values
-  // so it's ready for the *next* transformation.
-  node.scaleX(1);
-  node.scaleY(1);
-  node.x(newX);
-  node.y(newY);
+                  // Reset the Konva node's scale and position to reflect the new dimensions
+                  // This is crucial: set the actual visual node's properties based on the calculated values
+                  // so it's ready for the *next* transformation.
+                  node.scaleX(1);
+                  node.scaleY(1);
+                  node.x(newX);
+                  node.y(newY);
 
-  // Dispatch the action to update your Redux state
-  dispatch(
-    editText({
-      id: textElement.id,
-      rotation,
-      fontSize: roundedFontSize,
-      width: newWidth,
-      height: newHeight,
-      x: newX,
-      y: newY,
-      backgroundWidth: backgroundWidth, // Dispatch background width
-      backgroundHeight: backgroundHeight, // Dispatch background height
-      // If you are using boundsX and boundsY for internal text layout,
-      // you might need to re-evaluate them based on newWidth/Height.
-      // boundsX: -newWidth / 2, // Example if origin is center
-      // boundsY: (some_calculation_based_on_new_height_or_node_getClientRect_y),
-    })
-  );
-}}
+                  // Dispatch the action to update your Redux state
+                  dispatch(
+                    editText({
+                      id: textElement.id,
+                      rotation,
+                      fontSize: roundedFontSize,
+                      width: newWidth,
+                      height: newHeight,
+                      // x: newX,
+                      // y: newY,
+                      backgroundWidth: backgroundWidth, // Dispatch background width
+                      backgroundHeight: backgroundHeight, // Dispatch background height
+                      // If you are using boundsX and boundsY for internal text layout,
+                      // you might need to re-evaluate them based on newWidth/Height.
+                      // boundsX: -newWidth / 2, // Example if origin is center
+                      // boundsY: (some_calculation_based_on_new_height_or_node_getClientRect_y),
+                    })
+                  );
+                }}
                 onMount={(node) => addCursorEvents(node, 'text')}
               >
                 {(textElement.backgroundColor || (textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor)) && (
@@ -330,7 +344,7 @@ function ElementsOverlay() {
                     height={textElement.height * scalingY || textElement.fontSize}
                     cornerRadius={4}
                     fill={
-                      textElement.backgroundType==='gradient'
+                      textElement.backgroundType === 'gradient'
                         ? undefined
                         : textElement.backgroundColor
                     }

@@ -13,6 +13,7 @@ import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
 import { store } from "../redux/store";
 import { setReferenceId, setVersions } from "../redux/features/videoSlice";
+import { setLoader } from "../redux/features/loaderSlice";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
@@ -279,6 +280,7 @@ export async function getVoiceForLanguage(language_id: text) {
 
 export async function textToSpeech(payload: { voiceid: string; text: string }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
+    store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:true}));
     axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
@@ -379,6 +381,9 @@ export function exportOrupdateProject(payload) {
       .post("https://contentinova.com/neoguideinsertdata", payload)
       .then((res) => {
         if (res.data.reference_id) {
+          axios
+          .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
+          store.dispatch(setReferenceId(res.data.reference_id));
           axios
           .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
           store.dispatch(setReferenceId(res.data.reference_id));

@@ -16,7 +16,7 @@ import ZoomOptions from './Elements/ZoomOptions'
 
 const EditorSider = ({ playerRef }) => {
   const [rightActiveArea, setRightActiveArea] = useState(2)
-  const { currentPlayTime } = useAppSelector(state => state.video)
+  const { currentPlayTime, isDisabled } = useAppSelector(state => state.video)
   const { rectangles, blurs, texts, arrows, spotLights, zooms, currentElement, currentElementId } = useAppSelector(state => state.elements)
   const dispatch = useAppDispatch()
   function handleAddShape(shape: string) {
@@ -174,23 +174,48 @@ const EditorSider = ({ playerRef }) => {
 
   return (
     <div className='w-full h-full  bg-[#16151a] border-[1px] border-[#303032] rounded-tl-2xl   flex z-50   '>
-      {/* <div>
-      <EditorLeftTopBar setDub={setDub} />
-      </div> */}
-      <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
-        {rightActiveArea == 1 && <DubAreaComponent />}
-        {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef} />}
-        {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
-        {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
-        {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
-        {rightActiveArea == 7 && <ArrowOptions playerRef={playerRef} />}
-        {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
-        {rightActiveArea == 9 && <ZoomOptions playerRef={playerRef} />}
-      </div>
-      <div className='w-[60px] h-full border-[#303032] border-l'>
-        <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />
-      </div>
-
+      <>
+          <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
+            {rightActiveArea == 1 && <DubAreaComponent />}
+            {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef} />}
+            {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
+            {rightActiveArea == 5 && <RectangleOptions playerRef={playerRef} />}
+            {rightActiveArea == 6 && <TextOptions playerRef={playerRef} />}
+            {rightActiveArea == 7 && <ArrowOptions playerRef={playerRef} />}
+            {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
+            {rightActiveArea == 9 && <ZoomOptions playerRef={playerRef} />}
+          </div>
+          {isDisabled ?  <div className='flex h-full w-[20%] gap-4 p-4 '>
+          
+          <div className='h-full w-[20%] gap-4 flex-column items-center justify-center'>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4 ">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
+              Loading
+            </div>
+          </div>
+        </div>
+        :
+          <div className='w-[60px] h-full border-[#303032] border-l'>
+            <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />
+          </div>}
+        </>
     </div>
   )
 }

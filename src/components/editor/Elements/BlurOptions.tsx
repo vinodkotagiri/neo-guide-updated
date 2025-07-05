@@ -20,7 +20,7 @@ const BlurOptions = ({ playerRef }) => {
   useEffect(() => {
     setStartTime(currentPlayTime)
     setEndTime(currentPlayTime + 5)
-  }, [])
+  }, [currentPlayTime])
 
   function handleAddNewBlur() {
     setStartTime(currentPlayTime)
