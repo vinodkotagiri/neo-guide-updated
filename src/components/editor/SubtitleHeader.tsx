@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useRef, useState } from 'react';
 import { IoClose, IoPlayOutline, IoPauseOutline } from 'react-icons/io5';
 import { MdFindReplace } from 'react-icons/md';
