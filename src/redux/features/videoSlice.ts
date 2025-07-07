@@ -497,7 +497,7 @@ const initialSubtitleState: SubtitlesState = {
 };
 
 const initialState: VideoState = {
-  url: url_test2,
+  url: "",
   isDisabled: false,
   user_id: undefined,
   user_name:'NeoGuide User',
