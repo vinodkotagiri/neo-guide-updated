@@ -156,7 +156,7 @@ function SubtitleAreaComponent({ playerRef }) {
 
     setLoading(true);
     try {
-      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text });
+      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text, from:"subtitle" });
       if (audio_url) {
         setAudioUrls((prev) => {
           const newUrls = [...prev];

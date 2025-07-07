@@ -278,7 +278,7 @@ export async function getVoiceForLanguage(language_id: text) {
   });
 }
 
-export async function textToSpeech(payload: { voiceid: string; text: string }): Promise<{ audio_url: string | null }> {
+export async function textToSpeech(payload: { voiceid: string; text: string,from: "generate" | "subtitle" }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
     store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:true}));
     axios
@@ -289,7 +289,10 @@ export async function textToSpeech(payload: { voiceid: string; text: string }): 
       .catch((error) => {
         console.log("error getLanguages", error);
         resolve(null);
-      });
+      }).finally(() => {
+        if(payload.from === "subtitle")
+        store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:false}));
+      })
   });
 }
 
