@@ -187,29 +187,7 @@ const EditorSider = ({ playerRef }) => {
           </div>
           {isDisabled ?  <div className='flex h-full w-[20%] gap-4 p-4 '>
           
-          <div className='h-full w-[20%] gap-4 flex-column items-center justify-center'>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4 ">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-            <div className="skeleton bg-slate-900 h-18 w-18 flex items-center justify-center my-4">
-              Loading
-            </div>
-          </div>
+        
         </div>
         :
           <div className='w-[60px] h-full border-[#303032] border-l'>

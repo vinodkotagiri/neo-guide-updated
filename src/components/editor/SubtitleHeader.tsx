@@ -207,9 +207,11 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
           if (res?.status?.toLowerCase() === 'completed') {
             clearInterval(interval);
             const data = res?.result?.video_url;
+            dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
             if (data?.error) {
               toast.error(data?.error);
               setLoading(false);
+               dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
               return;
             }
             dispatch(setVideoUrl(data));
@@ -218,6 +220,7 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
         } catch (err) {
           setLoading(false);
           clearInterval(interval);
+           dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
           toast.error('Error checking merge progress');
         }
       }, 5000);

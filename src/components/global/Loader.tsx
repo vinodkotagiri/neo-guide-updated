@@ -7,7 +7,7 @@ const Loader = () => {
   if (!loading) return null;
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen flex flex-col justify-center gap-2 items-center bg-black bg-opacity-90 z-[9999]">
+    <div className="fixed top-0 left-0 w-screen h-screen flex flex-col justify-center gap-2 items-center bg-[#00000098] z-[9999]">
       <CircleLoader  color="oklch(0.707 0.165 254.624)" />
 
       <div className="flex flex-col items-center justify-center">

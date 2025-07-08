@@ -280,6 +280,7 @@ export async function getVoiceForLanguage(language_id: text) {
 
 export async function textToSpeech(payload: { voiceid: string; text: string,from: "generate" | "subtitle" }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
+    if(payload.from !== "subtitle")
     store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:true}));
     axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
@@ -312,9 +313,11 @@ export async function mergeAudio(payload: mergeAudioPayload): Promise<mergeAudio
 
 export async function mergeAudioProgress(payload: mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
   return new Promise((resolve) => {
+    store.dispatch(setLoader({title:'Merging Audio',status:` `,loading:true}));
     axios
       .post(" https://contentinova.com/mergeaudio_progress", payload)
       .then((res) => {
+        store.dispatch(setLoader({title:'Merging Audio',status:res?.data?.status,percentage:res?.data?.progress,loading:true}));
         resolve(res.data);
       })
       .catch(() => resolve(null));
