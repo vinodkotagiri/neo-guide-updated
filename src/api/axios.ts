@@ -453,4 +453,17 @@ export function getVersionData(index:{index:"string"|number}){
   })
 }
 
+export function translateText(text:string, source_language:string, target_language:string){
+  return new Promise((resolve) => {
+    axios.post("https://contentinova.com/neoguideTranslate",{source_language,target_language,text}).then(res=>{  
+      if(res.data?.translated_text)
+        resolve(res.data.translated_text)
+      else resolve('')
+    }).catch(err=>{
+      console.log("error in export or update json", err);
+      resolve('')
+    })
+  })
+}
+
 export default api;

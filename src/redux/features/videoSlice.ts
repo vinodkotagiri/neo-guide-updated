@@ -16,9 +16,9 @@ interface SubtitlesState {
 
 interface VideoState {
   url: string;
-  isDisabled:boolean;
+  isDisabled: boolean;
   user_id?: string;
-  user_name?:string;
+  user_name?: string;
   videoWidth: number;
   videoHeight: number;
   videoName: string;
@@ -44,12 +44,11 @@ interface VideoState {
   voice_language: string;
   voice: string;
   voiceid: string;
-  reference_id:string;
-  versions: [{ id: string | number; tstamp: string }]
+  reference_id: string;
+  versions: [{ id: string | number; tstamp: string }];
 }
 
 const initialSubtitleState: SubtitlesState = {
-  
   data: [
 
         // {
@@ -500,14 +499,14 @@ const initialState: VideoState = {
   url: "",
   isDisabled: false,
   user_id: undefined,
-  user_name:'NeoGuide User',
-  sourceLang: 'en',
+  user_name: "NeoGuide User",
+  sourceLang: "en",
   sourceLangName: "English",
-  targetLang: '',
-  targetLangName: '',
-  voice_language: '',
-  voice: '',
-  voiceid: '',
+  targetLang: "",
+  targetLangName: "",
+  voice_language: "",
+  voice: "",
+  voiceid: "",
   videoName: "",
   videoWidth: 0,
   videoHeight: 0,
@@ -526,7 +525,7 @@ const initialState: VideoState = {
   addingElements: false,
   currentSubtitle: { text: "", start_time: 0, end_time: 0 },
   tracks: [],
-  reference_id:'',
+  reference_id: "",
   versions: [
     // {
     //     "id": 31,
@@ -536,7 +535,7 @@ const initialState: VideoState = {
     //     "id": 30,
     //     "tstamp": "1750678309548"
     // }
-]
+  ]
 };
 
 const videoSlice = createSlice({
@@ -549,17 +548,17 @@ const videoSlice = createSlice({
     setSourceLangName: (state, action) => {
       state.sourceLangName = action.payload;
     },
-    setUserName:(state,action)=>{
-      state.use_name=action.payload
+    setUserName: (state, action) => {
+      state.use_name = action.payload;
     },
     setReferenceId: (state, action) => {
-      state.reference_id=action.payload
+      state.reference_id = action.payload;
     },
     setUserId: (state, action) => {
       state.user_id = action.payload;
     },
     setVersions: (state, action) => {
-      state.versions = action.payload
+      state.versions = action.payload;
     },
     setMuted: (state, action) => {
       state.muted = action.payload;
@@ -643,11 +642,14 @@ const videoSlice = createSlice({
       }
     },
     init: (state) => {
-      state.locked = false; 
+      state.locked = false;
     },
     setTargetLanguage(state, action) {
       state.targetLang = action.payload.targetLang;
       state.targetLangName = action.payload.targetLangName;
+    },
+    setTargetLanguageName(state, action) {
+      state.targetLangName = action.payload;
     },
     setVoice(state, action) {
       state.voice = action.payload;
@@ -658,8 +660,8 @@ const videoSlice = createSlice({
     setVoiceId(state, action) {
       state.voiceid = action.payload;
     },
-    setDisabled:(state,action)=>{
-      state.isDisabled=action.payload
+    setDisabled: (state, action) => {
+      state.isDisabled = action.payload;
     }
   }
 });
@@ -668,7 +670,10 @@ export default videoSlice.reducer;
 export const {
   setUserName,
   setDisabled,
-  setTargetLanguage,setVoice,setVoiceLanguage,setVoiceId,
+  setTargetLanguage,
+  setVoice,
+  setVoiceLanguage,
+  setVoiceId,
   setPlayerVideoDimensions,
   setUserId,
   setVersions,
@@ -676,6 +681,7 @@ export const {
   setPixelFactor,
   setVideoName,
   setSourceLang,
+  setTargetLanguageName,
   setSourceLangName,
   setMuted,
   setCurrentPlayTime,

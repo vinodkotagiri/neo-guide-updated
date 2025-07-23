@@ -5,12 +5,12 @@ import { MdFindReplace } from 'react-icons/md';
 import Flag from 'react-world-flags';
 import FindAndReplaceComponent from './FindAndReplaceComponent';
 import toast from 'react-hot-toast';
-import { mergeAudio, mergeAudioProgress, textToSpeech } from '../../api/axios';
+import { mergeAudio, mergeAudioProgress, textToSpeech, translateText } from '../../api/axios';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { generateRandomString, getSecondsFromTime } from '../../helpers';
-import { setTargetLanguage, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage } from '../../redux/features/videoSlice';
+import { setSourceLangName, setTargetLanguage, setTargetLanguageName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage, updateSubtitleData } from '../../redux/features/videoSlice';
 import { elvenLanguages, elvenVoices, Language, Voice } from '../../constants';
-import { setLoader } from '../../redux/features/loaderSlice';
+import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 
 interface SubtitleHeaderProps {
   selectedVoiceID: string;
@@ -31,9 +31,35 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
   const [showReplace, setShowReplace] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const dispatch = useAppDispatch();
-  const { subtitles, url ,isDisabled} = useAppSelector((state) => state.video);
+  const { subtitles, url, isDisabled, sourceLangName, targetLangName } = useAppSelector((state) => state.video);
 
   // Initialize language and voice lists
+
+  async function handleTranslate() {
+    try {
+      
+      if (isDisabled) return toast.error('Please wait while data loads!');
+      dispatch(setLoaderData({ loading: true, status: '', percentage: 0 }));
+      const subtitlesData = subtitles?.data;
+      let translatedSubtitles = []
+      for (const item of subtitlesData) {
+        dispatch(setLoaderData({ loading: false, status: `processing ${item.text}`, percentage: 0 }));
+        await translateText(item.text, sourceLangName, targetLangName).then(res => {
+          console.log('item::',item)
+          console.log('res::',res)
+          translatedSubtitles=[...translatedSubtitles,{...item,text:res}]
+        })
+      }
+      console.log('translatedSubtitles',translatedSubtitles)
+      dispatch(updateSubtitleData(translatedSubtitles));
+      setLoaderData({ loading: false, status: '', percentage: 0 });
+    } catch (err) {
+      console.log(err)
+    } finally {
+      dispatch(setLoaderData({ loading: false, status: '', percentage: 0 }));
+    }
+  }
+
   useEffect(() => {
     setLanguageList(elvenLanguages);
     setSelectedLanguage(elvenLanguages[0]?.language_id);
@@ -147,12 +173,12 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
   };
 
   const handleGenerateSpeech = async () => {
-    if(isDisabled) return toast.error('Please wait while data loads!');
+    if (isDisabled) return toast.error('Please wait while data loads!');
     if (!selectedVoiceID) {
       toast.error('Please select a voice to proceed');
       return;
     }
-    dispatch(setLoader({ loading: true,status: 'please wait while we generate speech',percentage: 0 }));
+    dispatch(setLoader({ loading: true, status: 'please wait while we generate speech', percentage: 0 }));
     setLoading(true);
     const payload = {
       batchid: generateRandomString(),
@@ -176,16 +202,16 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
 
     if (payload.voices.length) {
       try {
-        dispatch(setLoader({ loading: true,status: 'please wait while we generate speech',percentage: 0 }));
+        dispatch(setLoader({ loading: true, status: 'please wait while we generate speech', percentage: 0 }));
         const res = await mergeAudio(payload);
         setMergeToken(res?.token ?? '');
       } catch (err) {
-        console.log('error',err)
+        console.log('error', err)
         setLoading(false);
         toast.error('Error in merging audio');
       }
-      finally{
-        dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
+      finally {
+        dispatch(setLoader({ loading: false, status: 'please wait while we generate speech', percentage: 0 }));
       }
     } else {
       setLoading(false);
@@ -207,11 +233,11 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
           if (res?.status?.toLowerCase() === 'completed') {
             clearInterval(interval);
             const data = res?.result?.video_url;
-            dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
+            dispatch(setLoader({ loading: false, status: 'please wait while we generate speech', percentage: 0 }));
             if (data?.error) {
               toast.error(data?.error);
               setLoading(false);
-               dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
+              dispatch(setLoader({ loading: false, status: 'please wait while we generate speech', percentage: 0 }));
               return;
             }
             dispatch(setVideoUrl(data));
@@ -220,7 +246,7 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
         } catch (err) {
           setLoading(false);
           clearInterval(interval);
-           dispatch(setLoader({ loading: false,status: 'please wait while we generate speech',percentage: 0 }));
+          dispatch(setLoader({ loading: false, status: 'please wait while we generate speech', percentage: 0 }));
           toast.error('Error checking merge progress');
         }
       }, 5000);
@@ -237,13 +263,17 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
           <button
             className="text-[10px] text-[#a3a3a5] cursor-pointer flex items-center gap-2"
             onClick={() => {
-              if(isDisabled) return toast.error('Please wait while data loads!');
+              if (isDisabled) return toast.error('Please wait while data loads!');
               document.getElementById('change_language_modal')?.showModal()
             }}
           >
             {selectedName ? 'Change Voice' : 'Select Voice'}
           </button>
         </div>
+        <button className='btn btn-sm btn-info' onClick={() => {
+          if (isDisabled) return toast.error('Please wait while data loads!');
+          document.getElementById('translate_modal')?.showModal()
+        }}>translate</button>
         <div className="flex items-center gap-2">
           <div className="tooltip tooltip-left" data-tip="Find and Replace">
             <MdFindReplace
@@ -321,6 +351,64 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
                 onClick={handleSelectVoice}
               >
                 Select Voice
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="translate_modal" className="modal chhange_modal">
+        <div className="modal-box p-[30px] bg-[#16151a] w-4/10 max-w-5xl rounded-2xl">
+          <div className="modal-action mt-0">
+            <form method="dialog" className="flex w-full flex-col gap-2">
+              <div className="w-full flex justify-between border-b pb-4 border-b-[#303032]">
+                <h4 className="text-xl font-semibold text-[#ffffff]">Translate</h4>
+                <button className="cursor-pointer w-[25px] h-[25px] flex justify-center items-center rounded-full text-[#ffffff] text-xl">
+                  <IoClose />
+                </button>
+              </div>
+              <div className="flex mt-5 gap-3 items-center justify-between">
+                <div className="flex w-1/2 flex-col">
+                  <span className="text-[12px] text-[#a3a3a5]">Source Language</span>
+                  <select
+                    className="mt-2 px-2 py-3 text-xs outline-none rounded-md border-[#303032] text-[#a3a3a5] cursor-pointer dd_bg_op disabled:bg-slate-600 disabled:cursor-not-allowed"
+                    onChange={(e) => {
+                      // const lang = languageList?.find(item => item.language_id === e.target.value)?.language;
+                      dispatch(setSourceLangName(e.target.value))
+                    }}
+
+                    value={sourceLangName}
+                  >
+                    {languageList?.map((item) => (
+                      <option key={item.language_id} value={item.language} className="block">
+                        {item.language}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex w-1/2 flex-col">
+                  <span className="text-[12px] text-[#a3a3a5]">Target Language</span>
+                  <select
+                    className="mt-2 px-2 py-3 text-xs outline-none rounded-md border-[#303032] text-[#a3a3a5] cursor-pointer dd_bg_op disabled:bg-slate-600 disabled:cursor-not-allowed"
+                    onChange={(e) => {
+                      // const lang = languageList?.find(item => item.language_id === e.target.value)?.language;
+                      dispatch(setTargetLanguageName(e.target.value))
+                    }}
+                    value={targetLangName}
+                  >
+                    {languageList?.map((item) => (
+                      <option key={item.language_id} value={item.language} className="block">
+                        {item.language}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+              </div>
+              <button
+                className="bg-[#422ad5] cursor-pointer text-[#ffffff] py-3 font-semibold text-[14px] rounded-md border-[#303032] border mt-5"
+                onClick={handleTranslate}
+              >
+                Translate
               </button>
             </form>
           </div>
