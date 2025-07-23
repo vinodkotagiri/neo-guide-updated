@@ -9,9 +9,10 @@ import { TbFileExport } from 'react-icons/tb';
 import { uploadFile } from '../api/axios';
 import { setVideoUrl } from '../redux/features/videoSlice';
 import { useAppSelector } from '../redux/hooks';
-
+import Desktop from "../assets/monitor.png";
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
+  const [countdown, setCountdown] = useState(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -89,6 +90,7 @@ const InteractiveScreenRecorder: React.FC = () => {
       console.error('Error accessing screen:', err);
       toast.error('Failed to access screen or microphone.');
     }
+    setCountdown(3);
   };
 
   const stopScreenRecording = () => {
@@ -97,6 +99,7 @@ const InteractiveScreenRecorder: React.FC = () => {
       mediaRecorder.stop();
     }
     setIsRecording(false);
+
   };
 
   const togglePauseRecording = () => {
@@ -135,13 +138,13 @@ const InteractiveScreenRecorder: React.FC = () => {
           type: videoFormat.mimeType,
         });
         const response = await uploadFile({ user_id: '1', file });
-        if(response.file_url){
+        if (response.file_url) {
           dispatch(setVideoUrl(response.file_url));
           navigate('/editor')
         }
         else
-         toast.error("Error uploading video")
-        
+          toast.error("Error uploading video")
+
       } catch (error) {
         console.error('Error processing video:', error);
         dispatch(setLoader({ loading: false }));
@@ -153,13 +156,26 @@ const InteractiveScreenRecorder: React.FC = () => {
     }
   };
 
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0) {
+      setCountdown(null);
+      setIsRecording(true);
+      // Add your recording start logic here
+    }
+
+    return () => clearTimeout(timer);
+  }, [countdown]);
   return (
     <div className="w-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
 
       {/* Screen Recording Video */}
       <div style={{ position: 'relative' }} className="w-[60%] ">
-        {recordedVideoUrl&&<video
+        {recordedVideoUrl && <video
           controls
           width="100%"
           height="auto"
@@ -169,9 +185,20 @@ const InteractiveScreenRecorder: React.FC = () => {
           style={{ width: '100%', height: 'auto' }}
         ></video>}
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col w-[60%] items-center">
+        <div className="border-2 border-dashed border-[#422AD5] rounded-lg w-full h-[60vh] flex justify-center items-center start-record">
+          {!isRecording && countdown === null && (
+            <div className='  text-center flex justify-center items-center text-3xl text-[#999] flex-col gap-8'>
+              <img src={Desktop} alt='' className='w-1/4' />
+
+              Click to start recording</div>
+          )}
+          {countdown !== null && (
+            <div className=' w-[150px] h-[150px] p-10 text-center rounded-full flex justify-center items-center text-6xl text-white '> {countdown}</div>
+          )}
+        </div>
         <button
-          className=" bg-[#422AD5] text-white cursor-pointer px-3 py-2 rounded-md  font-medium "
+          className="  cursor-pointer  mt-5 w-fit text-xl  btn-grad"
           onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
         >
           {isRecording ? 'Stop Recording' : 'Start Recording'}
@@ -187,12 +214,12 @@ const InteractiveScreenRecorder: React.FC = () => {
           </button>
         )}
       </div>
-      <div className='fixed right-0   bg-[#333] text-white flex flex-col rounded-ss-md rounded-es-md px-2 '>
+      {/* <div className='fixed right-0   bg-[#333] text-white flex flex-col rounded-ss-md rounded-es-md px-2 '>
         <button
           className="   text-[#ccc] cursor-pointer  py-2    font-medium text-xl border-b border-[#ccc] "
           onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
         >
-          {/* {isRecording ? 'Stop Recording' : 'Start Recording'} */}
+          
           {isRecording ? <div className='tooltip tooltip-left' data-tip="Stop Recording"><BsStopCircle className='text-red-500 ' /> </div> : <div className='tooltip tooltip-left' data-tip="Start Recording"><BsRecordCircle /></div>}
         </button>
         <button onClick={togglePauseRecording} className="  text-[#ccc] cursor-pointer  py-2 border-b border-[#ccc]  font-medium text-xl ">
@@ -203,7 +230,7 @@ const InteractiveScreenRecorder: React.FC = () => {
           <TbFileExport />
         </button>
 
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -458,3 +458,39 @@
   background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
 
 }
+
+
+.btn-grad {
+  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 51%, #4776E6 100%)
+}
+
+.btn-grad {
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+
+  border-radius: 10px;
+  display: block;
+}
+
+.btn-grad:hover {
+  background-position: right center;
+  /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+}
+
+.start-record {
+  /*border: 2px solid #4776E6;*/
+  background: #2a2930;
+  background: radial-gradient(circle, rgba(42, 41, 48, 1) 0%, rgba(22, 21, 26, 1) 100%);
+}
+
+.gradient-icon {
+  background: linear-gradient(135deg, #43CBFF, #9708CC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
