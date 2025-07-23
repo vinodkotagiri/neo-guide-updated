@@ -7,8 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import toast from "react-hot-toast";
 import { setLoader, setLoaderData } from "../../redux/features/loaderSlice";
 import ArticleMenu from "./ArticleMenu";
-
-const ArticleEditor = ({ articleData, onSave }) => {
+const ArticleEditor = ({ articleData }) => {
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
   const [requestId, setRequestId] = useState(null);
@@ -132,26 +131,43 @@ const ArticleEditor = ({ articleData, onSave }) => {
     setQuillValue(value);
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(quillValue, "text/html");
-      const updatedArticleData = [];
+  const handleSave = async () => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(quillValue, "text/html");
+    const bodyHtml = doc.body.innerHTML;
+     const fullHtml = `
+    <html>
+      <head><meta charset="utf-8"></head>
+      <body>${bodyHtml}</body>
+    </html>
+  `;
+    // save as docx
+    const blob=window.htmlDocx.asBlob(fullHtml)
+    try {
+    // Prompt user to choose a save location
+    const fileHandle = await window.showSaveFilePicker({
+      suggestedName: 'quill-export.docx',
+      types: [
+        {
+          description: 'Word Document',
+          accept: {
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+          },
+        },
+      ],
+    });
 
-      const contentDivs = doc.querySelectorAll(".bg-white.text-slate-900.p-2");
+    // Create a writable stream and write blob content
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
 
-      contentDivs.forEach((div) => {
-        const img = div.querySelector("img");
-        const textDiv = div.querySelector(".prose.p-4");
+    toast.success('File saved successfully!');
+  } catch (error) {
+    console.error('File save canceled or failed:', error);
+    toast.error('File save canceled or failed.');
+  }
 
-        updatedArticleData.push({
-          image_url: img ? img.src : null,
-          text: textDiv ? textDiv.innerHTML : null,
-        });
-      });
-
-      onSave(updatedArticleData);
-    }
   };
 
   // Handle Right Click on Image
@@ -223,6 +239,7 @@ const ArticleEditor = ({ articleData, onSave }) => {
         <ArticleMenu />
       </div>
 
+      <button className="btn btn-primary" onClick={handleSave}>Export document</button>
       <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
         <ReactQuill ref={quillRef} theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules} />
       </div>
