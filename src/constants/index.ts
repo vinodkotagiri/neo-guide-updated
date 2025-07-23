@@ -169,11 +169,20 @@ export const elvenVoices = [
     language_id: "m92Fh9GAqr7fy0d64vQovQ==",
     voices: [
       {
-        voiceid: "2zRM7PkgwBPiau2jvVXc",
-        voice: "Monika Sogam - English Indian (Modern)",
-        preview:
-          "https://storage.googleapis.com/eleven-public-prod/custom/voices/2zRM7PkgwBPiau2jvVXc/a1TLKlWQdLQmKNkM8Ayo.mp3"
-      }
+        "voiceid": "2zRM7PkgwBPiau2jvVXc",
+        "voice": "Monika Sogam - English Indian (Modern)",
+        "preview": "https://storage.googleapis.com/eleven-public-prod/custom/voices/2zRM7PkgwBPiau2jvVXc/a1TLKlWQdLQmKNkM8Ayo.mp3"
+    },
+    {
+        "voiceid": "u0TsaWvt0v8migutHM3M",
+        "voice": "GHIZLANE (Modern)",
+        "preview": "https://storage.googleapis.com/eleven-public-prod/database/user/FLoNmOwfdyVstAmMeF1WDQhJF6k2/voices/u0TsaWvt0v8migutHM3M/oxi7BOeX3pB7YElCrYvu.mp3"
+    },
+    {
+        "voiceid": "QRq5hPRAKf5ZhSlTBH6r",
+        "voice": "Yahya (Modern)",
+        "preview": "https://storage.googleapis.com/eleven-public-prod/database/user/oElybY8BJoU44Y2HFxUpThOldSo2/voices/QRq5hPRAKf5ZhSlTBH6r/wb5Z4tIyA4seXDPvZGDt.mp3"
+    }
     ]
   },
   {

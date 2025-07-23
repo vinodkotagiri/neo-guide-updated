@@ -232,7 +232,7 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
           const res = await mergeAudioProgress({ token: request_id });
           if (res?.status?.toLowerCase() === 'completed') {
             clearInterval(interval);
-            const data = res?.result?.video_url;
+            const data = res?.video_url;
             dispatch(setLoader({ loading: false, status: 'please wait while we generate speech', percentage: 0 }));
             if (data?.error) {
               toast.error(data?.error);
