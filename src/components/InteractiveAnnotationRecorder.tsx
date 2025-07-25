@@ -8,7 +8,6 @@ import { GrResume } from 'react-icons/gr';
 import { TbFileExport } from 'react-icons/tb';
 import { uploadFile } from '../api/axios';
 import { setVideoUrl } from '../redux/features/videoSlice';
-import { useAppSelector } from '../redux/hooks';
 
 const InteractiveScreenRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -20,6 +19,10 @@ const InteractiveScreenRecorder: React.FC = () => {
     mimeType: 'video/mp4; codecs=avc3',
     extension: 'mp4',
   });
+  useEffect(() => {
+    setIsRecording(true);
+    startScreenRecording();
+  },[]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Clean up streams on unmount

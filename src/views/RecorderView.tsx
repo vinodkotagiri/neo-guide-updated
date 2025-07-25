@@ -26,7 +26,7 @@ function RecorderPage() {
 
     }
 
-  },[searchParams])
+  },[searchParams,dispatch])
   async function handleInitiateRecording() {
     dispatch(setLoader({ loading: true }));
     setTimeout(() => {
