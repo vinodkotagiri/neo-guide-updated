@@ -10,9 +10,9 @@ import ArticleMenu from "./ArticleMenu";
 const ArticleEditor = ({ articleData }) => {
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
-  const [requestId, setRequestId] = useState(null);
+  const [requestId] = useState(null);
   const dispatch = useAppDispatch()
-  const quillRef = useRef(null);
+  const quillRef = useRef<ReactQuill>(null);
   const { url } = useAppSelector(state => state.video)
   const modules = {
     toolbar: { container: "#custom-toolbar" },
@@ -131,44 +131,85 @@ const ArticleEditor = ({ articleData }) => {
     setQuillValue(value);
   };
 
-  const handleSave = async () => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(quillValue, "text/html");
-    const bodyHtml = doc.body.innerHTML;
-     const fullHtml = `
+const handleSave = async (type: 'docx' | 'pdf' = 'docx') => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(quillValue, "text/html");
+
+  // 🧹 Sanitize unsupported oklch() styles
+  doc.querySelectorAll<HTMLElement>("*").forEach((el) => {
+    const style = getComputedStyle(el);
+    if (style.color.includes("oklch")) el.style.color = "black";
+    if (style.backgroundColor.includes("oklch")) el.style.backgroundColor = "white";
+  });
+
+  const cleanBodyHtml = doc.body.innerHTML;
+  const fullHtml = `
     <html>
-      <head><meta charset="utf-8"></head>
-      <body>${bodyHtml}</body>
+      <head>
+        <meta charset="utf-8">
+        <title>Export</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+        </style>
+      </head>
+      <body>${cleanBodyHtml}</body>
     </html>
   `;
-    // save as docx
-    const blob=window.htmlDocx.asBlob(fullHtml)
-    try {
-    // Prompt user to choose a save location
-    const fileHandle = await window.showSaveFilePicker({
-      suggestedName: 'quill-export.docx',
-      types: [
-        {
-          description: 'Word Document',
-          accept: {
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-          },
-        },
-      ],
-    });
 
-    // Create a writable stream and write blob content
-    const writable = await fileHandle.createWritable();
-    await writable.write(blob);
-    await writable.close();
+  try {
+    if (type === 'docx') {
+      const blob = window.htmlDocx.asBlob(fullHtml);
+      await saveBlob(blob, 'quill-export.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    } else if (type === 'pdf') {
+      printHtml(fullHtml);
+    }
 
-    toast.success('File saved successfully!');
+    toast.success('File export complete!');
   } catch (error) {
-    console.error('File save canceled or failed:', error);
+    console.error('File save failed:', error);
     toast.error('File save canceled or failed.');
   }
+};
 
+// 📤 Save file with File System Access API
+const saveBlob = async (blob: Blob, suggestedName: string, mime: string) => {
+  const fileHandle = await window.showSaveFilePicker({
+    suggestedName,
+    types: [
+      {
+        description: mime === 'application/pdf' ? 'PDF Document' : 'Word Document',
+        accept: { [mime]: [`.${suggestedName.split('.').pop()}`] },
+      },
+    ],
+  });
+
+  const writable = await fileHandle.createWritable();
+  await writable.write(blob);
+  await writable.close();
+};
+
+// 🖨️ Trigger browser-native print-to-PDF dialog using new tab
+const printHtml = (html: string) => {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    toast.error('Popup blocked. Please allow popups for this site.');
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+
+  // Wait for content to load before printing
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+    // Optionally close window after print
+    // printWindow.close();
   };
+};
+
+
 
   // Handle Right Click on Image
   const handleContextMenu = (event) => {
@@ -204,6 +245,11 @@ const ArticleEditor = ({ articleData }) => {
 
   return (
     <>
+    <div className="flex items-center gap-4">
+
+      <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
+      <button className="btn btn-success" onClick={() => handleSave('pdf')}>Export as Pdf</button>
+</div>
       <div className="flex bg-black rounded-md justify-between items-center">
         <div id="custom-toolbar">
           <button className="ql-bold" />
@@ -239,7 +285,6 @@ const ArticleEditor = ({ articleData }) => {
         <ArticleMenu />
       </div>
 
-      <button className="btn btn-primary" onClick={handleSave}>Export document</button>
       <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
         <ReactQuill ref={quillRef} theme="snow" value={quillValue} onChange={handleChange} formats={formats} modules={modules} />
       </div>

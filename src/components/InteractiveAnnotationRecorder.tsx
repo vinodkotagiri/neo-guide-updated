@@ -175,15 +175,15 @@ const InteractiveScreenRecorder: React.FC = () => {
           className=" bg-[#422AD5] text-white cursor-pointer px-3 py-2 rounded-md  font-medium "
           onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
         >
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
+          {isRecording ? 'Record Again' : 'Start Recording'}
         </button>
-        {isRecording && (
+        {/* {isRecording && (
           <button onClick={togglePauseRecording} className=" bg-[#39383d] text-white cursor-pointer px-3 py-2 rounded-md  font-medium ">
             {isPaused ? 'Resume Recording' : 'Pause Recording'}
           </button>
-        )}
+        )} */}
         {recordedVideoUrl && (
-          <button onClick={handleSaveRecording} className="bg-red-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
+          <button onClick={handleSaveRecording} className="bg-green-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
             Save Recording
           </button>
         )}
