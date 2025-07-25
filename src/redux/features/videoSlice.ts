@@ -610,7 +610,12 @@ const videoSlice = createSlice({
     },
     updateSubtitleData: (state, action) => {
       const {index,text}=action.payload
-      state.subtitles.data[index].text=text
+      if(index && text){
+        state.subtitles.data[index].text=text
+      }else{
+        state.subtitles.data=action.payload
+      }
+
     },
     updateSubtitleColor: (state, action) => {
       state.subtitles.color = action.payload;
