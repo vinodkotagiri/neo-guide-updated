@@ -35,10 +35,19 @@ export interface TextElementState {
   font: string;
   fontSize: number;
   fontColor: string;
-  backgroundColor: string;
+  backgroundType: 'solid' | 'gradient';
+  backgroundColor?: string|undefined;
+  backgroundGradientStartColor?: string|undefined;
+  backgroundGradientEndColor?: string|undefined;
+  gradientDirection?: 'horizontal' | 'vertical' | 'diagonal'|undefined;
   justify: string;
   startTime: number;
   endTime: number;
+  rotation?: number;
+  width?: number;
+  height?: number;
+  boundsX?: number;
+  boundsY?: number;
 }
 
 export interface ArrowElementState {
@@ -181,6 +190,21 @@ const elementsSlice = createSlice({
       }
       state.texts[index] = text;
     },
+    changeBGType:(state,action)=>{
+      const index = state.texts.findIndex((e) => e.id === action.payload.id);
+      const text = state.texts[index];
+      const bgType = action.payload.bgType;
+      if(bgType === 'solid'){
+        text.backgroundColor="transparent"
+      }
+      else if(bgType === 'gradient'){
+        text.backgroundColor='transparent';
+        text.backgroundGradientStartColor="transparent";
+        text.backgroundGradientEndColor="transparent";
+        text.gradientDirection="horizontal";
+      }
+      state.texts[index] = text;
+    },
     editSpotLight(state, action) {
       const index = state.spotLights.findIndex((e) => e.id === action.payload.id);
       const spot = state.spotLights[index];
@@ -238,6 +262,7 @@ export const {
   editBlur,
   editText,
   editSpotLight,
+  changeBGType,
   deleteRectangle,
   deleteArrow,
   deleteBlur,

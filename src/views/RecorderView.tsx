@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
 
 import { useAppDispatch } from '../redux/hooks';
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { setLoader } from '../redux/features/loaderSlice'
+import {  useSearchParams } from 'react-router-dom'
 import Navbar from '../components/global/Navbar';
 import { BsRecordCircle } from 'react-icons/bs';
-import InteractiveScreenRecorder from '../components/InteractiveAnnotationRecorder'
 import toast from 'react-hot-toast';
 import { setUserId, setUserName } from '../redux/features/videoSlice';
+import CountDownTimer from '../components/global/CountDownTimer';
 
 function RecorderPage() {
   const [startRecording, setStartRecording] = React.useState(false)
@@ -26,13 +25,8 @@ function RecorderPage() {
 
     }
 
-  },[searchParams])
+  },[searchParams,dispatch])
   async function handleInitiateRecording() {
-    dispatch(setLoader({ loading: true }));
-    setTimeout(() => {
-      //navigate(`/recorder`);
-      dispatch(setLoader({ loading: false }))
-    }, 1000);
     setStartRecording(true)
   }
 
@@ -40,7 +34,7 @@ function RecorderPage() {
     <div className='   bg-[#16151a]   h-full'>
       <Navbar hideMenu={'/'} />
       {startRecording &&
-        <InteractiveScreenRecorder />
+        <CountDownTimer/>
       }
       {!startRecording &&
         <div className='flex  items-center h-3/4'>

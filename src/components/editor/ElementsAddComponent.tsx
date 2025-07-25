@@ -95,9 +95,10 @@ function ElementTypeComponent({ icon, label }) {
         text: 'Hello world',
         font: 'Open Sans',
         fontSize: 24,
-        backgroundColor: 'green',
-        justify: 'left',
-        fontColor: 'red',
+        backgroundColor: 'transparent',
+        justify: 'center',
+        rotation: 0,
+        fontColor: '#000000',
         startTime: currentPlayTime,
         endTime: currentPlayTime + 15
       }

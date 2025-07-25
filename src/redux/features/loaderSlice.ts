@@ -4,12 +4,14 @@ interface LoaderState {
   loading: boolean;
   status?: string;
   percentage?: number;
+  title?: string;
 }
 
 const initialState: LoaderState = {
   loading: false,
   status: "loading",
   percentage: 0,
+  title:'',
 };
 
 const loaderSlice = createSlice({
@@ -25,6 +27,9 @@ const loaderSlice = createSlice({
       }
       if (action.payload.status !== undefined) {
         state.status = action.payload.status;
+      }
+      if(action.payload.title !== undefined) {
+        state.title = action.payload.title;
       }
     },
   },

@@ -90,10 +90,10 @@ useEffect(()=>{
         <div className='flag_user'>
           <div className='flag_icon'>
             <Flag code="IN" /></div>
-          <p className='mb-0 text-[18px] text-[#f9fbfc] font-semibold '>Suman</p>
+          <p className='text-[8px] text-[#f9fbfc] font-semibold '>Suman</p>
         </div>
         <div className='tooltip' data-tip='Find and Replace'>
-        {showReplace?<MdClose size={24} color='#ff000095' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>:<MdFindReplace size={24} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>}
+        {showReplace?<MdClose size={18} color='#ff000095' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>:<MdFindReplace size={18} color='#dfdfdf' className='cursor-pointer' onClick={() => setShowReplace(!showReplace)}/>}
         </div>
         <button onClick={() => document.getElementById('change_language_modal').showModal()}>Change Voice {loading && <span className=''> <FadeLoader size={100} /></span>}
         </button>

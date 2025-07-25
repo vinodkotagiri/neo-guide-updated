@@ -13,6 +13,7 @@ import AWS from "aws-sdk";
 import { getLanguages } from "../helpers";
 import { store } from "../redux/store";
 import { setReferenceId, setVersions } from "../redux/features/videoSlice";
+import { setLoader } from "../redux/features/loaderSlice";
 
 const BASE_URL =
   import.meta.env.VITE_NODE_ENV == "local" ? "http://161.97.162.131:3000" : "https://docvideo.effybiz.com/api";
@@ -204,7 +205,6 @@ export async function articleStep(payload: {
     api
       .post("/flsk/article_step", payload)
       .then((res) => {
-        console.log("res", res);
         resolve(res.data);
       })
       .catch((error) => {
@@ -278,8 +278,10 @@ export async function getVoiceForLanguage(language_id: text) {
   });
 }
 
-export async function textToSpeech(payload: { voiceid: string; text: string }): Promise<{ audio_url: string | null }> {
+export async function textToSpeech(payload: { voiceid: string; text: string,from: "generate" | "subtitle" }): Promise<{ audio_url: string | null }> {
   return new Promise((resolve) => {
+    if(payload.from !== "subtitle")
+    store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:true}));
     axios
       .post("https://contentinova.com/data/effybizgeneratevoice", payload)
       .then((res) => {
@@ -288,7 +290,10 @@ export async function textToSpeech(payload: { voiceid: string; text: string }): 
       .catch((error) => {
         console.log("error getLanguages", error);
         resolve(null);
-      });
+      }).finally(() => {
+        if(payload.from === "subtitle")
+        store.dispatch(setLoader({title:'Processing Subtitles',status:` ${payload?.text}`,loading:false}));
+      })
   });
 }
 
@@ -308,10 +313,11 @@ export async function mergeAudio(payload: mergeAudioPayload): Promise<mergeAudio
 
 export async function mergeAudioProgress(payload: mergeAudioProgressPayload): Promise<mergeAudioProgressResponse> {
   return new Promise((resolve) => {
+    store.dispatch(setLoader({title:'Merging Audio',status:` `,loading:true}));
     axios
       .post(" https://contentinova.com/mergeaudio_progress", payload)
       .then((res) => {
-        console.log("res.data", res.data);
+        store.dispatch(setLoader({title:'Merging Audio',status:res?.data?.status,percentage:res?.data?.progress,loading:true}));
         resolve(res.data);
       })
       .catch(() => resolve(null));
@@ -358,7 +364,6 @@ export function exportOrupdateJSON(
     axios
       .post(url, payload)
       .then((res) => {
-        console.log("res.data", res.data);
         if (res.data.file_url) {
           resolve(res.data);
         } else {
@@ -382,6 +387,9 @@ export function exportOrupdateProject(payload) {
       .post("https://contentinova.com/neoguideinsertdata", payload)
       .then((res) => {
         if (res.data.reference_id) {
+          axios
+          .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
+          store.dispatch(setReferenceId(res.data.reference_id));
           axios
           .post("https://contentinova.com/neoguideversions", {payload,reference_id:res.data.reference_id})
           store.dispatch(setReferenceId(res.data.reference_id));
@@ -439,8 +447,21 @@ export function getVersionData(index:{index:"string"|number}){
      
       resolve(res.data)
     }).catch(err=>{
-      console.log('resolve(false)',err);
+      console.log("error in export or update json", err);
       resolve(false)
+    })
+  })
+}
+
+export function translateText(text:string, source_language:string, target_language:string){
+  return new Promise((resolve) => {
+    axios.post("https://contentinova.com/neoguideTranslate",{source_language,target_language,text}).then(res=>{  
+      if(res.data?.translated_text)
+        resolve(res.data.translated_text)
+      else resolve('')
+    }).catch(err=>{
+      console.log("error in export or update json", err);
+      resolve('')
     })
   })
 }

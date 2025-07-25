@@ -106,7 +106,7 @@ function ElementsOverlay() {
       }
     }
   }, [selectedId, rectangles, blurs, texts, arrows, spotLights, played, zooms]);
-// Cursor event handlers for elements
+  // Cursor event handlers for elements
   const addCursorEvents = (node, type) => {
     node.on('mouseover', () => {
       if (stageRef.current) {
@@ -147,7 +147,7 @@ function ElementsOverlay() {
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
       {blurs.map((rect) => (
-        <BlurOverlay key={rect.id} rect={rect} played={played} scalingX={scalingX} scalingY={scalingY}/>
+        <BlurOverlay key={rect.id} rect={rect} played={played} scalingX={scalingX} scalingY={scalingY} />
       ))}
 
       <Stage ref={stageRef} width={stageSize.width} height={stageSize.height} onMouseDown={checkDeselect} >
@@ -198,12 +198,12 @@ function ElementsOverlay() {
               ref={blurRectRef}
               key={rect.id}
               id={rect.id}
-              x={rect.x*scalingX }
-              y={rect.y*scalingY }
+              x={rect.x * scalingX}
+              y={rect.y * scalingY}
               fill={'transparent'}
               // stroke={"#000000"}
-              width={rect.width*scalingX }
-              height={rect.height*scalingY }
+              width={rect.width * scalingX}
+              height={rect.height * scalingY}
               draggable
               visible={rect.startTime <= played && rect.endTime >= played}
               onClick={() => {
@@ -233,39 +233,211 @@ function ElementsOverlay() {
               onMount={(node) => addCursorEvents(node, 'blur')}
             />
           ))}
-          {texts.map((textElement) => (
-            <Text
-              key={textElement.id}
-              id={textElement.id}
-              x={textElement.x * scalingX}
-              y={textElement.y * scalingY}
-              text={textElement.text}
-              fontFamily={textElement.font}
-              fontSize={textElement.fontSize}
-              fill={textElement.fontColor}
-              align={textElement.justify}
-              backgroundColor={textElement.backgroundColor}
-              draggable
-              visible={textElement.startTime <= played && textElement.endTime >= played}
-              onClick={() => {
-                setSelectedId(textElement.id);
-                dispatch(setCurrentElementId({ type: 'text', id: textElement.id }));
-              }}
-              onDragEnd={(e) => {
-                const { x, y } = e.target.position();
-                dispatch(editText({ id: textElement.id, x: x / scalingX, y: y / scalingY }));
-              }}
-              onTransformEnd={(e) => {
-                const node = e.target;
-                const scaleX = node.scaleX();
-                node.scaleX(1);
+          {texts.map((textElement) => {
+            return (
+              <Group
+                key={textElement.id}
+                id={textElement.id}
+                x={textElement.x  * scalingX} // Center x
+                y={textElement.y  * scalingY} // Center y
+                offsetX={(textElement.width || 100) * scalingX / 2} // Rotation around center
+                offsetY={(textElement.height || textElement.fontSize) * scalingY / 2}
+                draggable
+                rotation={textElement.rotation}
+                visible={textElement.startTime <= played && textElement.endTime >= played}
+                onDragStart={(e) => {
+                  const { x, y } = e.target.position();
+                  const newX = x / scalingX - (textElement.width || 100) / 2;
+                  const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                  dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                }}
+                onDragEnd={
+                  (e) => {
+                    const { x, y } = e.target.position();
+                    const newX = x / scalingX - (textElement.width || 100) / 2;
+                    const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                    dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                  }
+                }
+                onClick={() => {
+                  setSelectedId(textElement.id);
+                  dispatch(setCurrentElementId({ type: 'text', id: textElement.id }));
+                }}
+                // onDragEnd={(e) => {
+                //   const { x, y } = e.target.position();
+                //   const newX = x / scalingX - (textElement.width || 100) / 2;
+                //   const newY = y / scalingY - (textElement.height || textElement.fontSize) / 2;
+                //   dispatch(editText({ id: textElement.id, x: newX, y: newY }));
+                // }}
+                onTransformEnd={(e) => {
+                  const node = e.target;
+                  const currentScaleX = node.scaleX();
+                  const currentScaleY = node.scaleY();
+                  const rotation = node.rotation();
 
-                const newFontSize = node.fontSize() * scaleX / scalingX;
-                dispatch(editText({ id: textElement.id, fontSize: newFontSize }));
-              }}
-              onMount={(node) => addCursorEvents(node, 'text')}
-            />
-          ))}
+                  // Calculate new absolute dimensions and font size
+                  // Assume textElement.width and textElement.height from your state are the
+                  // base (unscaled) dimensions for the current state of the text.
+                  const newWidth = textElement.width * currentScaleX;
+                  const newHeight = textElement.height * currentScaleY;
+
+                  // For font size, use the maximum of the two scales to ensure proportional scaling
+                  const newFontSize = textElement.fontSize * Math.max(currentScaleX, currentScaleY);
+                  const roundedFontSize = Math.round(newFontSize); // Or parseFloat((newFontSize).toFixed(1));
+
+                  // Get the new position of the Konva node after the transform
+                  const newX = node.x();
+                  const newY = node.y();
+
+                  // --- Calculate backgroundWidth and backgroundHeight ---
+                  // If the background is tied to the text element's new dimensions,
+                  // then newWidth and newHeight are your background dimensions.
+                  // If the background has a separate, constant scaling factor or padding,
+                  // you'd apply that here.
+                  // For simplicity, let's assume background matches text element's new dimensions.
+                  const backgroundWidth = newWidth; // Assuming background width scales with text width
+                  const backgroundHeight = newHeight; // Assuming background height scales with text height
+
+                  // Reset the Konva node's scale and position to reflect the new dimensions
+                  // This is crucial: set the actual visual node's properties based on the calculated values
+                  // so it's ready for the *next* transformation.
+                  node.scaleX(1);
+                  node.scaleY(1);
+                  node.x(newX);
+                  node.y(newY);
+
+                  // Dispatch the action to update your Redux state
+                  dispatch(
+                    editText({
+                      id: textElement.id,
+                      rotation,
+                      fontSize: roundedFontSize,
+                      width: newWidth,
+                      height: newHeight,
+                      // x: newX,
+                      // y: newY,
+                      backgroundWidth: backgroundWidth, // Dispatch background width
+                      backgroundHeight: backgroundHeight, // Dispatch background height
+                      // If you are using boundsX and boundsY for internal text layout,
+                      // you might need to re-evaluate them based on newWidth/Height.
+                      // boundsX: -newWidth / 2, // Example if origin is center
+                      // boundsY: (some_calculation_based_on_new_height_or_node_getClientRect_y),
+                    })
+                  );
+                }}
+                onMount={(node) => addCursorEvents(node, 'text')}
+              >
+                {(textElement.backgroundColor || (textElement.backgroundGradientStartColor && textElement.backgroundGradientEndColor)) && (
+                  <Rect
+                    ref={(node) => {
+                      if (node) {
+                        const textNode = node.getStage()?.findOne(`#text-${textElement.id}`);
+                        if (textNode) {
+                          const textWidth = textNode.getTextWidth();
+                          node.width(textWidth);
+                        }
+                      }
+                    }}
+                    x={textElement.boundsX * scalingX || 0}
+                    y={textElement.boundsY * scalingY || 0}
+                    width={textElement.width * scalingX || 100 * scalingX} // Use stored width
+                    height={textElement.height * scalingY || textElement.fontSize}
+                    cornerRadius={4}
+                    fill={
+                      textElement.backgroundType === 'gradient'
+                        ? undefined
+                        : textElement.backgroundColor
+                    }
+                    // LINEAR GRADIENT (horizontal, vertical, diagonal)
+                    fillLinearGradientStartPoint={
+                      textElement.gradientDirection === 'horizontal'
+                        ? { x: 0, y: 0 }
+                        : textElement.gradientDirection === 'vertical'
+                          ? { x: 0, y: 0 }
+                          : textElement.gradientDirection === 'diagonal'
+                            ? { x: 0, y: 0 }
+                            : undefined
+                    }
+                    fillLinearGradientEndPoint={
+                      textElement.gradientDirection === 'horizontal'
+                        ? { x: (textElement.width || 100) * scalingX, y: 0 }
+                        : textElement.gradientDirection === 'vertical'
+                          ? { x: 0, y: (textElement.height || textElement.fontSize) * scalingY }
+                          : textElement.gradientDirection === 'diagonal'
+                            ? {
+                              x: (textElement.width || 100) * scalingX,
+                              y: (textElement.height || textElement.fontSize) * scalingY,
+                            }
+                            : undefined
+                    }
+                    fillLinearGradientColorStops={
+                      (textElement.gradientDirection === 'horizontal' ||
+                        textElement.gradientDirection === 'vertical' ||
+                        textElement.gradientDirection === 'diagonal') &&
+                        textElement.backgroundGradientStartColor &&
+                        textElement.backgroundGradientEndColor
+                        ? [0, textElement.backgroundGradientStartColor, 1, textElement.backgroundGradientEndColor]
+                        : undefined
+                    }
+
+                    // RADIAL GRADIENT
+                    fillRadialGradientStartPoint={
+                      textElement.gradientDirection === 'radial' ? {
+                        x: (textElement.width || 100) * scalingX / 2,
+                        y: (textElement.height || textElement.fontSize) * scalingY / 2
+                      } : undefined
+                    }
+                    fillRadialGradientEndPoint={
+                      textElement.gradientDirection === 'radial' ? {
+                        x: (textElement.width || 100) * scalingX / 2,
+                        y: (textElement.height || textElement.fontSize) * scalingY / 2
+                      } : undefined
+                    }
+                    fillRadialGradientStartRadius={
+                      textElement.gradientDirection === 'radial' ? 0 : undefined
+                    }
+                    fillRadialGradientEndRadius={
+                      textElement.gradientDirection === 'radial'
+                        ? Math.sqrt(
+                          Math.pow((textElement.width || 100) * scalingX / 2, 2) +
+                          Math.pow((textElement.height || textElement.fontSize) * scalingY / 2, 2)
+                        )
+                        : undefined
+                    }
+                    fillRadialGradientColorStops={
+                      textElement.gradientDirection === 'radial' &&
+                        textElement.backgroundGradientStartColor &&
+                        textElement.backgroundGradientEndColor
+                        ? [0, textElement.backgroundGradientStartColor, 1, textElement.backgroundGradientEndColor]
+                        : undefined
+                    }
+
+                  />
+                )}
+                <Text
+                  id={`text-${textElement.id}`}
+                  text={textElement.text}
+                  fontFamily={textElement.font}
+                  fontSize={textElement.fontSize}
+                  fill={textElement.fontColor}
+                  align="center"
+                  verticalAlign='middle'
+                  rotation={0} // Rotation handled by Group
+                  onMount={(node) => {
+                    if (node && (textElement.width === undefined || textElement.height === undefined || textElement.boundsX === undefined)) {
+                      const textWidth = node.getTextWidth();
+                      const rect = node.getClientRect({ relativeTo: node.getParent() });
+                      const width = textWidth / scalingX;
+                      const height = rect.height / scalingY;
+                      const boundsX = -width / 2;
+                      const boundsY = rect.y / scalingY;
+                      dispatch(editText({ id: textElement.id, width, height, boundsX, boundsY }));
+                    }
+                  }}
+                />
+              </Group>
+            );
+          })}
           {arrows.map((arrow) => (
             <Arrow
               key={arrow.id}
@@ -416,9 +588,9 @@ function ElementsOverlay() {
           ))}
 
           <Transformer ref={transformerRef}
-            rotateEnabled={selectedId && arrows.some(blur => blur.id === selectedId) ? true : false}
+            rotateEnabled={selectedId && arrows.some(arrow => arrow.id === selectedId) || selectedId && texts.some(text => text.id === selectedId) ? true : false}
             flipEnabled={false}
-            enabledAnchors={selectedId && texts.some(text => text.id === selectedId) ? [] : ['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+            enabledAnchors={selectedId && texts.some(text => text.id === selectedId) ? ['bottom-center', 'middle-right', 'bottom-right'] : ['top-left', 'top-right', 'bottom-left', 'bottom-right']}
             boundBoxFunc={(oldBox, newBox) => {
               if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
                 return oldBox;
@@ -434,17 +606,17 @@ function ElementsOverlay() {
 
 export default ElementsOverlay;
 
-const BlurOverlay = ({ rect, played,scalingX,scalingY }) => {
+const BlurOverlay = ({ rect, played, scalingX, scalingY }) => {
   if (rect.startTime <= played && rect.endTime >= played) {
     return (
       <div
         className="blur-overlay"
         style={{
           position: "absolute",
-          top: rect.y*scalingY,
-          left: rect.x*scalingX,
-          width: rect.width*scalingX,
-          height: rect.height*scalingY,
+          top: rect.y * scalingY,
+          left: rect.x * scalingX,
+          width: rect.width * scalingX,
+          height: rect.height * scalingY,
           backdropFilter: "blur(10px)", // Apply blur effect
           pointerEvents: "none", // Allow interactions through the blur
         }}

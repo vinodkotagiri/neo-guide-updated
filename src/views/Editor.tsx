@@ -11,10 +11,10 @@ import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
 import { useDispatch } from 'react-redux'
 import { setArticleData } from '../redux/features/articleSlice'
 import { useNavigate } from 'react-router-dom'
-import { setLocked } from '../redux/features/videoSlice'
+import { setDisabled, setLocked } from '../redux/features/videoSlice'
 
 const Editor = () => {
-  const { isArticle, url } = useAppSelector(state => state.video)
+  const { isArticle, url,subtitles,isDisabled } = useAppSelector(state => state.video)
   const { articleData } = useAppSelector(state => state.article)
   const [requestId, setRequestId] = useState('')
   const dispatch = useDispatch()
@@ -67,6 +67,7 @@ const Editor = () => {
       getArticleData(requestId)
     }
   }, [requestId])
+
   async function getArticleData(request_id) {
     if (request_id) {
       dispatch(setLocked(true))
@@ -91,8 +92,18 @@ const Editor = () => {
     navigate('/')
   }
 
+  useEffect(()=>{
+    if(!articleData.length || !subtitles.data.length){
+      dispatch(setDisabled(true));
+    }else{
+      dispatch(setDisabled(false));
+    }
+  },[articleData,subtitles.data,dispatch])
+
+
+
   return (
-    <div className='w-full h-full bg-[#16151a]'>
+    <div className='w-full h-full bg-[#16151a]' >
       <Navbar from={'editor'} />
       <div className='w-full h-[calc(100vh-64px)] flex  rounded-md fixed top-[72px]'>
 
@@ -114,9 +125,10 @@ const Editor = () => {
           <div className='w-[70%] h-full'>
             <VideoEditor playerRef={playerRef} />
           </div>
-          <div className='w-[30%] h-full  '>
+        
             <EditorSider playerRef={playerRef} />
-          </div>
+        
+          
         </>}
       </div>
     </div>

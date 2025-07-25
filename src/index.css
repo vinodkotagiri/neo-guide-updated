@@ -277,12 +277,15 @@
   color: #ffffff;
   font-weight: 400;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: oklch(45% 0.24 277.023);
-  border-radius: 28px;
-  padding: 8px 10px;
-  width: 118px;
-  height: 36px;
+  border-radius: 8px;
+  padding: 4px;
+  width: auto;
+  height: 24px;
 }
 
 .change_voice .flag_user {

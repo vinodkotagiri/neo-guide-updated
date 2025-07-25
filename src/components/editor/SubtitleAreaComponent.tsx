@@ -17,7 +17,7 @@ import LocalLoader from '../global/LocalLoader';
 import { IoPauseOutline, IoPlayOutline } from 'react-icons/io5';
 
 function SubtitleAreaComponent({ playerRef }) {
-  const { subtitles, played, url, retries } = useAppSelector((state) => state.video);
+  const { subtitles, played, url, retries, processing_subtitle } = useAppSelector((state) => state.video);
   const { percentage, status } = useAppSelector((state) => state.loader);
   const [currentIdx, setCurrentIdx] = useState(-1);
   const [reqId, setReqId] = useState('');
@@ -156,7 +156,7 @@ function SubtitleAreaComponent({ playerRef }) {
 
     setLoading(true);
     try {
-      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text });
+      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text, from:"subtitle" });
       if (audio_url) {
         setAudioUrls((prev) => {
           const newUrls = [...prev];
@@ -240,6 +240,7 @@ function SubtitleAreaComponent({ playerRef }) {
               }}
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}
             >
+              {processing_subtitle.index==index && processing_subtitle.status==1?<div className='skeleton h-25 w-full bg-transparent'/>: <>
               <div className="flex flex-col h-full items-center justify-center px-2 ">
                 <div className="text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
                 <div className="text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
@@ -275,6 +276,9 @@ function SubtitleAreaComponent({ playerRef }) {
                   />
                 )}
               </div>
+              
+              </> 
+              }
             </motion.div>
           ))
         )}

@@ -7,13 +7,14 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import toast from "react-hot-toast";
 import { setLoader, setLoaderData } from "../../redux/features/loaderSlice";
 import ArticleMenu from "./ArticleMenu";
-
-const ArticleEditor = ({ articleData, onSave }) => {
+import { handleSaveArticle } from "../../helpers";
+import { setHtmlContent } from "../../redux/features/articleSlice";
+const ArticleEditor = ({ articleData }) => {
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
-  const [requestId, setRequestId] = useState(null);
+  const [requestId] = useState(null);
   const dispatch = useAppDispatch()
-  const quillRef = useRef(null);
+  const quillRef = useRef<ReactQuill>(null);
   const { url } = useAppSelector(state => state.video)
   const modules = {
     toolbar: { container: "#custom-toolbar" },
@@ -92,6 +93,24 @@ const ArticleEditor = ({ articleData, onSave }) => {
     }
   }
 
+  useEffect(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(quillValue, "text/html");
+    const cleanBodyHtml = doc.body.innerHTML;
+    const fullHtml = `
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Export</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+        </style>
+      </head>
+      <body>${cleanBodyHtml}</body>
+    </html>
+  `;
+    dispatch(setHtmlContent(fullHtml))
+  }, [quillValue, dispatch])
 
   useEffect(() => {
     if (articleData && articleData.length > 0) {
@@ -132,27 +151,26 @@ const ArticleEditor = ({ articleData, onSave }) => {
     setQuillValue(value);
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(quillValue, "text/html");
-      const updatedArticleData = [];
-
-      const contentDivs = doc.querySelectorAll(".bg-white.text-slate-900.p-2");
-
-      contentDivs.forEach((div) => {
-        const img = div.querySelector("img");
-        const textDiv = div.querySelector(".prose.p-4");
-
-        updatedArticleData.push({
-          image_url: img ? img.src : null,
-          text: textDiv ? textDiv.innerHTML : null,
-        });
-      });
-
-      onSave(updatedArticleData);
-    }
+  const handleSave = async (type: 'docx' | 'pdf' = 'docx') => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(quillValue, "text/html");
+    const cleanBodyHtml = doc.body.innerHTML;
+    const fullHtml = `
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Export</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+        </style>
+      </head>
+      <body>${cleanBodyHtml}</body>
+    </html>
+  `;
+    return handleSaveArticle(fullHtml, type, window)
   };
+
+
 
   // Handle Right Click on Image
   const handleContextMenu = (event) => {
@@ -188,6 +206,11 @@ const ArticleEditor = ({ articleData, onSave }) => {
 
   return (
     <>
+      <div className="flex items-center gap-4">
+
+        <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
+        <button className="btn btn-success" onClick={() => handleSave('pdf')}>Export as Pdf</button>
+      </div>
       <div className="flex bg-black rounded-md justify-between items-center">
         <div id="custom-toolbar">
           <button className="ql-bold" />

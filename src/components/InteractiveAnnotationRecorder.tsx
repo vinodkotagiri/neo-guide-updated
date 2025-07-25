@@ -21,6 +21,10 @@ const InteractiveScreenRecorder: React.FC = () => {
     mimeType: 'video/mp4; codecs=avc3',
     extension: 'mp4',
   });
+  useEffect(() => {
+    setIsRecording(true);
+    startScreenRecording();
+  }, []);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Clean up streams on unmount
@@ -35,7 +39,6 @@ const InteractiveScreenRecorder: React.FC = () => {
 
   const startScreenRecording = async () => {
     try {
-      console.log('Starting screen recording...');
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
         audio: { echoCancellation: true, noiseSuppression: true },
@@ -54,11 +57,11 @@ const InteractiveScreenRecorder: React.FC = () => {
       // Check if MP4 is supported, fallback to WebM if not
       let selectedFormat = { mimeType: 'video/mp4; codecs=avc3', extension: 'mp4' };
       if (!MediaRecorder.isTypeSupported('video/mp4; codecs=avc3')) {
-        console.log('MP4 not supported, falling back to WebM');
+
         selectedFormat = { mimeType: 'video/webm', extension: 'webm' };
         toast.error('MP4 recording not supported in this browser. Using WebM instead.');
       } else {
-        console.log('MP4 recording supported');
+
         toast.success('Recording in MP4 format');
       }
       setVideoFormat(selectedFormat);
@@ -71,12 +74,12 @@ const InteractiveScreenRecorder: React.FC = () => {
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           recordedChunks.push(event.data);
-          console.log('Received data chunk, size:', event.data.size);
+
         }
       };
 
       recorder.onstop = () => {
-        console.log('Recording stopped, creating video blob...');
+
         const videoBlob = new Blob(recordedChunks, { type: selectedFormat.mimeType });
         const videoUrl = URL.createObjectURL(videoBlob);
         setRecordedVideoUrl(videoUrl);
@@ -85,7 +88,7 @@ const InteractiveScreenRecorder: React.FC = () => {
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
-      console.log('Screen recording started in', selectedFormat.mimeType);
+
     } catch (err) {
       console.error('Error accessing screen:', err);
       toast.error('Failed to access screen or microphone.');
@@ -95,7 +98,7 @@ const InteractiveScreenRecorder: React.FC = () => {
 
   const stopScreenRecording = () => {
     if (mediaRecorder) {
-      console.log('Stopping screen recording...');
+
       mediaRecorder.stop();
     }
     setIsRecording(false);
@@ -105,10 +108,10 @@ const InteractiveScreenRecorder: React.FC = () => {
   const togglePauseRecording = () => {
     if (mediaRecorder) {
       if (isPaused) {
-        console.log('Resuming recording...');
+
         mediaRecorder.resume();
       } else {
-        console.log('Pausing recording...');
+
         mediaRecorder.pause();
       }
       setIsPaused(!isPaused);
@@ -118,19 +121,18 @@ const InteractiveScreenRecorder: React.FC = () => {
   const handleSaveRecording = async () => {
     if (recordedVideoUrl) {
       try {
-        console.log('Starting save recording process...');
+
         dispatch(setLoader({ loading: true }));
         // toast('Preparing to save recording...', { duration: 2000 });
 
         const videoBlob = await fetch(recordedVideoUrl).then((r) => r.blob());
-        console.log('Fetched video blob, size:', videoBlob.size);
 
         // Download the video file
         const a = document.createElement('a');
         a.href = recordedVideoUrl;
         a.download = `screen_recording_${new Date()}.${videoFormat.extension}`;
         a.click();
-        console.log('Video download triggered');
+
         toast.success(`File downloaded as ${videoFormat.extension.toUpperCase()}`);
         dispatch(setLoader({ loading: false }));
         // navigate('/upload')
@@ -170,7 +172,7 @@ const InteractiveScreenRecorder: React.FC = () => {
     return () => clearTimeout(timer);
   }, [countdown]);
   return (
-    <div className="w-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
+    <div className="w-screen h-screen bg-slate-900  px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
 
       {/* Screen Recording Video */}
@@ -201,15 +203,15 @@ const InteractiveScreenRecorder: React.FC = () => {
           className="  cursor-pointer  mt-5 w-fit text-xl  btn-grad"
           onClick={() => (isRecording ? stopScreenRecording() : startScreenRecording())}
         >
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
+          {isRecording ? 'Record Again' : 'Start Recording'}
         </button>
-        {isRecording && (
+        {/* {isRecording && (
           <button onClick={togglePauseRecording} className=" bg-[#39383d] text-white cursor-pointer px-3 py-2 rounded-md  font-medium ">
             {isPaused ? 'Resume Recording' : 'Pause Recording'}
           </button>
-        )}
+        )} */}
         {recordedVideoUrl && (
-          <button onClick={handleSaveRecording} className="bg-red-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
+          <button onClick={handleSaveRecording} className="bg-green-500 text-white cursor-pointer px-3 py-2 rounded-md  font-medium">
             Save Recording
           </button>
         )}
