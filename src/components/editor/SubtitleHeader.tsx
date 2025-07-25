@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { mergeAudio, mergeAudioProgress, textToSpeech, translateText } from '../../api/axios';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { generateRandomString, getSecondsFromTime } from '../../helpers';
-import { setSourceLangName, setTargetLanguage, setTargetLanguageName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage, updateSubtitleData } from '../../redux/features/videoSlice';
+import { setProcessing_subtitle, setSourceLangName, setTargetLanguage, setTargetLanguageName, setVideoUrl, setVoice, setVoiceId, setVoiceLanguage, updateSubtitleData } from '../../redux/features/videoSlice';
 import { elvenLanguages, elvenVoices, Language, Voice } from '../../constants';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 
@@ -37,26 +37,23 @@ const SubtitleHeader: React.FC<SubtitleHeaderProps> = ({ selectedVoiceID, setSel
 
   async function handleTranslate() {
     try {
-      
       if (isDisabled) return toast.error('Please wait while data loads!');
-      dispatch(setLoaderData({ loading: true, status: '', percentage: 0 }));
       const subtitlesData = subtitles?.data;
       let translatedSubtitles = []
-      for (const item of subtitlesData) {
-        dispatch(setLoaderData({ loading: false, status: `processing ${item.text}`, percentage: 0 }));
+      for (const index in subtitlesData) {
+        dispatch(setProcessing_subtitle({index,status:1}))
+        const item=subtitlesData[index]
+        
         await translateText(item.text, sourceLangName, targetLangName).then(res => {
-          console.log('item::',item)
-          console.log('res::',res)
           translatedSubtitles=[...translatedSubtitles,{...item,text:res}]
+          dispatch(updateSubtitleData({index,text:res}));
         })
       }
-      console.log('translatedSubtitles',translatedSubtitles)
-      dispatch(updateSubtitleData(translatedSubtitles));
-      setLoaderData({ loading: false, status: '', percentage: 0 });
     } catch (err) {
       console.log(err)
     } finally {
       dispatch(setLoaderData({ loading: false, status: '', percentage: 0 }));
+      dispatch(setProcessing_subtitle({index:0,status:0}))
     }
   }
 

@@ -46,6 +46,7 @@ interface VideoState {
   voiceid: string;
   reference_id: string;
   versions: [{ id: string | number; tstamp: string }];
+  processing_subtitle:{index:numeber,status:0|1}
 }
 
 const initialSubtitleState: SubtitlesState = {
@@ -526,6 +527,7 @@ const initialState: VideoState = {
   currentSubtitle: { text: "", start_time: 0, end_time: 0 },
   tracks: [],
   reference_id: "",
+  processing_subtitle:{index:0,status:0},
   versions: [
     // {
     //     "id": 31,
@@ -607,7 +609,8 @@ const videoSlice = createSlice({
       state.isArticle = action.payload;
     },
     updateSubtitleData: (state, action) => {
-      state.subtitles.data = action.payload;
+      const {index,text}=action.payload
+      state.subtitles.data[index].text=text
     },
     updateSubtitleColor: (state, action) => {
       state.subtitles.color = action.payload;
@@ -662,12 +665,16 @@ const videoSlice = createSlice({
     },
     setDisabled: (state, action) => {
       state.isDisabled = action.payload;
+    },
+    setProcessing_subtitle:(state,action)=>{
+      state.processing_subtitle=action.payload
     }
   }
 });
 
 export default videoSlice.reducer;
 export const {
+  setProcessing_subtitle,
   setUserName,
   setDisabled,
   setTargetLanguage,
