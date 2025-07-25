@@ -155,7 +155,7 @@ const InteractiveScreenRecorder: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-transparent px-3 py-2 flex items-center justify-center flex-col gap-4">
+    <div className="w-screen h-screen bg-slate-900  px-3 py-2 flex items-center justify-center flex-col gap-4">
       {/* Button to Start/Stop Recording */}
 
       {/* Screen Recording Video */}
