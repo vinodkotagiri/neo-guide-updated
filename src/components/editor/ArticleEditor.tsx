@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import toast from "react-hot-toast";
 import { setLoader, setLoaderData } from "../../redux/features/loaderSlice";
 import ArticleMenu from "./ArticleMenu";
+import { handleSaveArticle } from "../../helpers";
+import { setHtmlContent } from "../../redux/features/articleSlice";
 const ArticleEditor = ({ articleData }) => {
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
@@ -91,6 +93,24 @@ const ArticleEditor = ({ articleData }) => {
     }
   }
 
+  useEffect(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(quillValue, "text/html");
+    const cleanBodyHtml = doc.body.innerHTML;
+    const fullHtml = `
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Export</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+        </style>
+      </head>
+      <body>${cleanBodyHtml}</body>
+    </html>
+  `;
+    dispatch(setHtmlContent(fullHtml))
+  }, [quillValue, dispatch])
 
   useEffect(() => {
     if (articleData && articleData.length > 0) {
@@ -131,19 +151,11 @@ const ArticleEditor = ({ articleData }) => {
     setQuillValue(value);
   };
 
-const handleSave = async (type: 'docx' | 'pdf' = 'docx') => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(quillValue, "text/html");
-
-  // 🧹 Sanitize unsupported oklch() styles
-  doc.querySelectorAll<HTMLElement>("*").forEach((el) => {
-    const style = getComputedStyle(el);
-    if (style.color.includes("oklch")) el.style.color = "black";
-    if (style.backgroundColor.includes("oklch")) el.style.backgroundColor = "white";
-  });
-
-  const cleanBodyHtml = doc.body.innerHTML;
-  const fullHtml = `
+  const handleSave = async (type: 'docx' | 'pdf' = 'docx') => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(quillValue, "text/html");
+    const cleanBodyHtml = doc.body.innerHTML;
+    const fullHtml = `
     <html>
       <head>
         <meta charset="utf-8">
@@ -155,59 +167,8 @@ const handleSave = async (type: 'docx' | 'pdf' = 'docx') => {
       <body>${cleanBodyHtml}</body>
     </html>
   `;
-
-  try {
-    if (type === 'docx') {
-      const blob = window.htmlDocx.asBlob(fullHtml);
-      await saveBlob(blob, 'quill-export.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    } else if (type === 'pdf') {
-      printHtml(fullHtml);
-    }
-
-    toast.success('File export complete!');
-  } catch (error) {
-    console.error('File save failed:', error);
-    toast.error('File save canceled or failed.');
-  }
-};
-
-// 📤 Save file with File System Access API
-const saveBlob = async (blob: Blob, suggestedName: string, mime: string) => {
-  const fileHandle = await window.showSaveFilePicker({
-    suggestedName,
-    types: [
-      {
-        description: mime === 'application/pdf' ? 'PDF Document' : 'Word Document',
-        accept: { [mime]: [`.${suggestedName.split('.').pop()}`] },
-      },
-    ],
-  });
-
-  const writable = await fileHandle.createWritable();
-  await writable.write(blob);
-  await writable.close();
-};
-
-// 🖨️ Trigger browser-native print-to-PDF dialog using new tab
-const printHtml = (html: string) => {
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    toast.error('Popup blocked. Please allow popups for this site.');
-    return;
-  }
-
-  printWindow.document.open();
-  printWindow.document.write(html);
-  printWindow.document.close();
-
-  // Wait for content to load before printing
-  printWindow.onload = () => {
-    printWindow.focus();
-    printWindow.print();
-    // Optionally close window after print
-    // printWindow.close();
+    return handleSaveArticle(fullHtml, type, window)
   };
-};
 
 
 
@@ -245,11 +206,11 @@ const printHtml = (html: string) => {
 
   return (
     <>
-    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4">
 
-      <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
-      <button className="btn btn-success" onClick={() => handleSave('pdf')}>Export as Pdf</button>
-</div>
+        <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
+        <button className="btn btn-success" onClick={() => handleSave('pdf')}>Export as Pdf</button>
+      </div>
       <div className="flex bg-black rounded-md justify-between items-center">
         <div id="custom-toolbar">
           <button className="ql-bold" />

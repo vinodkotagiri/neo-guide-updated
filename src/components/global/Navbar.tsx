@@ -13,7 +13,7 @@ import { CiExport, CiLogout, CiUser } from "react-icons/ci";
 import { FaRegSave } from "react-icons/fa";
 import { RiDeleteBin6Line, RiFileVideoLine } from "react-icons/ri";
 import { BsFiletypeGif } from "react-icons/bs";
-import { convertToIST } from "../../helpers";
+import { convertToIST, handleSaveArticle } from "../../helpers";
 import { Navigate } from "react-router-dom";
 import { setArticleData } from "../../redux/features/articleSlice";
 import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, resetElements } from "../../redux/features/elementsSlice";
@@ -29,7 +29,7 @@ interface NavbarProps {
 
 function Navbar({ from, hideMenu }: NavbarProps) {
   const { isArticle, videoName, videoHeight, videoWidth, url, user_id, user_name, subtitles, reference_id, sourceLang, sourceLangName, targetLang, targetLangName, voice, voice_language, voiceid, versions } = useAppSelector(state => state.video)
-  const { articleData } = useAppSelector(state => state.article)
+  const { articleData, htmlContent } = useAppSelector(state => state.article)
   const dispatch = useAppDispatch()
   const [token, setToken] = useState('')
   const [uniqueId, setUniqueId] = useState('')
@@ -114,9 +114,9 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         if(spotLights.length==0) delete payload.spotLights
         if(blurs.length==0) delete payload.blurs
         if(zooms.length==0) delete payload.zooms
-        if(!(payload.arrows||payload.rectangles||payload.texts||payload.spotLights||payload.blurs||payload.zooms)) {
-          return toast.error('No elements found!');
-        }
+        // if(!(payload.arrows||payload.rectangles||payload.texts||payload.spotLights||payload.blurs||payload.zooms)) {
+        //   return toast.error('No elements found!');
+        // }
 
       await exportVideo(payload).then(token => {
         if (token) {
@@ -270,6 +270,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       })
       .catch(error => console.error("Error downloading videoURL:", error));
   };
+
+  const handleExportArticleData=(type: 'docx' | 'pdf')=>{
+    if(!htmlContent) return toast.error("Please verify the article atleast once!")
+    handleSaveArticle(htmlContent,type,window)
+  }
 
   const saveVideo = async () => {
     try{
@@ -581,8 +586,9 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
                         {open === "Docs" && (
                           <ul className="ml-4 mt-1 space-y-1 text-xs text-gray-300 p-0 m-0 flex items-start justify-center flex-col ">
                             <li onClick={handleExport} className="cursor-pointer px-4 p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" > Video </li>
-                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" >Article</li>
-                            <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full px-4 justify-center italic" >Gif</li>
+                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={()=>handleExportArticleData('docx')} >Article (.docx)</li>
+                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={()=>handleExportArticleData('pdf')}>Article (.pdf)</li>
+                            {/* <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full px-4 justify-center italic" >Gif</li> */}
 
                           </ul>
                         )}

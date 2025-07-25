@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-// const DOCX_URL = "https://converter-effy.s3.amazonaws.com/session_5_20241228_122014/session_5_20241228_122014_Transcription_With_Clicks.docx";
-// const DOCX_URL = "https://www.lehman.edu/faculty/john/classroomrespolicy1.docx";
 interface articleState {
   articleData: Array<{ text?: string; image_url?: string }>;
   findText: string;
   replaceText: string;
+  htmlContent: string;
 }
 const initialState: articleState = {
   articleData: [
@@ -70,7 +69,8 @@ const initialState: articleState = {
     // }
   ],
   findText: "",
-  replaceText: ""
+  replaceText: "",
+  htmlContent: ""
 };
 const articleSlice = createSlice({
   name: "article",
@@ -96,8 +96,12 @@ const articleSlice = createSlice({
           return article;
         });
       }
+    },
+
+    setHtmlContent: (state, action) => {
+      state.htmlContent = action.payload;
     }
   }
 });
-export const { setArticleData, setFindText, setReplaceText, handleReplaceText } = articleSlice.actions;
+export const { setArticleData, setFindText, setReplaceText, handleReplaceText, setHtmlContent } = articleSlice.actions;
 export default articleSlice.reducer;

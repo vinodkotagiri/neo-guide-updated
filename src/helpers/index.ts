@@ -87,3 +87,57 @@ export const encrypt = val => {
     return val
   }
 };
+
+
+
+
+
+export const handleSaveArticle = async (htmlContent,type: 'docx' | 'pdf' = 'docx',window) => {
+
+  try {
+    if (type === 'docx') {
+      const blob = window.htmlDocx.asBlob(htmlContent);
+      await saveBlob(blob, 'quill-export.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',window);
+    } else if (type === 'pdf') {
+      printHtml(htmlContent,window);
+    }
+
+  } catch (error) {
+    console.error('File save failed:', error);
+  }
+};
+const printHtml = (html: string,window) => {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+
+  // Wait for content to load before printing
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+    // Optionally close window after print
+    // printWindow.close();
+  };
+};
+
+// 📤 Save file with File System Access API
+const saveBlob = async (blob: Blob, suggestedName: string, mime: string,window) => {
+  const fileHandle = await window.showSaveFilePicker({
+    suggestedName,
+    types: [
+      {
+        description: mime === 'application/pdf' ? 'PDF Document' : 'Word Document',
+        accept: { [mime]: [`.${suggestedName.split('.').pop()}`] },
+      },
+    ],
+  });
+
+  const writable = await fileHandle.createWritable();
+  await writable.write(blob);
+  await writable.close();
+};
