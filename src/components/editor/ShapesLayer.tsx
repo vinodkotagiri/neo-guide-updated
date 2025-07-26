@@ -91,7 +91,7 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef, playerRe
         </div>}
 
       {/* Thumbnails section */}
-      <div className='w-full flex justify-between bg-[#212025]' style={{ paddingTop: '30px' }}>
+      <div className='w-full flex justify-between bg-[#00000099]' style={{ paddingTop: '30px' }}>
         {segments.map((segment, index) => (
           <div
             key={index}
@@ -122,57 +122,57 @@ function ShapesLayer({ width, numSegments, thumbnailHeight, wrapperRef, playerRe
       </div>
 
       {/* RECTANGLE LAYER */}
-      <div className='h-[24px] w-full bg-[#212025] rounded-md  relative' ref={rectLayerRef}>
+      {rectangles?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md  relative' ref={rectLayerRef}>
         {rectangles.map((rectangle) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'rectangle'} key={rectangle.id} shapeType={'rectangle'} shape={rectangle} color='#3554af' />
           )
         })}
-      </div>
+      </div>}
 
       {/* BLUR LAYER */}
-      <div className='h-[24px] w-full bg-[#212025] rounded-md relative' ref={rectLayerRef}>
+      {blurs?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md relative' ref={rectLayerRef}>
         {blurs.map((blur) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'blur'} key={blur.id} shapeType={'blur'} shape={blur} color='#f80093' />
           )
         })}
-      </div>
+      </div>}
 
       {/* ARROW LAYER */}
-      <div className='h-[24px] w-full bg-[#212025] rounded-md relative' ref={rectLayerRef}>
+      {arrows?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md relative' ref={rectLayerRef}>
         {arrows.map((arrow) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'arrow'} key={arrow.id} shapeType={'arrow'} shape={arrow} color='#ffa101' />
           )
         })}
-      </div>
+      </div>}
 
 
       {/* TEXT LAYER */}
-      <div className='h-[24px] w-full bg-[#212025] rounded-md relative' ref={rectLayerRef}>
+      {texts?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md relative' ref={rectLayerRef}>
         {texts.map((text) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'text'} key={text.id} shapeType={'text'} shape={text} color='#01afec' />
           )
         })}
-      </div>
+      </div>}
 
       {/* SPOTLIGHT LAYER */}
-      <div className='h-[24px] w-full bg-[#212025] rounded-md relative' ref={rectLayerRef}>
+      {spotLights?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md relative' ref={rectLayerRef}>
         {spotLights.map((spotlight) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'spotlight'} key={spotlight.id} shapeType={'spotlight'} shape={spotlight} color='#fe4728' />
           )
         })}
-      </div>
-      <div className='h-[24px] w-full bg-[#212025] rounded-md relative' ref={rectLayerRef}>
+      </div>}
+      {zooms?.length&&<div className='h-[24px] w-full bg-[#00000099] rounded-md relative' ref={rectLayerRef}>
         {zooms.map((zoom) => {
           return (
             <DraggableResizableSlice playerRef={playerRef} wrapperRef={wrapperRef} layerRef={rectLayerRef} sliceRef={sliceRef} label={'zoom'} key={zoom.id} shapeType={'zoom'} shape={zoom} color='#fef728' />
           )
         })}
-      </div>
+      </div>}
     </div>
   );
 }
