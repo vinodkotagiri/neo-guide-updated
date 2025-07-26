@@ -112,20 +112,36 @@ const ArticleEditor = ({ articleData }) => {
     dispatch(setHtmlContent(fullHtml))
   }, [quillValue, dispatch])
 
-  useEffect(() => {
+ useEffect(() => {
     if (articleData && articleData.length > 0) {
       const htmlArray = articleData
         .map((item, index) => {
           if (typeof item === "object" && item !== null && (item.text || item.image_url)) {
             const tempDiv = document.createElement("div");
-            tempDiv.className = "bg-white text-slate-900 p-2";
+            tempDiv.className = "bg-white text-slate-900 p-2 relative";
 
             if (item.image_url) {
+              const imgContainer = document.createElement("div");
+              imgContainer.className = "relative";
+              
               const img = document.createElement("img");
               img.src = item.image_url;
               img.alt = `Article Image ${index}`;
               img.className = "w-full h-auto rounded-md border-2 border-slate-900";
-              tempDiv.appendChild(img);
+              
+              const menuIcon = document.createElement("div");
+              menuIcon.className = "absolute top-2 right-2 cursor-pointer ";
+              menuIcon.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="6" r="2" fill="#1E293B"/>
+                  <circle cx="12" cy="12" r="2" fill="#1E293B"/>
+                  <circle cx="12" cy="18" r="2" fill="#1E293B"/>
+                </svg>
+              `;
+              
+              imgContainer.appendChild(img);
+              imgContainer.appendChild(menuIcon);
+              tempDiv.appendChild(imgContainer);
             }
 
             if (item.text) {

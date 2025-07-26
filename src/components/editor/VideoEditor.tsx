@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Player from "./Player"
 import TimelineArea from "./TimelineArea";
 // import SubtitlesOverlay from "./SubtitlesOverlay";
@@ -55,7 +55,7 @@ const VideoEditor = ({ playerRef }) => {
     dispatch(setPixelFactor(50))
   else
     dispatch(setPixelFactor(8))
-  },[duration])
+  },[duration,dispatch])
 
   return (
     <div className='w-full h-full flex flex-col gap-1 px-2 '>
@@ -68,7 +68,7 @@ const VideoEditor = ({ playerRef }) => {
           {addingElements ? <div className="w-full h-full absolute z-10">
             <ElementsOverlay />
           </div> : ''}
-          <div className="w-full h-full object-fit-contain">
+          <div className="w-full h-full object-fit-contain bg-zinc-500 py-1">
             <Player playerRef={playerRef} />
           </div>
         </div>
@@ -95,7 +95,6 @@ const VideoEditor = ({ playerRef }) => {
       </div>
       <div className="w-full h-[35%]">
         <TimelineArea playerRef={playerRef} />
-
       </div>
     </div>
   );

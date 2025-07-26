@@ -191,17 +191,17 @@ function Player({ playerRef }) {
             dispatch(setVideoPlayed(progress.playedSeconds));
           }}
           onSeek={(time) => dispatch(setVideoPlayed(time))}
-          config={{
-            file: {
-              attributes: {
-                style: {
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                },
-              },
-            },
-          }}
+          // config={{
+          //   file: {
+          //     attributes: {
+          //       style: {
+          //         width: "100%",
+          //         height: "100%",
+          //         objectFit: "cover",
+          //       },
+          //     },
+          //   },
+          // }}
         />
       </motion.div>
     </div>
