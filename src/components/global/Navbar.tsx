@@ -49,74 +49,75 @@ function Navbar({ from, hideMenu }: NavbarProps) {
   }, [token]);
   const [open, setOpen] = useState<string | null>("Docs");
   async function handleExport() {
-    try{
-      if(!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
-      if(!articleData.length) return toast.error('Article data not loaded yet!');
-      
+    try {
+      if (!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
+      if (!articleData.length) return toast.error('Article data not loaded yet!');
+
       dispatch(setLoader({ loading: true, status: 'please wait while we export the video' }));
       const payload = {
         video: url,
         videoWidth,
         videoHeight,
-          rectangles: rectangles.map(rect => ({
+        rectangles: rectangles.map(rect => ({
           ...rect,
-          width:  parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
-          height:  parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
-          x:  parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
+          width: parseInt(((rect.width / videoWidth) * 100).toFixed(2)),
+          height: parseInt(((rect.height / videoHeight) * 100).toFixed(2)),
+          x: parseInt(((rect.x / videoWidth) * 100).toFixed(2)),
           y: parseInt(((rect.y / videoHeight) * 100).toFixed(2)),
           cornerRadius: rect.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
         })),
         arrows: arrows.map(arrow => ({
           ...arrow,
-          strokeWidth:  parseInt(((arrow.strokeWidth / videoWidth) * 100).toFixed(2)),
-          pointerLength:  parseInt(((arrow.pointerLength / videoWidth) * 100).toFixed(2)),
-          pointerWidth:  parseInt(((arrow.pointerWidth / videoWidth) * 100).toFixed(2)),
-          x:  parseInt(((arrow.x / videoWidth) * 100).toFixed(2)),
-          y:  parseInt(((arrow.y / videoHeight) * 100).toFixed(2)),
-          points: arrow.points.map(point => ( parseInt((point / videoWidth) * 100).toFixed(2)))
+          strokeWidth: parseInt(((arrow.strokeWidth / videoWidth) * 100).toFixed(2)),
+          pointerLength: parseInt(((arrow.pointerLength / videoWidth) * 100).toFixed(2)),
+          pointerWidth: parseInt(((arrow.pointerWidth / videoWidth) * 100).toFixed(2)),
+          x: parseInt(((arrow.x / videoWidth) * 100).toFixed(2)),
+          y: parseInt(((arrow.y / videoHeight) * 100).toFixed(2)),
+          points: arrow.points.map(point => (parseInt((point / videoWidth) * 100).toFixed(2)))
         }))
         , texts: texts.map(text => ({
           ...text,
-          x:  parseInt(((text.x / videoWidth) * 100).toFixed(2)),
-          y:  parseInt(((text.y / videoHeight) * 100).toFixed(2)),
+          x: parseInt(((text.x / videoWidth) * 100).toFixed(2)),
+          y: parseInt(((text.y / videoHeight) * 100).toFixed(2)),
+          fontSize: ((text.fontSize * (videoWidth/videoHeight))).toFixed(2),
         })),
         spotLights: spotLights.map(spot => ({
           ...spot,
-          x:  parseInt(((spot.x / videoWidth) * 100).toFixed(2)),
-          y:  parseInt(((spot.y / videoHeight) * 100).toFixed(2)),
-          width:  parseInt(((spot.width / videoWidth) * 100).toFixed(2)),
-          height:  parseInt(((spot.height / videoHeight) * 100).toFixed(2)),
-          cornerRadius: spot.cornerRadius.map(radius => ( parseInt((radius / videoWidth) * 100).toFixed(2)))
+          x: parseInt(((spot.x / videoWidth) * 100).toFixed(2)),
+          y: parseInt(((spot.y / videoHeight) * 100).toFixed(2)),
+          width: parseInt(((spot.width / videoWidth) * 100).toFixed(2)),
+          height: parseInt(((spot.height / videoHeight) * 100).toFixed(2)),
+          cornerRadius: spot.cornerRadius.map(radius => (parseInt((radius / videoWidth) * 100).toFixed(2)))
         })),
         blurs: blurs.map(blur => ({
           ...blur,
-          x:  parseInt(((blur.x / videoWidth) * 100).toFixed(2)),
-          y:  parseInt(((blur.y / videoHeight) * 100).toFixed(2)),
-          width:  parseInt(((blur.width / videoWidth) * 100).toFixed(2)),
-          height:  parseInt(((blur.height / videoHeight) * 100).toFixed(2)),
-          blurRadius:  parseInt(((blur.blurRadius / videoWidth) * 100).toFixed(2))
+          x: parseInt(((blur.x / videoWidth) * 100).toFixed(2)),
+          y: parseInt(((blur.y / videoHeight) * 100).toFixed(2)),
+          width: parseInt(((blur.width / videoWidth) * 100).toFixed(2)),
+          height: parseInt(((blur.height / videoHeight) * 100).toFixed(2)),
+          blurRadius: parseInt(((blur.blurRadius / videoWidth) * 100).toFixed(2))
         }
         )),
         zooms: zooms.map(zoom => (
           {
             ...zoom,
             roi: {
-              x:  parseInt(((zoom.roi.x / videoWidth) * 100).toFixed(2)),
-              y:  parseInt(((zoom.roi.y / videoHeight) * 100).toFixed(2)),
-              width:  parseInt(((zoom.roi.width / videoWidth) * 100).toFixed(2)),
-              height:  parseInt(((zoom.roi.height / videoHeight) * 100).toFixed(2))
+              x: parseInt(((zoom.roi.x / videoWidth) * 100).toFixed(2)),
+              y: parseInt(((zoom.roi.y / videoHeight) * 100).toFixed(2)),
+              width: parseInt(((zoom.roi.width / videoWidth) * 100).toFixed(2)),
+              height: parseInt(((zoom.roi.height / videoHeight) * 100).toFixed(2))
             }
           }))
-        }
-        if(rectangles.length==0) delete payload.rectangles
-        if(arrows.length==0) delete payload.arrows
-        if(texts.length==0) delete payload.texts
-        if(spotLights.length==0) delete payload.spotLights
-        if(blurs.length==0) delete payload.blurs
-        if(zooms.length==0) delete payload.zooms
-        // if(!(payload.arrows||payload.rectangles||payload.texts||payload.spotLights||payload.blurs||payload.zooms)) {
-        //   return toast.error('No elements found!');
-        // }
+      }
+      if (rectangles.length == 0) delete payload.rectangles
+      if (arrows.length == 0) delete payload.arrows
+      if (texts.length == 0) delete payload.texts
+      if (spotLights.length == 0) delete payload.spotLights
+      if (blurs.length == 0) delete payload.blurs
+      if (zooms.length == 0) delete payload.zooms
+      // if(!(payload.arrows||payload.rectangles||payload.texts||payload.spotLights||payload.blurs||payload.zooms)) {
+      //   return toast.error('No elements found!');
+      // }
 
       await exportVideo(payload).then(token => {
         if (token) {
@@ -126,11 +127,11 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           toast.error('Something went wrong while exporting video')
         }
       })
-    
-    }catch(err){
+
+    } catch (err) {
       console.log(err);
       return toast.error("error in export video")
-    }finally{
+    } finally {
       dispatch(setLoader({ loading: false }));
     }
   }
@@ -179,7 +180,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           const texts = elements?.texts ? elements?.texts.map(text => ({
             ...text,
             x: parseInt((parseFloat(text.x) * videoWidth) / 100),
-            y: parseInt((parseFloat(text.y) * videoHeight) / 100)
+            y: parseInt((parseFloat(text.y) * videoHeight) / 100),
+
           })) : []
           texts.forEach((text) => {
             dispatch(addText(text));
@@ -233,7 +235,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       dispatch(setLoader({ loading: true, status: 'please wait while we download the file' }));
       const interval = setInterval(() => {
         trackExportProgress(request_id).then(async (res) => {
-          if(res?.status?.toLowerCase() == 'failed') {
+          if (res?.status?.toLowerCase() == 'failed') {
             clearInterval(interval);
             dispatch(setLoader({ loading: false, status: '' }));
             return toast.error(res?.message);
@@ -271,34 +273,118 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       .catch(error => console.error("Error downloading videoURL:", error));
   };
 
-  const handleExportArticleData=(type: 'docx' | 'pdf')=>{
-    if(!htmlContent) return toast.error("Please verify the article atleast once!")
-    handleSaveArticle(htmlContent,type,window)
+  const handleExportArticleData = (type: 'docx' | 'pdf') => {
+    if (!htmlContent) return toast.error("Please verify the article atleast once!")
+    handleSaveArticle(htmlContent, type, window)
   }
 
   const saveVideo = async () => {
-    try{
-if(!articleData.length) return toast.error('Article data not loaded yet!');
-    if(!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
-    dispatch(setLoader({ loading: true, status: 'please wait while we save the video' }));
-    if (!uniqueId) {
-      setUniqueId(Date.now().toString())
-    }
-    const video = url ? url.split('/').pop() : ''
-    const subtitlePayload = subtitles.data
-    const articlePayload = articleData
-    let payload = {}
-    if (!reference_id) {
-      if (subtitlePayload?.length && articlePayload?.length) {
-        await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
-          if (res.file_url) {
-            setSubtitleId(res.file_url.split('/').pop())
+    try {
+      if (!articleData.length) return toast.error('Article data not loaded yet!');
+      if (!subtitles.data.length) return toast.error('Subtitle data not loaded yet!');
+      dispatch(setLoader({ loading: true, status: 'please wait while we save the video' }));
+      if (!uniqueId) {
+        setUniqueId(Date.now().toString())
+      }
+      const video = url ? url.split('/').pop() : ''
+      const subtitlePayload = subtitles.data
+      const articlePayload = articleData
+      let payload = {}
+      if (!reference_id) {
+        if (subtitlePayload?.length && articlePayload?.length) {
+          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
+            if (res.file_url) {
+              setSubtitleId(res.file_url.split('/').pop())
+            }
+          }).catch(err => console.log(err))
+          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
+            if (res.file_url) setArticleId(res.file_url.split('/').pop())
+          }).catch(err => console.log(err))
+          payload = {
+            unique_id: uniqueId,
+            user_id: user_id,
+            projectname: videoName,
+            tstamp: Date.now().toString(),
+            video: video,
+            subtitle: subtitleId,
+            article: articleId,
+            sourceLang,
+            sourceLangName,
+            targetLang,
+            targetLangName,
+            voice,
+            voice_language,
+            voiceid,
+            data: {
+              video: url,
+              videoWidth,
+              videoHeight,
+              rectangles: rectangles.map(rect => ({
+                ...rect,
+                width: ((rect.width / videoWidth) * 100).toFixed(2),
+                height: ((rect.height / videoHeight) * 100).toFixed(2),
+                x: ((rect.x / videoWidth) * 100).toFixed(2),
+                y: ((rect.y / videoHeight) * 100).toFixed(2),
+                cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+              })),
+              arrows: arrows.map(arrow => ({
+                ...arrow,
+                strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+                pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+                pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+                x: ((arrow.x / videoWidth) * 100).toFixed(2),
+                y: ((arrow.y / videoHeight) * 100).toFixed(2),
+                points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
+              }))
+              , texts: texts.map(text => ({
+                ...text,
+                x: ((text.x / videoWidth) * 100).toFixed(2),
+                y: ((text.y / videoHeight) * 100).toFixed(2),
+                fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
+              })),
+              spotLights: spotLights.map(spot => ({
+                ...spot,
+                x: ((spot.x / videoWidth) * 100).toFixed(2),
+                y: ((spot.y / videoHeight) * 100).toFixed(2),
+                width: ((spot.width / videoWidth) * 100).toFixed(2),
+                height: ((spot.height / videoHeight) * 100).toFixed(2),
+                cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+              })),
+              blurs: blurs.map(blur => ({
+                ...blur,
+                x: ((blur.x / videoWidth) * 100).toFixed(2),
+                y: ((blur.y / videoHeight) * 100).toFixed(2),
+                width: ((blur.width / videoWidth) * 100).toFixed(2),
+                height: ((blur.height / videoHeight) * 100).toFixed(2),
+                blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+              }
+              )),
+              zooms: zooms.map(zoom => (
+                {
+                  ...zoom,
+                  roi: {
+                    x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+                    y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+                    width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+                    height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+                  }
+                }))
+            }
           }
-        }).catch(err => console.log(err))
-        await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
-          if (res.file_url) setArticleId(res.file_url.split('/').pop())
-        }).catch(err => console.log(err))
+          exportOrupdateProject(payload).then(res => {
+            if (res.reference_id) {
+              dispatch(setReferenceId(res.reference_id))
+              return toast.success("Project saved successfully")
+            }
+          }).catch(err => {
+            console.log(err)
+            return toast.error("Error in saving project")
+          })
+        }
+
+      } else {
         payload = {
+          reference_id: reference_id,
           unique_id: uniqueId,
           user_id: user_id,
           projectname: videoName,
@@ -336,8 +422,10 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
             }))
             , texts: texts.map(text => ({
               ...text,
-              x: ((text.x / videoWidth) * 100).toFixed(2),
-              y: ((text.y / videoHeight) * 100).toFixed(2),
+              x: ((text.x) * 100).toFixed(2),
+              y: ((text.y) * 100).toFixed(2),
+              fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
+
             })),
             spotLights: spotLights.map(spot => ({
               ...spot,
@@ -368,98 +456,15 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
               }))
           }
         }
-        exportOrupdateProject(payload).then(res => {
-          if (res.reference_id) {
-            dispatch(setReferenceId(res.reference_id))
-            return toast.success("Project saved successfully")
-          }
-        }).catch(err => {
-          console.log(err)
-          return toast.error("Error in saving project")
-        })
+        exportOrupdateProject(payload).then(async () => {
+          await updateVersions(reference_id)
+          return toast.success('Project updated successfully');
+        }).catch(err => console.log(err))
       }
-      
-    } else {
-      payload = {
-        reference_id: reference_id,
-        unique_id: uniqueId,
-        user_id: user_id,
-        projectname: videoName,
-        tstamp: Date.now().toString(),
-        video: video,
-        subtitle: subtitleId,
-        article: articleId,
-        sourceLang,
-        sourceLangName,
-        targetLang,
-        targetLangName,
-        voice,
-        voice_language,
-        voiceid,
-        data: {
-          video: url,
-          videoWidth,
-          videoHeight,
-          rectangles: rectangles.map(rect => ({
-            ...rect,
-            width: ((rect.width / videoWidth) * 100).toFixed(2),
-            height: ((rect.height / videoHeight) * 100).toFixed(2),
-            x: ((rect.x / videoWidth) * 100).toFixed(2),
-            y: ((rect.y / videoHeight) * 100).toFixed(2),
-            cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-          })),
-          arrows: arrows.map(arrow => ({
-            ...arrow,
-            strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
-            pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
-            pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
-            x: ((arrow.x / videoWidth) * 100).toFixed(2),
-            y: ((arrow.y / videoHeight) * 100).toFixed(2),
-            points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
-          }))
-          , texts: texts.map(text => ({
-            ...text,
-            x: ((text.x / videoWidth) * 100).toFixed(2),
-            y: ((text.y / videoHeight) * 100).toFixed(2),
-          })),
-          spotLights: spotLights.map(spot => ({
-            ...spot,
-            x: ((spot.x / videoWidth) * 100).toFixed(2),
-            y: ((spot.y / videoHeight) * 100).toFixed(2),
-            width: ((spot.width / videoWidth) * 100).toFixed(2),
-            height: ((spot.height / videoHeight) * 100).toFixed(2),
-            cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-          })),
-          blurs: blurs.map(blur => ({
-            ...blur,
-            x: ((blur.x / videoWidth) * 100).toFixed(2),
-            y: ((blur.y / videoHeight) * 100).toFixed(2),
-            width: ((blur.width / videoWidth) * 100).toFixed(2),
-            height: ((blur.height / videoHeight) * 100).toFixed(2),
-            blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
-          }
-          )),
-          zooms: zooms.map(zoom => (
-            {
-              ...zoom,
-              roi: {
-                x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
-                y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
-                width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
-                height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
-              }
-            }))
-        }
-      }
-      exportOrupdateProject(payload).then(async () => {
-        await updateVersions(reference_id)
-        return toast.success('Project updated successfully');
-      }).catch(err => console.log(err))
-    }
-    }catch(err){
+    } catch (err) {
       console.log(err);
       toast.error("Error saving video")
-    }finally{
+    } finally {
       dispatch(setLoader({ loading: false }))
     }
   }
@@ -553,13 +558,13 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
                         </div>
                         {open === "Version History" && (
                           <ul className="p-0 m-0 flex items-center justify-center flex-col text-xs italic">
-                            {versions?.length ? versions.map((version) => (
+                            {versions?.length ? versions.map((version, index) => (
                               <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-center justify-center " onClick={() => {
                                 setSelectedVersion({ text: `${version.id} - ${convertToIST(version.tstamp)}`, index: version.id })
                                 document.getElementById('my_modal_3')?.showModal()
                               }}>
                                 <MdHistory />
-                                <span>Version {`${version.id} - ${convertToIST(version.tstamp)}`}</span>
+                                <span>Version {`${index + 1} - ${convertToIST(version.tstamp)}`}</span>
                               </li>
                             )) : <li className='text-center'>No versions found</li>}
                           </ul>
@@ -586,8 +591,8 @@ if(!articleData.length) return toast.error('Article data not loaded yet!');
                         {open === "Docs" && (
                           <ul className="ml-4 mt-1 space-y-1 text-xs text-gray-300 p-0 m-0 flex items-start justify-center flex-col ">
                             <li onClick={handleExport} className="cursor-pointer px-4 p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" > Video </li>
-                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={()=>handleExportArticleData('docx')} >Article (.docx)</li>
-                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={()=>handleExportArticleData('pdf')}>Article (.pdf)</li>
+                            {/* <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={() => handleExportArticleData('docx')} >Article (.docx)</li>
+                            <li className="cursor-pointer p-0  px-4 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full justify-center italic" onClick={() => handleExportArticleData('pdf')}>Article (.pdf)</li> */}
                             {/* <li className="cursor-pointer p-0 m-0  hover:bg-slate-800 hover:text-sm hover:rounded-md h-6 flex items-start w-full px-4 justify-center italic" >Gif</li> */}
 
                           </ul>

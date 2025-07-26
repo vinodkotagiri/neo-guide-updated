@@ -93,7 +93,7 @@ const Editor = () => {
   }
 
   useEffect(()=>{
-    if(!articleData.length || !subtitles.data.length){
+    if( !subtitles.data.length){
       dispatch(setDisabled(true));
     }else{
       dispatch(setDisabled(false));
@@ -125,10 +125,9 @@ const Editor = () => {
           <div className='w-[70%] h-full'>
             <VideoEditor playerRef={playerRef} />
           </div>
-        
+          <div className='w-[30%] h-full'>
             <EditorSider playerRef={playerRef} />
-        
-          
+          </div>
         </>}
       </div>
     </div>

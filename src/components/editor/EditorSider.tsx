@@ -173,9 +173,9 @@ const EditorSider = ({ playerRef }) => {
   }, [currentElement, currentElementId])
 
   return (
-    <div className='w-full h-full  bg-[#16151a] border-[1px] border-[#303032] rounded-tl-2xl   flex z-50   '>
+    <div className='w-full h-full  bg-[#16151a] border-[1px] border-[#303032] rounded-tl-2xl flex z-50   '>
       <>
-          <div className='w-[calc(100%-56px)] text-slate-600   h-full    '>
+          <div className='w-[calc(100%-56px)] text-slate-600  h-full    '>
             {rightActiveArea == 1 && <DubAreaComponent />}
             {rightActiveArea == 2 && <SubtitleAreaComponent playerRef={playerRef} />}
             {rightActiveArea == 4 && <BlurOptions playerRef={playerRef} />}
@@ -185,14 +185,9 @@ const EditorSider = ({ playerRef }) => {
             {rightActiveArea == 8 && <SpotlightOptions playerRef={playerRef} />}
             {rightActiveArea == 9 && <ZoomOptions playerRef={playerRef} />}
           </div>
-          {isDisabled ?  <div className='flex h-full w-[20%] gap-4 p-4 '>
-          
-        
-        </div>
-        :
           <div className='w-[60px] h-full border-[#303032] border-l'>
             <RightMenuIcons setRightActiveArea={setRightActiveArea} rightActiveArea={rightActiveArea} />
-          </div>}
+          </div>
         </>
     </div>
   )

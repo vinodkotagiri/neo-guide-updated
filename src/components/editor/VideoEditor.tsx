@@ -93,9 +93,7 @@ const VideoEditor = ({ playerRef }) => {
           </div>
         </div>
       </div>
-
       <div className="w-full h-[35%]">
-
         <TimelineArea playerRef={playerRef} />
 
       </div>

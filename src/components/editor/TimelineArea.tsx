@@ -150,7 +150,7 @@ function TimelineArea({ playerRef }) {
         initial="start"
         animate="end"
       >
-        <div className="text-white text-2xl">Loading timeline...</div>
+        <div className="text-white text-2xl w-full">Loading timeline...</div>
       </motion.div>
     );
   }
@@ -177,7 +177,7 @@ function TimelineArea({ playerRef }) {
         {markers.map((item, index) => (
           <motion.div
             key={index}
-            className='absolute top-0 cursor-pointer z-10 bg-slate-400'
+            className='w-full absolute top-0 cursor-pointer z-10 bg-slate-400'
             style={{
               left: `${item * pixelFactor}px`,
               height: item % 10 === 0 ? '8px' : '4px',
