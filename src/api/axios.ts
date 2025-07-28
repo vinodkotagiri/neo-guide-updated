@@ -254,7 +254,7 @@ export async function getLanguages() {
       .get("https://contentinova.com/effybizgetlanguages")
       .then((res) => {
         if (res.data) {
-          resolve(languages);
+          resolve(res.data);
         }
       })
       .catch((error) => {
