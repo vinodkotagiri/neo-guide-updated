@@ -17,7 +17,7 @@
 .custom-buttons-ai {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0px;
 }
 
 .ql-toolbar.ql-snow {
@@ -103,20 +103,20 @@
   border-radius: 6px;
   cursor: pointer;
   margin-right: 10px;
-  font-size: 14px;
+  font-size: 12px;
   gap: 5px;
   white-space: nowrap;
   justify-content: center;
-  min-width: 140px;
+  min-width: 100px;
 }
 
 .bg-color-dark {
-  background-color: #0f172b;
+  background-color: #16151a;
 }
 
 .dropdown-menu-ai {
-  background-color: #1f1427;
-  color: #9c8aa9;
+  background-color: #16151a;
+  color: #fff;
 }
 
 .dropdown-menu-ai li {
@@ -125,6 +125,10 @@
 
 .dropdown-menu-ai li:last-child {
   border-bottom: none;
+}
+
+.dropdown-menu-ai li a {
+  font-size: 12px;
 }
 
 .toggler {
@@ -460,4 +464,20 @@
   color: #fff;
   background: linear-gradient(45deg, rgba(66, 42, 213, 1) 0%, rgba(153, 41, 234, 1) 100%);
 
+}
+
+@media screen and (max-width:1360px) {
+  .res-dektop {
+    display: none;
+  }
+}
+
+.res-mobi {
+  display: none;
+}
+
+@media screen and (max-width:1360px) {
+  .res-mobi {
+    display: block;
+  }
 }
