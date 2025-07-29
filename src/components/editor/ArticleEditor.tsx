@@ -9,7 +9,10 @@ import { setLoader, setLoaderData } from "../../redux/features/loaderSlice";
 import ArticleMenu from "./ArticleMenu";
 import { handleSaveArticle } from "../../helpers";
 import { setHtmlContent } from "../../redux/features/articleSlice";
+import { PiFileTextLight, PiTextAlignJustify } from "react-icons/pi";
+
 const ArticleEditor = ({ articleData }) => {
+  const [selected, setSelected] = useState(null);
   const [quillValue, setQuillValue] = useState("");
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, imageUrl: "" });
   const [requestId] = useState(null);
@@ -112,7 +115,7 @@ const ArticleEditor = ({ articleData }) => {
     dispatch(setHtmlContent(fullHtml))
   }, [quillValue, dispatch])
 
- useEffect(() => {
+  useEffect(() => {
     if (articleData && articleData.length > 0) {
       const htmlArray = articleData
         .map((item, index) => {
@@ -123,12 +126,12 @@ const ArticleEditor = ({ articleData }) => {
             if (item.image_url) {
               const imgContainer = document.createElement("div");
               imgContainer.className = "relative";
-              
+
               const img = document.createElement("img");
               img.src = item.image_url;
               img.alt = `Article Image ${index}`;
               img.className = "w-full h-auto rounded-md border-2 border-slate-900";
-              
+
               const menuIcon = document.createElement("div");
               menuIcon.className = "absolute top-2 right-2 cursor-pointer ";
               menuIcon.innerHTML = `
@@ -138,7 +141,7 @@ const ArticleEditor = ({ articleData }) => {
                   <circle cx="12" cy="18" r="2" fill="#1E293B"/>
                 </svg>
               `;
-              
+
               imgContainer.appendChild(img);
               imgContainer.appendChild(menuIcon);
               tempDiv.appendChild(imgContainer);
@@ -220,8 +223,55 @@ const ArticleEditor = ({ articleData }) => {
     }
   }, [quillRef]);
 
+  const handleSelect = (type) => {
+    setSelected(type);
+  };
   return (
     <>
+      <div className=" flex flex-col items-center justify-center p-6 text-white font-sans">
+        <div className="flex flex-col md:flex-row gap-8 mb-8">
+          {/* Step-by-Step Article */}
+          <div
+            onClick={() => handleSelect('step')}
+            className={`cursor-pointer border rounded-lg p-6 w-[300px] transition-all ${selected === 'step' ? 'border-purple-500 shadow-lg' : 'border-transparent bg-[#1a1a1d]'
+              }`}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`text-4xl mb-4 rounded-full w-12 h-12 flex items-center justify-center ${selected === 'step' ? 'bg-purple-700 ' : 'bg-[#313133]'}`}><PiTextAlignJustify /> </div>
+              <h2 className="text-xl font-semibold mb-2">Step-by-Step Article</h2>
+              <p className="text-sm text-gray-300">
+                A Step-by-Step Article walks users through a product feature with clear instructions and screenshots,
+                explaining when and why to use it—making complex actions easy to follow.
+              </p>
+            </div>
+          </div>
+
+          {/* Explainer Article */}
+          <div
+            onClick={() => handleSelect('explainer')}
+            className={`cursor-pointer border rounded-lg p-6 w-[300px] transition-all ${selected === 'explainer' ? 'border-purple-500 shadow-lg' : 'border-transparent bg-[#1a1a1d]'
+              }`}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`text-4xl mb-4 rounded-full w-12 h-12 flex items-center justify-center ${selected === 'explainer' ? 'bg-purple-700 ' : 'bg-[#313133]'}`}><PiFileTextLight />
+              </div>
+              <h2 className="text-xl font-semibold mb-2">Explainer Article</h2>
+              <p className="text-sm text-gray-300">
+                An Explainer Video Article introduces a product or feature using visuals and concise narration, explaining
+                what it does, why it matters, and how to use it—helping users grasp key concepts quickly and confidently.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded transition cursor-pointer"
+          disabled={!selected}
+
+        >
+          Proceed with Selection
+        </button>
+      </div>
       <div className="flex items-center gap-4">
 
         <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
