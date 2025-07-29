@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setLoader, setLoaderData } from '../../redux/features/loaderSlice';
 import toast from 'react-hot-toast';
 
-const ArticleMenu = ({ languageIcon }) => {
+const ArticleMenu = ({ languageIcon,handleSave }) => {
   const { articleData } = useAppSelector(state => state.article)
   const [requestId, setRequestId] = useState('')
   const dispatch = useDispatch()
@@ -77,8 +77,8 @@ const ArticleMenu = ({ languageIcon }) => {
           <div tabIndex={0} className=" ai-menu-btn my-1 bg-color-dark "> <PiDownload />
             Dowload</div>
           <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32  px-1 py-2  dropdown-menu-ai">
-            <li><a  >As Document</a></li>
-            <li><a  >As PDF</a></li>
+            <li ><button onClick={()=>handleSave('docx')}>As Document</button></li>
+            <li ><button onClick={() => handleSave('pdf')}>As PDF</button></li>
 
           </ul>
         </div>

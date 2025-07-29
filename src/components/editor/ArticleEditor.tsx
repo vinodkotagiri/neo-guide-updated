@@ -228,9 +228,9 @@ const ArticleEditor = ({ articleData }) => {
   };
   return (
     <>
+    {/* <>
       <div className=" flex flex-col items-center justify-center p-6 text-white font-sans">
         <div className="flex flex-col md:flex-row gap-8 mb-8">
-          {/* Step-by-Step Article */}
           <div
             onClick={() => handleSelect('step')}
             className={`cursor-pointer border rounded-lg p-6 w-[300px] transition-all ${selected === 'step' ? 'border-purple-500 shadow-lg' : 'border-transparent bg-[#1a1a1d]'
@@ -246,7 +246,6 @@ const ArticleEditor = ({ articleData }) => {
             </div>
           </div>
 
-          {/* Explainer Article */}
           <div
             onClick={() => handleSelect('explainer')}
             className={`cursor-pointer border rounded-lg p-6 w-[300px] transition-all ${selected === 'explainer' ? 'border-purple-500 shadow-lg' : 'border-transparent bg-[#1a1a1d]'
@@ -272,11 +271,11 @@ const ArticleEditor = ({ articleData }) => {
           Proceed with Selection
         </button>
       </div>
-      <div className="flex items-center gap-4">
-
+      </> */}
+      {/* <div className="flex items-center gap-4">
         <button className="btn btn-secondary" onClick={() => handleSave('docx')}>Export as document</button>
         <button className="btn btn-success" onClick={() => handleSave('pdf')}>Export as Pdf</button>
-      </div>
+      </div> */}
       <div className="flex bg-black rounded-md justify-between items-center">
         <div id="custom-toolbar">
           <button className="ql-bold" />
@@ -309,7 +308,7 @@ const ArticleEditor = ({ articleData }) => {
           <select className="ql-align" />
           <button className="ql-image" />
         </div>
-        <ArticleMenu />
+        <ArticleMenu  handleSave={handleSave}/>
       </div>
 
       <div className="w-full h-full bg-white text-slate-900 text-xl rounded-md overflow-y-auto relative">
