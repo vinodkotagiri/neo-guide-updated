@@ -411,13 +411,13 @@ export function exportOrupdateProject(payload) {
   });
 }
 
-export function getProjectData(reference_id: { reference_id: string }) {
+export function getProjectData(reference_id: string) {
   return new Promise((resolve) => {
     const url = "https://contentinova.com/neoguidegetdata";
     axios
       .post(url, { reference_id })
       .then((res) => {
-        return res.data;
+        resolve(res.data);
       })
       .catch((err) => {
         console.log("error in export or update json", err);

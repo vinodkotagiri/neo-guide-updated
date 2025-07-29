@@ -21,7 +21,16 @@ const loaderSlice = createSlice({
     setLoader: (state, action: PayloadAction<LoaderState>) => {
       Object.assign(state, action.payload); // Correct state update
     },
+    hideLoader: (state) => {
+      state.loading = false;
+    },
+    showLoader: (state) => {
+      state.loading = true;
+    },
     setLoaderData: (state, action: PayloadAction<Partial<LoaderState>>) => {
+      if(action.payload.loading !== undefined) {
+        state.loading = action.payload.loading;
+      }
       if (action.payload.percentage !== undefined) {
         state.percentage = action.payload.percentage;
       }
@@ -35,5 +44,5 @@ const loaderSlice = createSlice({
   },
 });
 
-export const { setLoader, setLoaderData } = loaderSlice.actions;
+export const { setLoader, setLoaderData, showLoader, hideLoader } = loaderSlice.actions;
 export default loaderSlice.reducer;

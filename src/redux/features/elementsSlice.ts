@@ -35,11 +35,11 @@ export interface TextElementState {
   font: string;
   fontSize: number;
   fontColor: string;
-  backgroundType: 'solid' | 'gradient';
-  backgroundColor?: string|undefined;
-  backgroundGradientStartColor?: string|undefined;
-  backgroundGradientEndColor?: string|undefined;
-  gradientDirection?: 'horizontal' | 'vertical' | 'diagonal'|undefined;
+  backgroundType: "solid" | "gradient";
+  backgroundColor?: string | undefined;
+  backgroundGradientStartColor?: string | undefined;
+  backgroundGradientEndColor?: string | undefined;
+  gradientDirection?: "horizontal" | "vertical" | "diagonal" | undefined;
   justify: string;
   startTime: number;
   endTime: number;
@@ -80,7 +80,7 @@ export interface SpotElementElementState {
 export interface ZoomElementState {
   id: string;
   zoom_factor: number;
-  roi: {x:number;y:number;width:number;height:number};
+  roi: { x: number; y: number; width: number; height: number };
   start_time: number;
   end_time: number;
   easing_factor: number;
@@ -94,7 +94,7 @@ interface ElementsState {
   blurs: BlurElementState[];
   texts: TextElementState[];
   spotLights: SpotElementElementState[];
-  zooms: ZoomElementState[]
+  zooms: ZoomElementState[];
 }
 
 const INITIAL_STATE: ElementsState = {
@@ -105,7 +105,7 @@ const INITIAL_STATE: ElementsState = {
   blurs: [],
   texts: [],
   spotLights: [],
-  zooms:[]
+  zooms: []
 };
 
 const elementsSlice = createSlice({
@@ -113,7 +113,16 @@ const elementsSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     resetElements() {
-      return INITIAL_STATE
+      return INITIAL_STATE;
+    },
+    restoreElements(state, action) {
+      const { rectangles, arrows, blurs, texts, spotLights, zooms } = action.payload;
+      state.rectangles = rectangles | [];
+      state.arrows = arrows | [];
+      state.blurs = blurs | [];
+      state.texts = texts | [];
+      state.spotLights = spotLights | [];
+      state.zooms = zooms | [];
     },
     setCurrentElementId(state, action) {
       state.currentElementId = action.payload.id;
@@ -142,7 +151,6 @@ const elementsSlice = createSlice({
     addText(state, action) {
       state.texts.push(action.payload);
       state.currentElementId = action.payload.id;
-      
     },
     addSpotLight(state, action) {
       state.spotLights.push(action.payload);
@@ -190,18 +198,17 @@ const elementsSlice = createSlice({
       }
       state.texts[index] = text;
     },
-    changeBGType:(state,action)=>{
+    changeBGType: (state, action) => {
       const index = state.texts.findIndex((e) => e.id === action.payload.id);
       const text = state.texts[index];
       const bgType = action.payload.bgType;
-      if(bgType === 'solid'){
-        text.backgroundColor="transparent"
-      }
-      else if(bgType === 'gradient'){
-        text.backgroundColor='transparent';
-        text.backgroundGradientStartColor="transparent";
-        text.backgroundGradientEndColor="transparent";
-        text.gradientDirection="horizontal";
+      if (bgType === "solid") {
+        text.backgroundColor = "transparent";
+      } else if (bgType === "gradient") {
+        text.backgroundColor = "transparent";
+        text.backgroundGradientStartColor = "transparent";
+        text.backgroundGradientEndColor = "transparent";
+        text.gradientDirection = "horizontal";
       }
       state.texts[index] = text;
     },
@@ -268,5 +275,6 @@ export const {
   deleteBlur,
   deleteText,
   deleteSpotLight,
-  setCurrentElement
+  setCurrentElement,
+  restoreElements
 } = elementsSlice.actions;

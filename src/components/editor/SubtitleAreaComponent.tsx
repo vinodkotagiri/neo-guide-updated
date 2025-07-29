@@ -68,7 +68,7 @@ function SubtitleAreaComponent({ playerRef }) {
   }, [currentIdx]);
 
   useEffect(() => {
-    if (!subtitles.data.length && retries < 3) {
+    if (!subtitles.data.length && retries < 3 && url) {
       getSubtitles({ target_language: 'en', video_path: url })
         .then((res) => {
           const request_id = res?.request_id;

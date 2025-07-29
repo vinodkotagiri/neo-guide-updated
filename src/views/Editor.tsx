@@ -5,13 +5,16 @@ import EditorSider from '../components/editor/EditorSider'
 import VideoEditor from '../components/editor/VideoEditor'
 import Navbar from '../components/global/Navbar'
 import { useAppSelector } from '../redux/hooks'
-import { createArticle, getProgress } from '../api/axios'
+import { createArticle, getProgress, getProjectData } from '../api/axios'
 import toast from 'react-hot-toast'
-import { setLoader, setLoaderData } from '../redux/features/loaderSlice'
+import { hideLoader, setLoader, setLoaderData, showLoader } from '../redux/features/loaderSlice'
 import { useDispatch } from 'react-redux'
 import { setArticleData } from '../redux/features/articleSlice'
-import { useNavigate } from 'react-router-dom'
-import { setDisabled, setLocked } from '../redux/features/videoSlice'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { setDisabled, setLocked, setSourceLang, setSourceLangName, setTargetLanguage, setVideoName, setVideoUrl, updateSubtitleData } from '../redux/features/videoSlice'
+import { error } from 'console'
+import axios from 'axios'
+import { restoreElements } from '../redux/features/elementsSlice'
 
 const Editor = () => {
   const { isArticle, url,subtitles,isDisabled } = useAppSelector(state => state.video)
@@ -20,14 +23,85 @@ const Editor = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const playerRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    if (!url) {
-      navigate('/')
+    const user_id=searchParams.get('user_id') ?? null;
+    const reference_id=searchParams.get('reference_id') ?? null;
+    if(!url && !user_id && !reference_id) navigate('/');
+    if(!url && user_id && reference_id){
+      console.log('Restoring project')
+      handleRestoreProject(reference_id)
     }
-  }, [url])
+  }, [url, navigate, searchParams])
 
-  // const [searchParams] = useSearchParams();
+async function handleRestoreProject(reference_id:string){
+  dispatch(showLoader());
+  const res=await getProjectData(reference_id)
+  if(res){
+    dispatch(setVideoName(res.projectname));
+    if(res.video){
+      dispatch(setVideoUrl(res.video));
+    }
+    if(res.article){
+      dispatch(setLoaderData({status:'Getting Saved Article'}))
+      axios.get(res.article).then((res) => {
+        dispatch(setArticleData(res.data));
+      }).catch(error => {
+        console.log(error);
+      })
+    }
+    if(res.subtitle){
+      dispatch(setLoaderData({status:'Getting Saved Subtitles'}))
+      axios.get(res.subtitle).then((res) => {
+        dispatch(updateSubtitleData(res.data));
+      }).catch(error => {
+        console.log(error);
+      })
+    }
+    if(res.elements){
+      dispatch(setLoaderData({status:'Getting Saved Elements'}))
+      const elements={}
+      if(res.elements?.rectangles?.length){
+        elements.rectangles=res.elements.rectangles
+      }
+      if(res.elements?.arrows?.length){
+        elements.arrows=res.elements.arrows
+      }
+      if(res.elements?.blurs?.length){
+        elements.blurs=res.elements.blurs
+      }
+      if(res.elements?.texts?.length){
+        elements.texts=res.elements.texts
+      }
+      if(res.elements?.spotLights?.length){
+        elements.spotLights=res.elements.spotLights
+      }
+      if(res.elements?.zooms?.length){
+        elements.zooms=res.elements.zooms
+      }
+      console.log('elements',elements)
+      if(Object.keys(elements).length){
+        dispatch(restoreElements(elements));
+      }
+    }
+    if(res?.sourceLang){
+      dispatch(setSourceLang(res.sourceLang));
+    }
+    if(res?.sourceLangName){
+      dispatch(setSourceLangName(res.sourceLangName));
+    }
+    if(res?.targetLang){
+      dispatch(setTargetLanguage(res.targetLang));
+    }
+    if(res?.targetLangName){
+      dispatch(setTargetLanguage(res.targetLangName));
+    }
+  }
+  dispatch(hideLoader());
+  toast.success("Project restored successfully")
+}
+
   // useEffect(()=>{
   //   const user_id=searchParams.get('user_id') ?? null;
   //   if(!user_id) toast.error('User ID is required to upload a video');

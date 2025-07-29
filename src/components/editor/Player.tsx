@@ -58,7 +58,7 @@ function Player({ playerRef }) {
       const containerWidth = videoContainerRef.current?.offsetWidth || 0;
       const containerHeight = videoContainerRef.current?.offsetHeight || 0;
 
-      const activeZoom: ZoomElementState = zooms.find(
+      const activeZoom: ZoomElementState = zooms?.find(
         (zoom: ZoomElementState) =>
           currentPlayTime >= zoom.start_time && currentPlayTime <= zoom.end_time
       );
