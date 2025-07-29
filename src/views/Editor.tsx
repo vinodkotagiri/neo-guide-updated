@@ -40,8 +40,16 @@ async function handleRestoreProject(reference_id:string){
   const res=await getProjectData(reference_id)
   if(res){
     dispatch(setVideoName(res.projectname));
-    if(res.video){
-      dispatch(setVideoUrl(res.video));
+
+    if(res.elements){
+      res.elements=JSON.parse(res.elements);
+    }
+    console.log('res',res.elements?.video)
+    if(res?.elements?.video){
+      dispatch(setVideoUrl(res?.elements?.video));
+    }else{
+      toast.error('Error restoring project- video not found');
+      return 
     }
     if(res.article){
       dispatch(setLoaderData({status:'Getting Saved Article'}))

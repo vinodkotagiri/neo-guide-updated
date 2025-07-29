@@ -79,7 +79,7 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           ...text,
           x: parseInt(((text.x / videoWidth) * 100).toFixed(2)),
           y: parseInt(((text.y / videoHeight) * 100).toFixed(2)),
-          fontSize: ((text.fontSize * (videoWidth/videoHeight))).toFixed(2),
+          fontSize: ((text.fontSize * (videoWidth / videoHeight))).toFixed(2),
         })),
         spotLights: spotLights.map(spot => ({
           ...spot,
@@ -289,97 +289,110 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       const video = url ? url.split('/').pop() : ''
       const subtitlePayload = subtitles.data
       const articlePayload = articleData
+      let subtitleIdLocal = ''
+      let articleIdLocal = ''
       let payload = {}
       if (!reference_id) {
         if (subtitlePayload?.length && articlePayload?.length) {
-          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId}-subtitle.json` }).then(res => {
+          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId||Date.now().toString()}-subtitle.json` }).then(res => {
             if (res.file_url) {
               setSubtitleId(res.file_url.split('/').pop())
+              subtitleIdLocal = res.file_url.split('/').pop()
+              console.log('subtitleIdLocal',subtitleIdLocal)
             }
           }).catch(err => console.log(err))
-          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId}-article.json` }).then(res => {
-            if (res.file_url) setArticleId(res.file_url.split('/').pop())
+          await new Promise(res => setTimeout(res, 1000));
+          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId||Date.now().toString()}-article.json` }).then(res => {
+            if (res.file_url) {
+              setArticleId(res.file_url.split('/').pop())
+              articleIdLocal = res.file_url.split('/').pop()
+              console.log('articleIdLocal',articleIdLocal)
+            }
           }).catch(err => console.log(err))
-          payload = {
-            unique_id: uniqueId,
-            user_id: user_id,
-            projectname: videoName,
-            tstamp: Date.now().toString(),
-            video: video,
-            subtitle: subtitleId,
-            article: articleId,
-            sourceLang,
-            sourceLangName,
-            targetLang,
-            targetLangName,
-            voice,
-            voice_language,
-            voiceid,
-            data: {
-              video: url,
-              videoWidth,
-              videoHeight,
-              rectangles: rectangles.map(rect => ({
-                ...rect,
-                width: ((rect.width / videoWidth) * 100).toFixed(2),
-                height: ((rect.height / videoHeight) * 100).toFixed(2),
-                x: ((rect.x / videoWidth) * 100).toFixed(2),
-                y: ((rect.y / videoHeight) * 100).toFixed(2),
-                cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-              })),
-              arrows: arrows.map(arrow => ({
-                ...arrow,
-                strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
-                pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
-                pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
-                x: ((arrow.x / videoWidth) * 100).toFixed(2),
-                y: ((arrow.y / videoHeight) * 100).toFixed(2),
-                points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
-              }))
-              , texts: texts.map(text => ({
-                ...text,
-                x: ((text.x / videoWidth) * 100).toFixed(2),
-                y: ((text.y / videoHeight) * 100).toFixed(2),
-                fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
-              })),
-              spotLights: spotLights.map(spot => ({
-                ...spot,
-                x: ((spot.x / videoWidth) * 100).toFixed(2),
-                y: ((spot.y / videoHeight) * 100).toFixed(2),
-                width: ((spot.width / videoWidth) * 100).toFixed(2),
-                height: ((spot.height / videoHeight) * 100).toFixed(2),
-                cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
-              })),
-              blurs: blurs.map(blur => ({
-                ...blur,
-                x: ((blur.x / videoWidth) * 100).toFixed(2),
-                y: ((blur.y / videoHeight) * 100).toFixed(2),
-                width: ((blur.width / videoWidth) * 100).toFixed(2),
-                height: ((blur.height / videoHeight) * 100).toFixed(2),
-                blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
-              }
-              )),
-              zooms: zooms.map(zoom => (
-                {
-                  ...zoom,
-                  roi: {
-                    x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
-                    y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
-                    width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
-                    height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
-                  }
+
+         
+          if (subtitleId || subtitleIdLocal && articleId || articleIdLocal) {
+            payload = {
+              unique_id: uniqueId,
+              user_id: user_id,
+              projectname: videoName,
+              tstamp: Date.now().toString(),
+              video: video,
+              subtitle: subtitleIdLocal || subtitleId,
+              article: articleIdLocal || articleId,
+              sourceLang,
+              sourceLangName,
+              targetLang,
+              targetLangName,
+              voice,
+              voice_language,
+              voiceid,
+              data: {
+                video: url,
+                videoWidth,
+                videoHeight,
+                rectangles: rectangles.map(rect => ({
+                  ...rect,
+                  width: ((rect.width / videoWidth) * 100).toFixed(2),
+                  height: ((rect.height / videoHeight) * 100).toFixed(2),
+                  x: ((rect.x / videoWidth) * 100).toFixed(2),
+                  y: ((rect.y / videoHeight) * 100).toFixed(2),
+                  cornerRadius: rect.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+                })),
+                arrows: arrows.map(arrow => ({
+                  ...arrow,
+                  strokeWidth: ((arrow.strokeWidth / videoWidth) * 100).toFixed(2),
+                  pointerLength: ((arrow.pointerLength / videoWidth) * 100).toFixed(2),
+                  pointerWidth: ((arrow.pointerWidth / videoWidth) * 100).toFixed(2),
+                  x: ((arrow.x / videoWidth) * 100).toFixed(2),
+                  y: ((arrow.y / videoHeight) * 100).toFixed(2),
+                  points: arrow.points.map(point => ((point / videoWidth) * 100).toFixed(2))
                 }))
+                , texts: texts.map(text => ({
+                  ...text,
+                  x: ((text.x / videoWidth) * 100).toFixed(2),
+                  y: ((text.y / videoHeight) * 100).toFixed(2),
+                  fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
+                })),
+                spotLights: spotLights.map(spot => ({
+                  ...spot,
+                  x: ((spot.x / videoWidth) * 100).toFixed(2),
+                  y: ((spot.y / videoHeight) * 100).toFixed(2),
+                  width: ((spot.width / videoWidth) * 100).toFixed(2),
+                  height: ((spot.height / videoHeight) * 100).toFixed(2),
+                  cornerRadius: spot.cornerRadius.map(radius => ((radius / videoWidth) * 100).toFixed(2))
+                })),
+                blurs: blurs.map(blur => ({
+                  ...blur,
+                  x: ((blur.x / videoWidth) * 100).toFixed(2),
+                  y: ((blur.y / videoHeight) * 100).toFixed(2),
+                  width: ((blur.width / videoWidth) * 100).toFixed(2),
+                  height: ((blur.height / videoHeight) * 100).toFixed(2),
+                  blurRadius: ((blur.blurRadius / videoWidth) * 100).toFixed(2)
+                }
+                )),
+                zooms: zooms.map(zoom => (
+                  {
+                    ...zoom,
+                    roi: {
+                      x: ((zoom.roi.x / videoWidth) * 100).toFixed(2),
+                      y: ((zoom.roi.y / videoHeight) * 100).toFixed(2),
+                      width: ((zoom.roi.width / videoWidth) * 100).toFixed(2),
+                      height: ((zoom.roi.height / videoHeight) * 100).toFixed(2)
+                    }
+                  }))
+              }
             }
+            exportOrupdateProject(payload).then(res => {
+              if (res.reference_id) {
+                dispatch(setReferenceId(res.reference_id))
+                return toast.success("Project saved successfully")
+              }
+            }).catch(err => {
+              console.log(err)
+              return toast.error("Error in saving project")
+            })
           }
-          exportOrupdateProject(payload).then(res => {
-            if (res.reference_id) {
-              dispatch(setReferenceId(res.reference_id))
-              return toast.success("Project saved successfully")
-            }
-          }).catch(err => {
-            console.log(err)
-            return toast.error("Error in saving project")
-          })
         }
 
       } else {

@@ -7,33 +7,33 @@ interface articleState {
 }
 const initialState: articleState = {
   articleData: [
-    {
-      text: "In this tutorial, we'll dive into enhancing software architecture with caching techniques to improve system performance. By the end, you'll understand how to strategically implement caching to handle millions of requests efficiently and recognize its potential challenges."
-    },
-    {
-      image_url: null
-    },
-    {
-      text: "Step 1: Understand the Benefits of Caching  \nCaching stores data temporarily, allowing future requests for the same data to be served faster. It significantly reduces latency, enhancing the user experience."
-    },
-    {
-      image_url: "https://effybiz-devops.s3.ap-south-1.amazonaws.com/deeac18b-79dc-49a3-baef-e302fdeae96a_frame_10.jpg"
-    },
-    {
-      text: "Step 2: Explore Different Types of Cache  \nConsider using a content delivery network (CDN) to cache static assets like images, ensuring users don’t download them repeatedly. Implement a memory or local cache on your services to quickly respond to requests. For broader needs, utilize distributed cache options such as Redis or Memcache, especially as a layer before hitting the database."
-    },
-    {
-      image_url: null
-    },
-    {
-      text: "Step 3: Identify Suitable Layers for Cache  \nAlmost any part of the architecture can support caching. Prioritize layers that experience high CPU and memory usage for caching, ensuring balanced performance."
-    },
-    {
-      image_url: "https://effybiz-devops.s3.amazonaws.com/generated-gifs/output.gif"
-    },
-    {
-      text: "Step 4: Address Cache Complications  \nBe aware that integrating cache adds complexity. For instance, Phil Carton highlights cache invalidation as a particularly challenging problem in computer science."
-    },
+    // {
+    //   text: "In this tutorial, we'll dive into enhancing software architecture with caching techniques to improve system performance. By the end, you'll understand how to strategically implement caching to handle millions of requests efficiently and recognize its potential challenges."
+    // },
+    // {
+    //   image_url: null
+    // },
+    // {
+    //   text: "Step 1: Understand the Benefits of Caching  \nCaching stores data temporarily, allowing future requests for the same data to be served faster. It significantly reduces latency, enhancing the user experience."
+    // },
+    // {
+    //   image_url: "https://effybiz-devops.s3.ap-south-1.amazonaws.com/deeac18b-79dc-49a3-baef-e302fdeae96a_frame_10.jpg"
+    // },
+    // {
+    //   text: "Step 2: Explore Different Types of Cache  \nConsider using a content delivery network (CDN) to cache static assets like images, ensuring users don’t download them repeatedly. Implement a memory or local cache on your services to quickly respond to requests. For broader needs, utilize distributed cache options such as Redis or Memcache, especially as a layer before hitting the database."
+    // },
+    // {
+    //   image_url: null
+    // },
+    // {
+    //   text: "Step 3: Identify Suitable Layers for Cache  \nAlmost any part of the architecture can support caching. Prioritize layers that experience high CPU and memory usage for caching, ensuring balanced performance."
+    // },
+    // {
+    //   image_url: "https://effybiz-devops.s3.amazonaws.com/generated-gifs/output.gif"
+    // },
+    // {
+    //   text: "Step 4: Address Cache Complications  \nBe aware that integrating cache adds complexity. For instance, Phil Carton highlights cache invalidation as a particularly challenging problem in computer science."
+    // },
     // {
     //   image_url: "https://effybiz-devops.s3.ap-south-1.amazonaws.com/860b6b33-93c5-49e5-a53f-263b1456c8af_frame_45.jpg"
     // },
