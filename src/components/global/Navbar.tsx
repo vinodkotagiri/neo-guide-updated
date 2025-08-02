@@ -19,6 +19,7 @@ import { setArticleData } from "../../redux/features/articleSlice";
 import { addArrow, addBlur, addRectangle, addSpotLight, addText, addZoom, resetElements } from "../../redux/features/elementsSlice";
 import { setVersions } from "../../redux/features/videoSlice";
 import { setLoader } from "../../redux/features/loaderSlice";
+import axios from "axios";
 interface NavbarProps {
   from?: string,
   hideMenu?: string,
@@ -146,8 +147,16 @@ function Navbar({ from, hideMenu }: NavbarProps) {
           dispatch(setVoiceLanguage(res?.voice_language));
           dispatch(setVoiceId(res?.voiceid));
           dispatch(setVoice(res?.voice));
-          // dispatch(updateSubtitleData(res?.subtitles));
-          // dispatch(setArticleData(res?.article));
+          if (res?.subtitle) {
+            axios.get(res.subtitle).then((response) => {
+              dispatch(updateSubtitleData(response.data));
+            })
+          }
+          if (res?.article) {
+            axios.get(res.article).then((response) => {
+              dispatch(setArticleData(response.data));
+            })
+          }
           const elements = typeof res?.elements == 'string' ? JSON.parse(res?.elements) : res?.elements
           // const videoUrl = elements?.videoUrl;
           // dispatch(setVideoUrl(videoUrl));
@@ -181,7 +190,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
             ...text,
             x: parseInt((parseFloat(text.x) * videoWidth) / 100),
             y: parseInt((parseFloat(text.y) * videoHeight) / 100),
-
+            width: parseInt((parseFloat(text.width) * videoWidth) / 100),
+            height: parseInt((parseFloat(text.height) * videoHeight) / 100),
           })) : []
           texts.forEach((text) => {
             dispatch(addText(text));
@@ -294,23 +304,23 @@ function Navbar({ from, hideMenu }: NavbarProps) {
       let payload = {}
       if (!reference_id) {
         if (subtitlePayload?.length && articlePayload?.length) {
-          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId||Date.now().toString()}-subtitle.json` }).then(res => {
+          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId || Date.now().toString()}-subtitle.json` }).then(res => {
             if (res.file_url) {
               setSubtitleId(res.file_url.split('/').pop())
               subtitleIdLocal = res.file_url.split('/').pop()
-              console.log('subtitleIdLocal',subtitleIdLocal)
+              console.log('subtitleIdLocal', subtitleIdLocal)
             }
           }).catch(err => console.log(err))
           await new Promise(res => setTimeout(res, 1000));
-          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId||Date.now().toString()}-article.json` }).then(res => {
+          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId || Date.now().toString()}-article.json` }).then(res => {
             if (res.file_url) {
               setArticleId(res.file_url.split('/').pop())
               articleIdLocal = res.file_url.split('/').pop()
-              console.log('articleIdLocal',articleIdLocal)
+              console.log('articleIdLocal', articleIdLocal)
             }
           }).catch(err => console.log(err))
 
-         
+
           if (subtitleId || subtitleIdLocal && articleId || articleIdLocal) {
             payload = {
               unique_id: uniqueId,
@@ -352,7 +362,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
                   ...text,
                   x: ((text.x / videoWidth) * 100).toFixed(2),
                   y: ((text.y / videoHeight) * 100).toFixed(2),
-                  fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
+                  width: ((text.backgroundWidth / videoWidth) * 100).toFixed(2),
+                  height: ((text.backgroundHeight / videoHeight) * 100).toFixed(2),
                 })),
                 spotLights: spotLights.map(spot => ({
                   ...spot,
@@ -396,6 +407,23 @@ function Navbar({ from, hideMenu }: NavbarProps) {
         }
 
       } else {
+        if (subtitlePayload?.length && articlePayload?.length) {
+          await exportOrupdateJSON({ json: subtitlePayload, action: subtitleId ? "update" : "insert", filename: `${uniqueId || Date.now().toString()}-subtitle.json` }).then(res => {
+            if (res.file_url) {
+              setSubtitleId(res.file_url.split('/').pop())
+              subtitleIdLocal = res.file_url.split('/').pop()
+              console.log('subtitleIdLocal', subtitleIdLocal)
+            }
+          }).catch(err => console.log(err))
+          await new Promise(res => setTimeout(res, 1000));
+          await exportOrupdateJSON({ json: articlePayload, action: articleId ? "update" : "insert", filename: `${uniqueId || Date.now().toString()}-article.json` }).then(res => {
+            if (res.file_url) {
+              setArticleId(res.file_url.split('/').pop())
+              articleIdLocal = res.file_url.split('/').pop()
+              console.log('articleIdLocal', articleIdLocal)
+            }
+          }).catch(err => console.log(err))
+        }
         payload = {
           reference_id: reference_id,
           unique_id: uniqueId,
@@ -437,7 +465,8 @@ function Navbar({ from, hideMenu }: NavbarProps) {
               ...text,
               x: ((text.x) * 100).toFixed(2),
               y: ((text.y) * 100).toFixed(2),
-              fontSize: ((text.fontSize / videoWidth) * 100).toFixed(2),
+              width: ((text.backgroundWidth / videoWidth) * 100).toFixed(2),
+              height: ((text.backgroundHeight / videoHeight) * 100).toFixed(2),
 
             })),
             spotLights: spotLights.map(spot => ({

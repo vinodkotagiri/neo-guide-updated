@@ -35,10 +35,13 @@ export interface TextElementState {
   font: string;
   fontSize: number;
   fontColor: string;
+  fontStyle: "normal" | "bold" | "italic"|"bold italic";
   backgroundType: "solid" | "gradient";
   backgroundColor?: string | undefined;
   backgroundGradientStartColor?: string | undefined;
   backgroundGradientEndColor?: string | undefined;
+  backgroundWidth?: number | undefined;
+  backgroundHeight?: number | undefined;
   gradientDirection?: "horizontal" | "vertical" | "diagonal" | undefined;
   justify: string;
   startTime: number;
@@ -191,6 +194,7 @@ const elementsSlice = createSlice({
       state.blurs[index] = blur;
     },
     editText(state, action) {
+      console.log('editText action', action.payload);
       const index = state.texts.findIndex((e) => e.id === action.payload.id);
       const text = state.texts[index];
       for (const key of Object.keys(text)) {

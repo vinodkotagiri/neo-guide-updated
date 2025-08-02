@@ -295,8 +295,8 @@ function ElementsOverlay() {
                   // If the background has a separate, constant scaling factor or padding,
                   // you'd apply that here.
                   // For simplicity, let's assume background matches text element's new dimensions.
-                  const backgroundWidth = newWidth; // Assuming background width scales with text width
-                  const backgroundHeight = newHeight; // Assuming background height scales with text height
+                  // Assuming background width scales with text width
+                  // Assuming background height scales with text height
 
                   // Reset the Konva node's scale and position to reflect the new dimensions
                   // This is crucial: set the actual visual node's properties based on the calculated values
@@ -305,23 +305,18 @@ function ElementsOverlay() {
                   node.scaleY(1);
                   node.x(newX);
                   node.y(newY);
-
-                  // Dispatch the action to update your Redux state
+                  const backgroundWidth=Math.ceil(node.children[0].attrs.width||0)
+                  const backgroundHeight=Math.ceil(node.children[0].attrs.height||0)
                   dispatch(
                     editText({
                       id: textElement.id,
                       rotation,
                       fontSize: roundedFontSize,
-                      width: newWidth,
-                      height: newHeight,
-                      // x: newX,
-                      // y: newY,
-                      backgroundWidth: backgroundWidth, // Dispatch background width
-                      backgroundHeight: backgroundHeight, // Dispatch background height
-                      // If you are using boundsX and boundsY for internal text layout,
-                      // you might need to re-evaluate them based on newWidth/Height.
-                      // boundsX: -newWidth / 2, // Example if origin is center
-                      // boundsY: (some_calculation_based_on_new_height_or_node_getClientRect_y),
+                      x: newX,
+                      y: newY,
+                      backgroundWidth: backgroundWidth,
+                      backgroundHeight: backgroundHeight,
+                  
                     })
                   );
                 }}
@@ -343,6 +338,7 @@ function ElementsOverlay() {
                     width={textElement.width * scalingX || 100 * scalingX} // Use stored width
                     height={textElement.height * scalingY || textElement.fontSize}
                     cornerRadius={4}
+
                     fill={
                       textElement.backgroundType === 'gradient'
                         ? undefined
@@ -420,6 +416,7 @@ function ElementsOverlay() {
                   fontFamily={textElement.font}
                   fontSize={textElement.fontSize}
                   fill={textElement.fontColor}
+                  fontStyle={textElement.fontStyle}
                   align="center"
                   verticalAlign='middle'
                   rotation={0} // Rotation handled by Group

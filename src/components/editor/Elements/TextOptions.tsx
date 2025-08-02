@@ -27,6 +27,10 @@ const TextOptions = ({ playerRef }) => {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [activeId, setActiveId] = useState(null);
+  const [fontStyle, setFontStyle] = useState('normal');
+  const [toggleItalic, setToggleItalic] = useState(false);
+  const [toggleBold, setToggleBold] = useState(false);
+
 
   const fontColorInputRef = useRef(null);
   const backgroundColorInputRef = useRef(null);
@@ -108,22 +112,43 @@ const TextOptions = ({ playerRef }) => {
     }
   }, [backgroundType, dispatch]);
 
-const getBackgroundStyle = () => {
-  if (backgroundType === 'solid') {
-    return { backgroundColor: backgroundColor || 'transparent' };
+  const getBackgroundStyle = () => {
+    if (backgroundType === 'solid') {
+      return { backgroundColor: backgroundColor || 'transparent' };
+    }
+
+    let direction = 'to right';
+    if (gradientDirection === 'vertical') direction = 'to bottom';
+    else if (gradientDirection === 'radial') return {
+      backgroundImage: `radial-gradient(${backgroundGradientStartColor}, ${backgroundGradientEndColor})`
+    };
+    else if (gradientDirection === 'diagonal') direction = '45deg';
+
+    return {
+      backgroundImage: `linear-gradient(${direction}, ${backgroundGradientStartColor}, ${backgroundGradientEndColor})`,
+    };
+  };
+
+  function handleFontStyle(style) {
+    if (style === 'italic') setToggleItalic(!toggleItalic);
+    if (style === 'bold') setToggleBold(!toggleBold);
   }
 
-  let direction = 'to right';
-  if (gradientDirection === 'vertical') direction = 'to bottom';
-  else if (gradientDirection === 'radial') return {
-    backgroundImage: `radial-gradient(${backgroundGradientStartColor}, ${backgroundGradientEndColor})`
-  };
-  else if (gradientDirection === 'diagonal') direction = '45deg';
+  useEffect(() => {
+    if (toggleItalic && toggleBold) setFontStyle('bold italic');
+    else if (toggleItalic) setFontStyle('italic');
+    else if (toggleBold) setFontStyle('bold');
+    else setFontStyle('normal');
+  }, [toggleItalic, toggleBold]);
 
-  return {
-    backgroundImage: `linear-gradient(${direction}, ${backgroundGradientStartColor}, ${backgroundGradientEndColor})`,
-  };
-};
+  useEffect(() => {
+    if (currentElementId && currentElement === 'text') {
+      dispatch(editText({
+        id: currentElementId,
+        fontStyle
+      }));
+    }
+  }, [fontStyle, currentElementId, currentElement, dispatch]);
 
   function handleAddNewText() {
     setStartTime(currentPlayTime);
@@ -132,8 +157,9 @@ const getBackgroundStyle = () => {
     dispatch(setCurrentElementId({ id: null, type: null }));
     const textData: TextElementState = {
       id: Date.now().toString(),
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
+      fontStyle: 'normal',
       text,
       font,
       fontSize,
@@ -147,8 +173,8 @@ const getBackgroundStyle = () => {
       rotation,
       startTime,
       endTime,
-        backgroundHeight: 0,
-        backgroundWidth: 0
+      backgroundHeight: 0,
+      backgroundWidth: 0
     };
     dispatch(addText(textData));
     dispatch(setCurrentElement('text'));
@@ -182,11 +208,12 @@ const getBackgroundStyle = () => {
           {/* Text Input */}
           <input
             className="input bg-transparent border-[#303032] w-full shadow-none text-[#ffffff] px-2 py-1 rounded-md"
-            style={{ fontFamily: font, textAlign: 'center', color:" #ffffff" }}
+            style={{ fontFamily: font, textAlign: 'center', color: " #ffffff" }}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter text"
           />
+
 
           {/* Font and Size */}
           <div className="flex w-full gap-1">
@@ -205,6 +232,9 @@ const getBackgroundStyle = () => {
               <option value="Oswald">Oswald</option>
               <option value="Raleway">Raleway</option>
             </select>
+
+            <button className='w-10 h-10 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline-none focus:outline-none text-[#a3a3a5] rounded-md flex items-center justify-center italic' onClick={() => handleFontStyle('italic')} style={toggleItalic ? { backgroundColor: '#422ad5' } : {}}>I</button>
+            <button className='w-10 h-10 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline-none focus:outline-none text-[#a3a3a5] rounded-md flex items-center justify-center' onClick={() => handleFontStyle('bold')} style={toggleBold ? { backgroundColor: '#422ad5' } : {}}>B</button>
             <select
               className="select w-18 bg-transparent shadow-none border-[1px] border-[#303032] cursor-pointer outline-none focus:outline-none text-[#a3a3a5] rounded-md px-2 py-1"
               value={fontSize}

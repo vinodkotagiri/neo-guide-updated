@@ -95,12 +95,15 @@ function ElementTypeComponent({ icon, label }) {
         text: 'Hello world',
         font: 'Open Sans',
         fontSize: 24,
+        fontStyle: 'normal',
         backgroundColor: 'transparent',
         justify: 'center',
         rotation: 0,
         fontColor: '#000000',
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 15
+        endTime: currentPlayTime + 15,
+        backgroundWidth:100,
+        backgroundHeight: 24,
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))

@@ -57,11 +57,12 @@ const EditorSider = ({ playerRef }) => {
       dispatch(setAddingElements(true))
       const textData: TextElementState = {
         id: Date.now().toString(),
-        x: 100,
-        y: 100,
+        x: 200,
+        y: 200,
         text: 'Hello world',
         font: 'Open Sans',
         fontSize: 24,
+        fontStyle:'normal',
         backgroundColor: 'transparent',
         backgroundGradientStartColor: 'transparent',
         backgroundGradientEndColor: 'transparent',
@@ -71,7 +72,9 @@ const EditorSider = ({ playerRef }) => {
         backgroundType: 'solid',
         rotation: 0,
         startTime: currentPlayTime,
-        endTime: currentPlayTime + 5
+        endTime: currentPlayTime + 5,
+        backgroundWidth: 100,
+        backgroundHeight: 24,
       }
       dispatch(addText(textData))
       dispatch(setCurrentElement('text'))

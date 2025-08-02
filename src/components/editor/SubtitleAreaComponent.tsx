@@ -156,7 +156,7 @@ function SubtitleAreaComponent({ playerRef }) {
 
     setLoading(true);
     try {
-      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text, from:"subtitle" });
+      const audio_url = await textToSpeech({ voiceid: selectedVoiceID, text: item.text, from: "subtitle" });
       if (audio_url) {
         setAudioUrls((prev) => {
           const newUrls = [...prev];
@@ -240,44 +240,55 @@ function SubtitleAreaComponent({ playerRef }) {
               }}
               onClick={() => playerRef.current.seekTo(getSecondsFromTime(item.start_time))}
             >
-              {processing_subtitle.index==index && processing_subtitle.status==1?<div className='skeleton h-25 w-full bg-transparent'/>: <>
-              <div className="flex flex-col h-full items-center justify-center px-2 ">
-                <div className="text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
-                <div className="text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
-              </div>
+              {processing_subtitle.index == index && processing_subtitle.status == 1 ? <div className='skeleton h-25 w-full bg-transparent' /> : <>
+                <div className="flex flex-col h-full items-center justify-center px-2 ">
+                  <div className="text-[0.8rem]">{item?.start_time?.split(',')[0]}</div>
+                  <div className="text-[0.8rem]">{item?.end_time?.split(',')[0]}</div>
+                </div>
 
-              <p
-                className="w-full h-auto p-2 py-3 subtitle-content text-[0.8rem] outline-0"
-                dangerouslySetInnerHTML={{ __html: item.text }}
-                contentEditable
-              />
+                <p
+                  className="w-full h-auto p-2 py-3 subtitle-content text-[0.8rem] outline-0"
+                  dangerouslySetInnerHTML={{ __html: item.text }}
+                  contentEditable
+                  onBlur={(e) => {
+                    const newText = e.currentTarget.innerHTML;
 
-              <div className="mx-5">
-                <audio ref={(el) => (audioRefs.current[index] = el)} />
-                {loading && activeAudioIndex === index ? (
-                  <div className="loader" />
-                ) : activeAudioIndex === index && audioRefs.current[index] && !audioRefs.current[index].paused ? (
-                  <IoPauseOutline
-                    size={24}
-                    className="text-[#ccc] cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleAudio(index, item);
-                    }}
-                  />
-                ) : (
-                  <IoPlayOutline
-                    size={24}
-                    className="text-[#ccc] cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleAudio(index, item);
-                    }}
-                  />
-                )}
-              </div>
-              
-              </> 
+                    // Only dispatch if text actually changed (optional optimization)
+                    if (newText !== item.text) {
+                      const updatedSubtitles = subtitles.data.map((sub, i) =>
+                        i === index ? { ...sub, text: newText } : sub
+                      );
+                      dispatch(updateSubtitleData(updatedSubtitles));
+                    }
+                  }}
+                />
+
+                <div className="mx-5">
+                  <audio ref={(el) => (audioRefs.current[index] = el)} />
+                  {loading && activeAudioIndex === index ? (
+                    <div className="loader" />
+                  ) : activeAudioIndex === index && audioRefs.current[index] && !audioRefs.current[index].paused ? (
+                    <IoPauseOutline
+                      size={24}
+                      className="text-[#ccc] cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleAudio(index, item);
+                      }}
+                    />
+                  ) : (
+                    <IoPlayOutline
+                      size={24}
+                      className="text-[#ccc] cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleAudio(index, item);
+                      }}
+                    />
+                  )}
+                </div>
+
+              </>
               }
             </motion.div>
           ))
